@@ -1,0 +1,1 @@
+docker exec -it kingroofing-odoo odoo -i all -d kingroofing --dev assets

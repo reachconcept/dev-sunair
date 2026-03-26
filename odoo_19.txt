@@ -1,0 +1,7 @@
+"""
+This project contains the implementation of the selected functionality.
+Note: This repository is using Odoo 19.
+Client: Sunair
+"""
+
+9nwk-4pzp-izr9

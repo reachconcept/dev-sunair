@@ -34,5 +34,5 @@ $ git clone <repository-url>
 $ cd <repository-directory>
 
 cd odoo
-git clone -b 18.0 https://github.com/odoo/odoo.git
-git clone -b 18.0 https://github.com/odoo/enterprise.git
+git clone -b 19.0 https://github.com/odoo/odoo.git
+git clone -b 19.0 https://github.com/odoo/enterprise.git
