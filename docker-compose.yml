@@ -22,8 +22,8 @@ services:
       - ./config:/etc/odoo
     networks:
       - odoo_network
-    # command: >
-    #   odoo -u sunair_sale,vault_import -d sunair_prod
+    command: >
+      odoo -u sunair_crm -d sunair_prod
 
   postgres:
     container_name: sunair-db
