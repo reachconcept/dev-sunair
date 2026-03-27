@@ -10,12 +10,14 @@
     'maintainer': 'Reach Concept',
     'website': 'https://www.reachconcept.com',
 
-    'depends': ['base','crm'],
+    'depends': ['base','crm','mail'],
 
     'data': [
         "security/ir.model.access.csv",
         "views/customer_type_views.xml",
         "views/lead_type_views.xml",
+        "views/crm_territory_views.xml",
+        "views/crm_lead_views.xml",
 
     ],
     'assets': {
