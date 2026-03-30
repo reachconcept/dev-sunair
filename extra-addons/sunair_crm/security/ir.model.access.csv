@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_customer_type,customer.type,model_customer_type,base.group_user,1,1,1,1
 access_lead_type,lead.type,model_lead_type,base.group_user,1,1,1,1
 access_crm_territory,crm.territory,model_crm_territory,base.group_user,1,1,1,1
+access_crm_application,crm.application,model_crm_application,base.group_user,1,1,1,1

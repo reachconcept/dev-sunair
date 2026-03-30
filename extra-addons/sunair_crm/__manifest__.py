@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Reach Concept : Module Name',
+    'name': 'Reach Concept : Sunair Shades Structure',
     'version': '19.0.1.0.0',
     'category': 'Business Management',
-    'summary': """ Reach Concept : Module Name """,
-    'description': """ Reach Concept : Module Name """,
+    'summary': """ Reach Concept : Sunair Shades Structure """,
+    'description': """ Reach Concept : Sunair Shades Structure """,
     'author': 'Reach Concept',
     'company': 'Reach Concept',
     'maintainer': 'Reach Concept',
     'website': 'https://www.reachconcept.com',
 
-    'depends': ['base','crm','mail'],
+    'depends': ['base','crm','mail','sale'],
 
     'data': [
         "security/ir.model.access.csv",
+        "data/sequence.xml",
         "views/customer_type_views.xml",
         "views/lead_type_views.xml",
         "views/crm_territory_views.xml",
         "views/crm_lead_views.xml",
+        "views/crm_application_views.xml",
 
     ],
     'assets': {

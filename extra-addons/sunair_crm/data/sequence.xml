@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="seq_crm_application" model="ir.sequence">
+        <field name="name">CRM Application</field>
+        <field name="code">crm.application</field>
+        <field name="prefix">APP/</field>
+        <field name="padding">5</field>
+    </record>
+
+</odoo>

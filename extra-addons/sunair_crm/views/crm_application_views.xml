@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_crm_application_kanban" model="ir.ui.view">
+        <field name="name">crm.application.kanban</field>
+        <field name="model">crm.application</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+
+                <field name="state"/>
+                <field name="partner_id"/>
+                <field name="lead_id"/>
+                <field name="document_count"/>
+                <field name="is_awcbn"/>
+
+                <progressbar field="state"
+    colors='{"sent":"warning","ar_approval":"info","manager_approval":"primary","completed":"success","cancelled":"danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+
+                            <div class="o_kanban_content">
+
+                                <div class="o_kanban_record_top">
+                                    <strong>
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+
+                                <div class="o_kanban_record_body">
+                                    <div>
+                                        <i class="fa fa-user"/> <field name="partner_id"/>
+                                    </div>
+
+                                    <div t-if="record.is_awcbn.raw_value">
+                                        <span class="badge badge-info">AWCBN</span>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_bottom">
+
+                                    <div>
+                                        <i class="fa fa-file"/>
+                                        <t t-esc="record.document_count.value"/> docs
+                                    </div>
+
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="create_date" widget="date"/>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_crm_application_tree" model="ir.ui.view">
+        <field name="name">crm.application.tree</field>
+        <field name="model">crm.application</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="lead_id"/>
+                <field name="state"/>
+                <field name="is_awcbn"/>
+                <field name="document_count"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_crm_application_form" model="ir.ui.view">
+        <field name="name">crm.application.form</field>
+        <field name="model">crm.application</field>
+        <field name="arch" type="xml">
+            <form string="Dealer Application">
+                <header>
+                    <button name="action_send_to_finance" type="object" string="Send to Finance"
+                            class="btn-primary" invisible="state != 'sent'"/>
+
+                    <button name="action_ar_approve" type="object" string="AR Approve"
+                            class="btn-primary" invisible="state != 'ar_approval'"/>
+
+                    <button name="action_manager_approve" type="object" string="Manager Approve"
+                            class="btn-success" invisible="state != 'manager_approval'"/>
+
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('completed','cancelled')"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="sent,ar_approval,manager_approval,completed"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_documents" icon="fa-file-o">
+                            <field name="document_count" widget="statinfo" string="Documents"/>
+                        </button>
+
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_order" icon="fa-shopping-cart"
+                                invisible="not order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Sales Order</span>
+                            </div>
+                        </button>
+
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="lead_id" readonly="state != 'sent'"/>
+                            <field name="partner_id" readonly="state != 'sent'"/>
+                            <field name="is_awcbn"/>
+                            <field name="awcbn_number" invisible="not is_awcbn"/>
+                        </group>
+
+                        <group>
+                            <field name="create_date" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="order_id" readonly="1" invisible="not order_id"/>
+                        </group>
+                    </group>
+
+                </sheet>
+
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="action_crm_application" model="ir.actions.act_window">
+        <field name="name">Applications</field>
+        <field name="res_model">crm.application</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add an Application Form</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_crm_application_root" name="Dealer Applications" sequence="1"/>
+    <menuitem id="menu_crm_application" name="Applications" parent="sunair_crm.menu_crm_application_root" action="action_crm_application" sequence="1"/>
+</odoo>

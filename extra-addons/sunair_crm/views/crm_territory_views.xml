@@ -23,13 +23,15 @@
         <field name="model">crm.territory</field>
         <field name="arch" type="xml">
             <form string="Territory">
-                    <button type="object"
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object"
                             name="action_view_leads"
                             class="oe_stat_button"
                             icon="fa-filter">
                         <field name="lead_count" widget="statinfo" string="Leads"/>
                     </button>
-                <sheet>
+                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="name" placeholder="Enter Territory Name"/>
