@@ -12,7 +12,7 @@ class CrmTerritory(models.Model):
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     team_id = fields.Many2one('crm.team', string='Primary Sales Team', required=True)
     backup_user_id = fields.Many2one('res.users', string='Backup Representative', compute='_compute_backup_user', store=True)
-    zip_range = fields.Char(string='ZIP Code Range', placeholder='eg:- 100-200,200-300')
+    zip_range = fields.Char(string='ZIP Code Range', help='Define ZIP code ranges for this territory, e.g. "100-199,300-399"')
     active = fields.Boolean(default=True)
     auto_assign = fields.Boolean(string='Lead Auto Assignment')
     lead_count = fields.Integer(compute='_compute_lead_count')

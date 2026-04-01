@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="sunair_crm.dashboard">
+        <div class="sunair-dashboard">
+            <div class="sunair-dashboard-inner">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <h1>SUNAIR CRM</h1>
+                    <p>Customer Relationship Management Dashboard</p>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="dashboard-search">
+                    <div class="search-container">
+                        <i class="fa fa-search search-icon"></i>
+                        <input type="text" 
+                               class="search-field" 
+                               t-att-value="state.searchQuery"
+                               t-on-input="(ev) => this.updateSearch(ev)"
+                               t-on-keyup="(ev) => this.handleKeyPress(ev)"
+                               placeholder="Search leads by name, email, or phone..."/>
+                        <button class="search-button" t-on-click="() => this.searchLeads()">
+                            Search
+                        </button>
+                    </div>
+                    <button class="create-button" t-on-click="() => this.createLead()">
+                        <i class="fa fa-plus"></i> New Lead
+                    </button>
+                </div>
+
+                <div t-if="state.searchResults.length > 0" class="search-results">
+                    <h2 class="results-title">
+                        <i class="fa fa-list"></i> Search Results
+                        <span class="results-count">(<t t-esc="state.searchResults.length"/>)</span>
+                    </h2>
+                    <div class="results-grid">
+                        <t t-foreach="state.searchResults" t-as="lead" t-key="lead.id">
+                            <div class="result-item" t-on-click="() => this.openLead(lead)">
+                                <div class="result-name">
+                                    <i class="fa fa-user-circle"></i>
+                                    <strong><t t-esc="lead.name"/></strong>
+                                </div>
+                                <div t-if="lead.email_from" class="result-email">
+                                    <i class="fa fa-envelope"></i>
+                                    <span><t t-esc="lead.email_from"/></span>
+                                </div>
+                                <div t-if="lead.phone" class="result-phone">
+                                    <i class="fa fa-phone"></i>
+                                    <span><t t-esc="lead.phone"/></span>
+                                </div>
+                                <div class="result-type">
+                                    <i class="fa fa-tag"></i>
+                                    <span><t t-esc="lead.customer_type_id ? lead.customer_type_id[1] : 'General'"/></span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="clear-results" t-on-click="() => this.clearSearch()">
+                        <i class="fa fa-times"></i> Clear Results
+                    </div>
+                </div>
+
+                <div t-if="state.searchResults.length === 0" class="customer-section">
+                    <h2 class="section-title">Customer Types</h2>
+                    <div class="customer-grid">
+                        <t t-foreach="leftTypes" t-as="ct" t-key="ct.id">
+                            <div class="type-card" t-on-click="() => this.openCustomerType(ct)">
+                                <div class="type-icon" t-att-style="'background: ' + this.getCardColor(ct.color)">
+                                    <i t-att-class="'fa ' + (ct.icon or 'fa-user')"></i>
+                                </div>
+                                <div class="type-name"><t t-esc="ct.name"/></div>
+                                <div class="type-description">Click to view leads</div>
+                            </div>
+                        </t>
+                        
+                        <div class="dealer-card-middle" t-on-click="() => this.openFindDealer()">
+                            <div class="dealer-icon">
+                                <i class="fa fa-building"></i>
+                            </div>
+                            <div class="dealer-name">Find a Dealer</div>
+                            <div class="dealer-description">Locate dealers near you</div>
+                        </div>
+                        
+                        <t t-foreach="rightTypes" t-as="ct" t-key="ct.id">
+                            <div class="type-card" t-on-click="() => this.openCustomerType(ct)">
+                                <div class="type-icon" t-att-style="'background: ' + this.getCardColor(ct.color)">
+                                    <i t-att-class="'fa ' + (ct.icon or 'fa-user')"></i>
+                                </div>
+                                <div class="type-name"><t t-esc="ct.name"/></div>
+                                <div class="type-description">Click to view leads</div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div t-if="state.searchPerformed and state.searchResults.length === 0 and state.searchQuery" class="no-results">
+                    <i class="fa fa-search"></i>
+                    <h3>No leads found</h3>
+                    <p>No leads matching "<strong><t t-esc="state.searchQuery"/></strong>"</p>
+                    <button class="clear-btn" t-on-click="() => this.clearSearch()">Clear Search</button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

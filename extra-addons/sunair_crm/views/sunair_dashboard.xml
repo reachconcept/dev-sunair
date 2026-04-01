@@ -1,0 +1,14 @@
+<odoo>
+    <record id="action_sunair_dashboard" model="ir.actions.client">
+        <field name="name">SUNAIR CRM Dashboard</field>
+        <field name="tag">sunair_crm.dashboard</field>
+    </record>
+
+    <!-- Menu Item - First position in CRM -->
+    <menuitem
+        id="menu_sunair_dashboard"
+        name="SUNAIR Dashboard"
+        parent="crm.crm_menu_root"
+        action="action_sunair_dashboard"
+        sequence="0"/>
+</odoo>

@@ -20,11 +20,14 @@
         "views/crm_territory_views.xml",
         "views/crm_lead_views.xml",
         "views/crm_application_views.xml",
+        "views/sunair_dashboard.xml",
 
     ],
     'assets': {
         'web.assets_backend': [
-           
+           'sunair_crm/static/src/js/dashboard.js',
+           'sunair_crm/static/src/xml/dashboard.xml',
+           'sunair_crm/static/src/css/dashboard.css',
         ],
     },
     'license': 'LGPL-3',
