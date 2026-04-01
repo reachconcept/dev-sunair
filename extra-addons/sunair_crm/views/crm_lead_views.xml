@@ -17,13 +17,13 @@
                     </span>
                 </div>
             </t>
-            <t t-if="record.lead_type_id.raw_value">
+            <!-- <t t-if="record.lead_type_id.raw_value">
                 <div class="mt-1">
                     <span class="badge rounded-pill bg-secondary text-white">
                         <t t-esc="record.lead_type_id.value"/>
                     </span>
                 </div>
-            </t>
+            </t> -->
             <t t-if="record.territory_id.raw_value">
                 <div class="mt-1">
                     <span class="badge rounded-pill bg-primary text-white">
