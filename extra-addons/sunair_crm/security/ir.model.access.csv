@@ -4,3 +4,4 @@ access_lead_type,lead.type,model_lead_type,base.group_user,1,1,1,1
 access_crm_territory,crm.territory,model_crm_territory,base.group_user,1,1,1,1
 access_crm_application,crm.application,model_crm_application,base.group_user,1,1,1,1
 access_crm_product_category,access_crm_product_category,model_crm_product_category,base.group_user,1,1,1,1
+access_dealer_dashboard,dealer.dashboard,model_dealer_dashboard,base.group_user,1,1,1,1

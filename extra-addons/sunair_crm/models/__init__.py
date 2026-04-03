@@ -7,3 +7,4 @@ from . import res_partner
 from . import crm_lead2opportunity_partner
 from . import product
 from . import crm_product_category
+from . import dealer_dashboard
