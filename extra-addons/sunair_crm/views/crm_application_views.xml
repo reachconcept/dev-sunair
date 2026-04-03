@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="view_crm_application_tree" model="ir.ui.view">
+        <field name="name">crm.application.tree</field>
+        <field name="model">crm.application</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_legal_name"/>
+                <field name="state"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="email"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
     <record id="view_crm_application_kanban" model="ir.ui.view">
         <field name="name">crm.application.kanban</field>
         <field name="model">crm.application</field>
@@ -60,104 +76,235 @@
         </field>
     </record>
 
-    <record id="view_crm_application_tree" model="ir.ui.view">
-        <field name="name">crm.application.tree</field>
-        <field name="model">crm.application</field>
-        <field name="arch" type="xml">
-            <list>
-                <field name="name"/>
-                <field name="partner_id"/>
-                <field name="lead_id"/>
-                <field name="state"/>
-                <field name="is_awcbn"/>
-                <field name="document_count"/>
-                <field name="create_date"/>
-            </list>
-        </field>
-    </record>
-
     <record id="view_crm_application_form" model="ir.ui.view">
         <field name="name">crm.application.form</field>
         <field name="model">crm.application</field>
         <field name="arch" type="xml">
             <form string="Dealer Application">
                 <header>
-                    <button name="action_send_application" type="object" string="Send Application"
-                            class="btn-primary" invisible="state != 'draft'"/>
-
-                    <button name="action_send_to_finance" type="object" string="Send to Finance"
-                            class="btn-primary" invisible="state != 'sent'"/>
-
-                    <button name="action_ar_approve" type="object" string="AR Approve"
-                            class="btn-primary" invisible="state != 'ar_approval'" confirm="Are you sure you want to approve this application for AR?"/>
-
-                    <button name="action_manager_approve" type="object" string="Manager Approve"
-                            class="btn-success" invisible="state != 'manager_approval'" confirm="This will create a sales order. Are you sure?"/>
-
-                    <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state in ('completed','cancelled')" confirm="Are you sure you want to cancel this application?"/>
-
-                    <field name="state" widget="statusbar"
-                           statusbar_visible="sent,ar_approval,manager_approval,completed"/>
+                    <button name="action_create_partner" type="object" string="Create Partner" class="btn-secondary" invisible="partner_id or state != 'draft'"/>
+                    <button name="action_send_application" type="object" string="Send Application" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_send_to_finance" type="object" string="Send to Finance" class="btn-primary" invisible="state != 'sent'"/>
+                    <button name="action_ar_approve" type="object" string="AR Approve" class="btn-primary" invisible="state != 'ar_approval'" confirm="Approve this application for AR?"/>
+                    <button name="action_manager_approve" type="object" string="Manager Approve" class="btn-success" invisible="state != 'manager_approval'" confirm="This will create a sales order. Proceed?"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('completed','cancelled')" confirm="Cancel this application?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="sent,ar_approval,manager_approval,completed"/>
                 </header>
 
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-
-                        <button class="oe_stat_button" type="object"
-                                name="action_view_documents" icon="fa-file-o">
+                        <button class="oe_stat_button" type="object" name="action_view_documents" icon="fa-file-o">
                             <field name="document_count" widget="statinfo" string="Documents"/>
                         </button>
-
-                        <button class="oe_stat_button" type="object"
-                                name="action_view_order" icon="fa-shopping-cart"
-                                invisible="not order_id">
-                            <div class="o_stat_info">
-                                <span class="o_stat_text">Sales Order</span>
-                            </div>
+                        <button class="oe_stat_button" type="object" name="action_view_order" icon="fa-shopping-cart" invisible="not order_id">
+                            <div class="o_stat_info"><span class="o_stat_text">Sales Order</span></div>
                         </button>
-
                     </div>
 
                     <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
+                        <h1><field name="name" readonly="1"/></h1>
                     </div>
 
-                    <group>
+                    <group name="company_info" string="Company Information">
                         <group>
-                            <field name="lead_id" readonly="state != 'sent'"/>
-                            <field name="partner_id" readonly="state != 'sent'"/>
+                            <field name="company_legal_name" placeholder="Company Legal Name" required="1"/>
+                            <field name="dba_name" placeholder="Trading Style or DBA Name(s)"/>
                             <field name="is_awcbn"/>
                             <field name="awcbn_number" invisible="not is_awcbn"/>
                         </group>
-
                         <group>
-                            <field name="create_date" readonly="1"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                            <field name="order_id" string="Sale order" readonly="1" invisible="not order_id"/>
+                            <field name="lead_id"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company" invisible="1"/>
                         </group>
                     </group>
 
+                    <group name="address_info" string="Address">
+                        <group>
+                            <field name="street" placeholder="Street Address" required="1"/>
+                            <field name="city" required="1"/>
+                            <field name="state_id" required="1"/>
+                            <field name="zip_code" required="1"/>
+                        </group>
+                        <group>
+                            <field name="phone" required="1"/>
+                            <field name="fax"/>
+                            <field name="cell"/>
+                            <field name="email" required="1"/>
+                        </group>
+                    </group>
+
+                    <group name="billing_address" string="Billing Address (if different)">
+                        <group>
+                            <field name="billing_street" placeholder="Billing Street Address"/>
+                            <field name="billing_city"/>
+                            <field name="billing_state_id"/>
+                            <field name="billing_zip"/>
+                        </group>
+                    </group>
+
+                    <group name="business_details" string="Business Details">
+                        <group>
+                            <field name="business_type" required="1"/>
+                            <field name="business_type_other" invisible="business_type != 'other'" placeholder="Please specify"/>
+                            <field name="duns_number" placeholder="DUN &amp; Bradstreet ID #"/>
+                            <field name="year_established" placeholder="Year Business Established"/>
+                        </group>
+                        <group>
+                            <field name="federal_id" placeholder="Federal Identification #" required="1"/>
+                            <field name="tax_status"/>
+                            <field name="tax_exempt_number" invisible="tax_status != 'tax_exempt'" placeholder="Tax Exempt #"/>
+                            <field name="multi_jurisdiction_attached"/>
+                        </group>
+                    </group>
+
+                    <separator string="Principal Owner(s) or Corporate Officer(s)"/>
+
+                    <group name="principle_1" string="Principal 1">
+                        <group>
+                            <field name="principle_name_1" placeholder="Name" required="1"/>
+                            <field name="principle_title_1" placeholder="Title" required="1"/>
+                            <field name="principle_ssn_1" placeholder="SSN (if Sole Prop, Partnership, or LLC)"/>
+                        </group>
+                        <group>
+                            <field name="principle_address_1" placeholder="Address"/>
+                            <field name="principle_city_1" placeholder="City"/>
+                            <field name="principle_state_id_1"/>
+                            <field name="principle_phone_1" placeholder="Phone"/>
+                        </group>
+                    </group>
+
+                    <group name="principle_2" string="Principal 2 (Optional)">
+                        <group>
+                            <field name="principle_name_2" placeholder="Name"/>
+                            <field name="principle_title_2" placeholder="Title"/>
+                            <field name="principle_ssn_2" placeholder="SSN (if Sole Prop, Partnership, or LLC)"/>
+                        </group>
+                        <group>
+                            <field name="principle_address_2" placeholder="Address"/>
+                            <field name="principle_city_2" placeholder="City"/>
+                            <field name="principle_state_id_2"/>
+                            <field name="principle_phone_2" placeholder="Phone"/>
+                        </group>
+                    </group>
+
+                    <separator string="Bank Information"/>
+
+                    <group name="bank_info">
+                        <group>
+                            <field name="bank_name" placeholder="Name of Bank" required="1"/>
+                            <field name="bank_account_number" placeholder="Account #" required="1"/>
+                        </group>
+                        <group>
+                            <field name="bank_address" placeholder="Address" required="1"/>
+                            <field name="bank_city" placeholder="City" required="1"/>
+                            <field name="bank_state_id" required="1"/>
+                            <field name="bank_zip" placeholder="ZIP" required="1"/>
+                        </group>
+                    </group>
+
+                    <separator string="Trade References"/>
+
+                    <group name="trade_references">
+                        <group string="Reference 1">
+                            <field name="trade_ref_1_name" placeholder="Name"/>
+                            <field name="trade_ref_1_phone" placeholder="Phone"/>
+                            <field name="trade_ref_1_fax" placeholder="FAX"/>
+                            <field name="trade_ref_1_address" placeholder="Address"/>
+                        </group>
+                        <group string="Reference 2">
+                            <field name="trade_ref_2_name" placeholder="Name"/>
+                            <field name="trade_ref_2_phone" placeholder="Phone"/>
+                            <field name="trade_ref_2_fax" placeholder="FAX"/>
+                            <field name="trade_ref_2_address" placeholder="Address"/>
+                        </group>
+                        <group string="Reference 3">
+                            <field name="trade_ref_3_name" placeholder="Name"/>
+                            <field name="trade_ref_3_phone" placeholder="Phone"/>
+                            <field name="trade_ref_3_fax" placeholder="FAX"/>
+                            <field name="trade_ref_3_address" placeholder="Address"/>
+                        </group>
+                    </group>
+
+                    <separator string="Additional Information"/>
+<group name="additional_info" col="4">
+                        <field name="has_other_business_names"/>
+                        <field name="other_business_names" placeholder="List other business names" colspan="2" invisible="not has_other_business_names" nolabel="1"/>
+                        <field name="has_bankruptcy"/>
+                        <field name="bankruptcy_dates" placeholder="Date(s)" colspan="2" invisible="not has_bankruptcy" nolabel="1"/>
+                    </group>
+
+                    <separator string="Terms and Conditions Agreement"/>
+
+                    <div class="alert alert-info mt-2" style="margin-bottom: 16px; margin-left: 12px; margin-right: 12px;">
+                         The undersigned applicant, in consideration for SUNAIR Awnings &amp; Solar Screens and Sunair West extending credit to it on an open
+                        account for the sale and delivery of merchandise and/or service, hereby agrees for itself and its successors and assigns to the following
+                        terms of payment.
+                        Payment shall be due in full within thirty (30) days of initial billing:<strong> FINANCE CHARGES SHALL BE PAYABLE AT THE RATE OF ONE
+                        AND ONE HALF PERCENT (1.5%) PER MONTH (ANNUAL PERCENTAGE RATE OF 18%)</strong> on all amounts due which is not paid
+                        within thirty (30) days. In the event of default in payment , SUNAIR Awnings &amp; Solar Screens and Sunair West, Inc will exercise all rights
+                        and remedies available by law for the collection of the balance due on the account and the applicant will be liable for all expenses of
+                        collections, with or without suit. If the account is referred to an attorney for collection or to a collection firm, the applicant shall be liable
+                        for reasonable attorney’s fees plus court costs and all other costs of litigation, including but not limited to, costs of service of process,
+                        depositions, and duplicating, and all other costs of collection assessed by the collection firm. Also both parties agree that terms of this
+                        application shall be governed by the laws of the State of Maryland and further agree that the venue for any action brought by creditor to
+                        enforce any terms of this agreement shall be in Howard County, Maryland.
+                        Order cancellations are not valid unless done in writing before a product ships. Such cancellations may be subject to appropriate restocking fees, or denied.<strong> Sales incentives and discounts are contingent upon compliance with all payment terms. These
+                        incentives will be voided for non-compliance. In addition if an account becomes (60) days delinquent any incentives and
+                        discounts given will be lost and charged back to the account.</strong>
+                    </div>
+
+                    <separator string="Personal Guarantee"/>
+
+                    <div class="alert alert-warning" style="margin-bottom: 16px; margin-left: 12px; margin-right: 12px;">
+                        <i class="fa fa-warning"/> <strong>Personal Guarantee:</strong> In consideration of your extending credit to the applicant herein on an open account for the sale and delivery of merchandise and/or
+                    services to the applicant, we the undersigned do hereby individually, personally, jointly, and severally guarantee payment to SUNAIR
+                    Awnings &amp; Solar Screens and Sunair West, its successors and assigns, of all amounts, which may become due by reason this account,
+                    including interest, attorney’s fees and costs. This guarantee is open, continuing, absolute and unconditional, and shall continue in full
+                    force not withstanding any change in form of such indebtedness, or renewals or extensions thereof granted by the creditor, and may be
+                    revoked only by the express written notice of revocation to SUNAIR Awnings &amp; Solar Screens and Sunair West by certified mail, and
+                    said revocation shall not in any manner affect the liability of the revoking guarantor as to any liability incurred prior to actual receipt of
+                    such notice. We also grant to SUNAIR Awnings &amp; Solar Screens and Sunair West the right to check any factors pertinent to a fair
+                    evaluation of establishing credit. The Guarantee is being executed in our individual capacities and not in any official capacity with above
+                    firm.
+                    </div>
+
+                    <separator/>
+                    <div style="margin-bottom: 16px; margin-left: 12px; margin-right: 12px;">
+                         The undersigned certifies that the above information is accurate and complete. The undersigned also acknowledges that he/she has
+                        read and <strong>AGREES TO ALL THE ABOVE TERMS AND CONDITIONS OF SALE. The undersigned agrees that the ABOVE TERMS
+                        AND CONDITIONS CONTROL ALL SALES.</strong>
+
+                    </div>
+
+                    <group name="signature_info" string="Signature" col="4">
+                        <field name="signed_by_name" placeholder="Signer Name (Please Print)" required="1"/>
+                        <field name="signed_by_title" placeholder="Title" required="1"/>
+                        <field name="signature_date" required="1"/>
+                        <field name="dealer_representative" placeholder="Dealer Representative"/>
+                    </group>
+
+
                 </sheet>
-
                 <chatter/>
-
             </form>
         </field>
     </record>
 
     <record id="action_crm_application" model="ir.actions.act_window">
-        <field name="name">Applications</field>
+        <field name="name">Dealer Applications</field>
         <field name="res_model">crm.application</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Add an Application Form</p>
+                Create a new Dealer Application
+            </p>
         </field>
     </record>
 
-    <menuitem id="menu_crm_application_root" name="Dealer Applications" sequence="1"/>
-    <menuitem id="menu_crm_application" name="Applications" parent="sunair_crm.menu_crm_application_root" action="action_crm_application" sequence="1"/>
+    <menuitem id="menu_crm_application_root" name="Dealer" sequence="10"/>
+    <menuitem id="menu_crm_application" name="Dealer Applications" parent="menu_crm_application_root" action="action_crm_application" sequence="0"/>
+
+
+
 </odoo>
