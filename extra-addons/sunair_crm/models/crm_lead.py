@@ -14,19 +14,10 @@ class CrmLead(models.Model):
         store=True,
         readonly=True
     )
-
-    tag_ids = fields.Many2many(
-        'crm.tag',
-        string='Tags',
-        domain="[('id', 'in', allowed_tag_ids)]"
-    )
-
-    allowed_tag_ids = fields.Many2many(
-        'crm.tag',
-        compute='_compute_allowed_tag_ids',
-        store=False
-    )
-
+    tag_ids = fields.Many2many('crm.tag',string='Tags',domain="[('id', 'in', allowed_tag_ids)]")
+    allowed_tag_ids = fields.Many2many('crm.tag',compute='_compute_allowed_tag_ids',store=False)
+    application_count = fields.Integer(compute='_compute_application_count')
+    
     @api.depends('customer_type_id')
     def _compute_allowed_tag_ids(self):
         for rec in self:
@@ -64,3 +55,33 @@ class CrmLead(models.Model):
                                     continue
                         if rec.territory_id:
                             break
+                        
+    def _compute_application_count(self):
+        for rec in self:
+            rec.application_count = self.env['crm.application'].search_count([
+                ('lead_id', '=', rec.id)
+            ])
+            
+    def action_create_application(self):
+        app = self.env['crm.application'].create({
+            'lead_id': self.id,
+            'partner_id': self.partner_id.id,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Application',
+            'res_model': 'crm.application',
+            'view_mode': 'form',
+            'res_id': app.id,
+            'target': 'current',
+        }
+
+    def action_view_applications(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Applications',
+            'res_model': 'crm.application',
+            'view_mode': 'kanban,list,form',
+            'domain': [('lead_id', '=', self.id)],
+        }

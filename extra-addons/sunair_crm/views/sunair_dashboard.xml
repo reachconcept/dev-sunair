@@ -4,7 +4,6 @@
         <field name="tag">sunair_crm.dashboard</field>
     </record>
 
-    <!-- Menu Item - First position in CRM -->
     <menuitem
         id="menu_sunair_dashboard"
         name="SUNAIR Dashboard"

@@ -82,17 +82,20 @@
         <field name="arch" type="xml">
             <form string="Dealer Application">
                 <header>
+                    <button name="action_send_application" type="object" string="Send Application"
+                            class="btn-primary" invisible="state != 'draft'"/>
+
                     <button name="action_send_to_finance" type="object" string="Send to Finance"
                             class="btn-primary" invisible="state != 'sent'"/>
 
                     <button name="action_ar_approve" type="object" string="AR Approve"
-                            class="btn-primary" invisible="state != 'ar_approval'"/>
+                            class="btn-primary" invisible="state != 'ar_approval'" confirm="Are you sure you want to approve this application for AR?"/>
 
                     <button name="action_manager_approve" type="object" string="Manager Approve"
-                            class="btn-success" invisible="state != 'manager_approval'"/>
+                            class="btn-success" invisible="state != 'manager_approval'" confirm="This will create a sales order. Are you sure?"/>
 
                     <button name="action_cancel" type="object" string="Cancel"
-                            invisible="state in ('completed','cancelled')"/>
+                            invisible="state in ('completed','cancelled')" confirm="Are you sure you want to cancel this application?"/>
 
                     <field name="state" widget="statusbar"
                            statusbar_visible="sent,ar_approval,manager_approval,completed"/>
@@ -133,7 +136,7 @@
                         <group>
                             <field name="create_date" readonly="1"/>
                             <field name="company_id" groups="base.group_multi_company"/>
-                            <field name="order_id" readonly="1" invisible="not order_id"/>
+                            <field name="order_id" string="Sale order" readonly="1" invisible="not order_id"/>
                         </group>
                     </group>
 

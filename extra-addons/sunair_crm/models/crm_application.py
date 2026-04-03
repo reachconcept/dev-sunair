@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+
 
 class CrmApplication(models.Model):
     _name = 'crm.application'
@@ -8,19 +10,34 @@ class CrmApplication(models.Model):
 
     name = fields.Char(default='New', readonly=True, copy=False)
     state = fields.Selection([
+        ('draft', 'Draft'),
         ('sent', 'Application Sent'),
         ('ar_approval', 'AR Approval'),
         ('manager_approval', 'Manager Approval'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
-    ], default='sent', tracking=True)
+    ], default='draft', tracking=True)
+
     lead_id = fields.Many2one('crm.lead', tracking=True)
     partner_id = fields.Many2one('res.partner', tracking=True)
+
     is_awcbn = fields.Boolean()
     awcbn_number = fields.Char()
+
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
-    order_id = fields.Many2one('sale.order')
+    order_id = fields.Many2one('sale.order', readonly=True)
+
     document_count = fields.Integer(compute='_compute_document_count')
+
+    def action_open_sale_order(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Sales Order',
+            'res_model': 'sale.order',
+            'view_mode': 'form',
+            'res_id': self.order_id.id,
+            'target': 'current',
+        }
 
     @api.depends()
     def _compute_document_count(self):
@@ -30,18 +47,41 @@ class CrmApplication(models.Model):
                 ('res_id', '=', rec.id)
             ])
 
+    def action_send_application(self):
+        self.state = 'sent'
+
     def action_send_to_finance(self):
-        self.state = 'ar_approval'
+        for rec in self:
+            if rec.document_count == 0:
+                raise ValidationError("Please attach the Dealer Application documents received.")
+            rec.state = 'ar_approval'
 
     def action_ar_approve(self):
         self.state = 'manager_approval'
 
     def action_manager_approve(self):
-        sale_order = self.env['sale.order'].create({
-            'partner_id': self.partner_id.id,
-        })
-        self.order_id = sale_order.id
-        self.state = 'completed'
+        for rec in self:
+            if rec.partner_id:
+                rec.partner_id.is_dealer = True
+
+            products = self.env['product.product'].search([
+                ('is_dealer_starter_kit', '=', True)
+            ])
+
+            order = self.env['sale.order'].create({
+                'partner_id': rec.partner_id.id,
+            })
+
+            for product in products:
+                self.env['sale.order.line'].create({
+                    'order_id': order.id,
+                    'product_id': product.id,
+                    'product_uom_qty': 1,
+                    'price_unit': product.lst_price,
+                })
+
+            rec.order_id = order.id
+            rec.state = 'completed'
 
     def action_cancel(self):
         self.state = 'cancelled'
