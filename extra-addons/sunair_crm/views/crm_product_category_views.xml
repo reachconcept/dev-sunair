@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="view_crm_product_categories_list" model="ir.ui.view">
+        <field name="name">crm.product.category.list</field>
+        <field name="model">crm.product.category</field>
+        <field name="arch" type="xml">
+            <list string="CRM Product Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_crm_product_categories" model="ir.actions.act_window">
+        <field name="name">CRM Product Categories</field>
+        <field name="res_model">crm.product.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_crm_product_categories"
+              name="CRM Product Category"
+              parent="crm.crm_menu_config"
+              action="action_crm_product_categories"
+              sequence="49"/>
+</odoo>

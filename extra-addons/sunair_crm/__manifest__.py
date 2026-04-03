@@ -22,6 +22,9 @@
         "views/crm_application_views.xml",
         "views/sunair_dashboard.xml",
         "views/crm_lead2opportunity_partner.xml",
+        "views/res_partner_view.xml",
+        "views/product_views.xml",
+        "views/crm_product_category_views.xml",
 
     ],
     'assets': {

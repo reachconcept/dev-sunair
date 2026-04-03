@@ -43,7 +43,7 @@
             <xpath expr="//header" position="inside">
                 <button name="action_create_application"
                         type="object"
-                        string="Send Application"
+                        string="Create Dealer Application"
                         class="btn-primary"
                         invisible="type == 'lead'"/>
             </xpath>
@@ -84,6 +84,7 @@
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="territory_id" readonly="1"/>
                 <field name="allowed_tag_ids" invisible="1"/>
+                <field name="crm_product_category_id"/>
             </xpath>
 
         </field>
