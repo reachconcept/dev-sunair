@@ -9,6 +9,7 @@
             <list string="Lead Types" editable="bottom">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
+                <field name="is_dealer_pipeline"/>
                 <field name="active"/>
             </list>
         </field>
@@ -25,6 +26,7 @@
                             <field name="name"/>
                             <field name="sequence"/>
                             <field name="active"/>
+                            <field name="is_dealer_pipeline"/>
                         </group>
                     </group>
                 </sheet>

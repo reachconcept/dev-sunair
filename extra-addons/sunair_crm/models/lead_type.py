@@ -8,4 +8,5 @@ class LeadType(models.Model):
     name = fields.Char(string='Name', required=True)
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
+    is_dealer_pipeline = fields.Boolean(string='Dealer Pipeline', default=False)
     

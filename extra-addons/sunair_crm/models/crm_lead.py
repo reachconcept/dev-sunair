@@ -6,6 +6,7 @@ class CrmLead(models.Model):
 
     customer_type_id = fields.Many2one('customer.type', string='Customer Type')
     lead_type_id = fields.Many2one('lead.type', string='Lead Type')
+    is_dealer_pipeline = fields.Boolean(related='lead_type_id.is_dealer_pipeline', store=True, readonly=True)
     crm_product_category_id = fields.Many2one('crm.product.category', string='Product Category')
 
     territory_id = fields.Many2one(
