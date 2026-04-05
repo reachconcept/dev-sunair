@@ -82,7 +82,7 @@
         <field name="arch" type="xml">
             <form string="Dealer Application">
                 <header>
-                    <button name="action_create_partner" type="object" string="Create Partner" class="btn-secondary" invisible="partner_id or state != 'draft'"/>
+                    <button name="action_create_partner" type="object" string="Create Partner" class="btn-secondary" invisible="partner_id"/>
                     <button name="action_send_application" type="object" string="Send Application" class="btn-primary" invisible="state != 'draft'"/>
                     <button name="action_send_to_finance" type="object" string="Send to Finance" class="btn-primary" invisible="state != 'sent'"/>
                     <button name="action_ar_approve" type="object" string="AR Approve" class="btn-primary" invisible="state != 'ar_approval'" confirm="Approve this application for AR?"/>
@@ -120,6 +120,8 @@
                             <field name="create_date" readonly="1"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="order_id" readonly="1" invisible="not order_id"/>
+                            <field name="territory_id"/>
+                            <field name="user_id" widget="many2one_avatar_user  1"/>
                         </group>
                     </group>
 
@@ -305,8 +307,8 @@
         </field>
     </record>
 
-    <menuitem id="menu_crm_application_root" name="Dealer" sequence="10"/>
-    <menuitem id="menu_crm_application" name="Dealer Applications" parent="menu_crm_application_root" action="action_crm_application" sequence="10"/>
+    <menuitem id="menu_crm_application_root" name="Dealers" sequence="10" web_icon="sunair_crm,static/description/dealer_icon.svg"/>
+    <menuitem id="menu_crm_application" name="Applications" parent="menu_crm_application_root" action="action_crm_application" sequence="10"/>
 
 
 

@@ -15,25 +15,21 @@
     'data': [
         "security/ir.model.access.csv",
         "data/sequence.xml",
+        "views/crm_stage_views.xml",
         "views/customer_type_views.xml",
         "views/lead_type_views.xml",
         "views/crm_territory_views.xml",
         "views/crm_lead_views.xml",
+        "views/dealer_request_views.xml",
+        "views/dealer_activity_views.xml",
         "views/crm_application_views.xml",
-        "views/sunair_dashboard.xml",
         "views/crm_lead2opportunity_partner.xml",
         "views/res_partner_view.xml",
         "views/product_views.xml",
         "views/crm_product_category_views.xml",
-        "views/dealer_dashboard_views.xml",
-
     ],
     'assets': {
-        'web.assets_backend': [
-           'sunair_crm/static/src/js/dashboard.js',
-           'sunair_crm/static/src/xml/dashboard.xml',
-           'sunair_crm/static/src/css/dashboard.css',
-        ],
+
     },
     'license': 'LGPL-3',
     'installable': True,

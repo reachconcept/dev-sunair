@@ -51,6 +51,20 @@
 
     </field>
 </record>
-    
+
+    <record id="action_dealers" model="ir.actions.act_window">
+        <field name="name">Dealers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_dealer', '=', True)]</field>
+        <field name="context">{'default_is_dealer': True}</field>
+    </record>
+
+    <menuitem id="menu_dealers"
+              name="Dealers"
+              parent="sunair_crm.menu_crm_application_root"
+              action="action_dealers"
+              sequence="1"/>
+
 
 </odoo>

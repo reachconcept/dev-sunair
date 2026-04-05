@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add pipeline_type to the existing stage list -->
+    <record id="view_crm_stage_list_inherit" model="ir.ui.view">
+        <field name="name">crm.stage.list.inherit.pipeline</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_won']" position="after">
+                <field name="pipeline_type"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add pipeline_type to the existing stage form -->
+    <record id="view_crm_stage_form_inherit" model="ir.ui.view">
+        <field name="name">crm.stage.form.inherit.pipeline</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_won']" position="after">
+                <field name="pipeline_type"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

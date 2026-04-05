@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_dealer_request_list" model="ir.ui.view">
+        <field name="name">crm.lead.dealer.request.list</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <list string="Dealer Requests">
+                <field name="name" string="Opportunity"/>
+                <field name="lead_type_id"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="stage_id"/>
+                <field name="user_id" string="Salesperson"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_dealer_request_kanban" model="ir.ui.view">
+        <field name="name">crm.lead.dealer.request.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="lead_type_id"/>
+                <field name="partner_id"/>
+                <field name="stage_id"/>
+                <field name="user_id"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <t t-if="record.partner_id.raw_value">
+                                    <div><field name="partner_id"/></div>
+                                </t>
+                                <t t-if="record.lead_type_id.raw_value">
+                                    <div class="mt-1">
+                                        <span class="badge rounded-pill bg-secondary text-white">
+                                            <t t-esc="record.lead_type_id.value"/>
+                                        </span>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left"/>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_dealer_request_form" model="ir.ui.view">
+        <field name="name">crm.lead.dealer.request.form</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Dealer Request">
+                <header>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': True}"
+                           domain="[('pipeline_type', 'in', ['all', 'dealer'])]"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Opportunity"/>
+                        <h1><field name="name" placeholder="e.g. New Dealer Opportunity"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="lead_type_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_dealer_request" model="ir.actions.act_window">
+        <field name="name">Dealer Requests</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_dealer_pipeline', '=', True)]</field>
+        <field name="context">{'default_type': 'opportunity'}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dealer_request_kanban')}),
+            (0, 0, {'view_mode': 'list',   'view_id': ref('view_dealer_request_list')}),
+            (0, 0, {'view_mode': 'form',   'view_id': ref('view_dealer_request_form')}),
+        ]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_dealer_request"
+              name="Dealer Requests"
+              parent="crm.crm_menu_root"
+              action="action_dealer_request"
+              sequence="2"/>
+
+    <menuitem id="menu_dealer_request_dealers"
+              name="Requests"
+              parent="sunair_crm.menu_crm_application_root"
+              action="action_dealer_request"
+              sequence="5"/>
+
+</odoo>

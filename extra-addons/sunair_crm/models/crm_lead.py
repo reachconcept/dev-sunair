@@ -20,6 +20,15 @@ class CrmLead(models.Model):
     allowed_tag_ids = fields.Many2many('crm.tag',compute='_compute_allowed_tag_ids',store=False)
     application_count = fields.Integer(compute='_compute_application_count')
     
+    @api.model
+    def default_get(self, fields_list):
+        defaults = super().default_get(fields_list)
+        if 'country_id' in fields_list and 'country_id' not in defaults:
+            us = self.env['res.country'].search([('code', '=', 'US')], limit=1)
+            if us:
+                defaults['country_id'] = us.id
+        return defaults
+
     @api.depends('customer_type_id')
     def _compute_allowed_tag_ids(self):
         for rec in self:
@@ -68,6 +77,14 @@ class CrmLead(models.Model):
         app = self.env['crm.application'].create({
             'lead_id': self.id,
             'partner_id': self.partner_id.id,
+            'company_legal_name': self.partner_name,
+            'state': 'draft',
+            'street': self.street + (' ' + self.street2 if self.street2 else ''),
+            'city': self.city,
+            'state_id': self.state_id.id,
+            'zip_code': self.zip,
+            'email': self.email_from,
+            'phone': self.phone,
         })
 
         return {

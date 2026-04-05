@@ -45,7 +45,7 @@
                         type="object"
                         string="Create Dealer Application"
                         class="btn-primary"
-                        invisible="type == 'lead'"/>
+                        invisible="type == 'lead' or not is_dealer_pipeline or application_count != 0"/>
             </xpath>
 
             <xpath expr="//div[@name='button_box']" position="inside">
@@ -56,6 +56,11 @@
                         invisible="application_count == 0">
                     <field name="application_count" widget="statinfo" string="Applications"/>
                 </button>
+            </xpath>
+
+            <!-- Filter stage_id to exclude dealer-only stages in regular CRM -->
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="domain">[('pipeline_type', 'in', ['all', 'regular'])]</attribute>
             </xpath>
 
             <xpath expr="//group[@name='lead_partner']//field[@name='partner_id']" position="after">

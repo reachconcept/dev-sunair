@@ -20,26 +20,28 @@ class CrmApplication(models.Model):
 
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
+    territory_id = fields.Many2one('crm.territory', string='Territory', tracking=True)
+    user_id = fields.Many2one('res.users', string='Salesperson', tracking=True)
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     order_id = fields.Many2one('sale.order', string='Sales Order', readonly=True)
 
     document_count = fields.Integer(compute='_compute_document_count')
 
-    company_legal_name = fields.Char(string='Company Legal Name', required=True, tracking=True)
+    company_legal_name = fields.Char(string='Company Legal Name', tracking=True)
     dba_name = fields.Char(string='Trading As / DBA Name(s)', tracking=True)
-    street = fields.Char(string='Street Address', required=True)
-    city = fields.Char(string='City', required=True)
-    state_id = fields.Many2one('res.country.state', string='State', domain="[('country_id.code', '=', 'US')]", required=True)
-    zip_code = fields.Char(string='ZIP', required=True)
-    phone = fields.Char(string='Phone', required=True)
+    street = fields.Char(string='Street Address')
+    city = fields.Char(string='City')
+    state_id = fields.Many2one('res.country.state', string='State', domain="[('country_id.code', '=', 'US')]")
+    zip_code = fields.Char(string='ZIP')
+    phone = fields.Char(string='Phone')
     fax = fields.Char(string='FAX')
     cell = fields.Char(string='Cell')
     billing_street = fields.Char(string='Billing Street Address')
     billing_city = fields.Char(string='Billing City')
     billing_state_id = fields.Many2one('res.country.state', string='Billing State', domain="[('country_id.code', '=', 'US')]")
     billing_zip = fields.Char(string='Billing ZIP')
-    email = fields.Char(string='Email Address', required=True)
+    email = fields.Char(string='Email Address')
 
     business_type = fields.Selection([
         ('sole_proprietorship', 'Sole Proprietorship'),
@@ -48,11 +50,11 @@ class CrmApplication(models.Model):
         ('llc', 'LLC'),
         ('s_corp', 'S Corp'),
         ('other', 'Other')
-    ], string='Type of Business', required=True)
+    ], string='Type of Business')
     business_type_other = fields.Char(string='Other Business Type')
     duns_number = fields.Char(string='DUN & Bradstreet ID #')
     year_established = fields.Char(string='Year Business Established')
-    federal_id = fields.Char(string='Federal Identification #', required=True)
+    federal_id = fields.Char(string='Federal Identification #')
 
     tax_status = fields.Selection([
         ('taxable', 'Taxable'),
@@ -61,8 +63,8 @@ class CrmApplication(models.Model):
     tax_exempt_number = fields.Char(string='Tax Exempt #')
     multi_jurisdiction_attached = fields.Boolean(string='Multi Jurisdiction Form Attached')
 
-    principle_name_1 = fields.Char(string='Name', required=True)
-    principle_title_1 = fields.Char(string='Title', required=True)
+    principle_name_1 = fields.Char(string='Name')
+    principle_title_1 = fields.Char(string='Title')
     principle_ssn_1 = fields.Char(string='SSN')
     principle_address_1 = fields.Char(string='Address')
     principle_city_1 = fields.Char(string='City')
@@ -77,12 +79,12 @@ class CrmApplication(models.Model):
     principle_state_id_2 = fields.Many2one('res.country.state', string='State', domain="[('country_id.code', '=', 'US')]")
     principle_phone_2 = fields.Char(string='Phone')
 
-    bank_name = fields.Char(string='Name of Bank', required=True)
-    bank_account_number = fields.Char(string='Account #', required=True)
-    bank_address = fields.Char(string='Address', required=True)
-    bank_city = fields.Char(string='City', required=True)
-    bank_state_id = fields.Many2one('res.country.state', string='State', domain="[('country_id.code', '=', 'US')]", required=True)
-    bank_zip = fields.Char(string='ZIP', required=True)
+    bank_name = fields.Char(string='Name of Bank')
+    bank_account_number = fields.Char(string='Account #')
+    bank_address = fields.Char(string='Address')
+    bank_city = fields.Char(string='City')
+    bank_state_id = fields.Many2one('res.country.state', string='State', domain="[('country_id.code', '=', 'US')]")
+    bank_zip = fields.Char(string='ZIP')
 
     trade_ref_1_name = fields.Char(string='Name')
     trade_ref_1_phone = fields.Char(string='Phone')
@@ -104,9 +106,9 @@ class CrmApplication(models.Model):
     has_bankruptcy = fields.Boolean(string='Has any principle been involved in bankruptcy?')
     bankruptcy_dates = fields.Char(string='Bankruptcy Date(s)')
 
-    signed_by_name = fields.Char(string='Signer Name', required=True)
-    signed_by_title = fields.Char(string='Title', required=True)
-    signature_date = fields.Date(string='Date', required=True)
+    signed_by_name = fields.Char(string='Signer Name')
+    signed_by_title = fields.Char(string='Title')
+    signature_date = fields.Date(string='Date')
     dealer_representative = fields.Char(string='Dealer Representative')
 
     is_awcbn = fields.Boolean(string='AWCBN Member')
