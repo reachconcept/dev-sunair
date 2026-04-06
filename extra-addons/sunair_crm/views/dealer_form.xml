@@ -393,42 +393,42 @@
                                     <div class="dr-row dr-col-2">
                                         <div class="dr-field">
                                             <label for="first_name">First Name<span class="req">*</span></label>
-                                            <input type="text" id="first_name" name="first_name" class="dr-input" t-att-class="'dr-input error' if error.get('first_name') else 'dr-input'" t-att-value="values.get('first_name','')"/>
+                                            <input type="text" id="first_name" name="first_name" placeholder="First Name" class="dr-input" t-att-class="'dr-input error' if error.get('first_name') else 'dr-input'" t-att-value="values.get('first_name','')"/>
                                             <div class="dr-error-msg">Please provide your first name.</div>
                                         </div>
                                         <div class="dr-field">
                                             <label for="last_name">Last Name<span class="req">*</span></label>
-                                            <input type="text" id="last_name" name="last_name" t-att-class="'dr-input error' if error.get('last_name') else 'dr-input'" t-att-value="values.get('last_name','')"/>
+                                            <input type="text" id="last_name" name="last_name" placeholder="Last Name" t-att-class="'dr-input error' if error.get('last_name') else 'dr-input'" t-att-value="values.get('last_name','')"/>
                                             <div class="dr-error-msg">Please provide your last name.</div>
                                         </div>
                                     </div>
                                     <div class="dr-row dr-col-2">
                                         <div class="dr-field">
                                             <label for="title">Title</label>
-                                            <input type="text" id="title" name="title" class="dr-input" t-att-value="values.get('title','')"/>
+                                            <input type="text" id="title" name="title" placeholder="Title" class="dr-input" t-att-value="values.get('title','')"/>
                                         </div>
                                         <div class="dr-field">
                                             <label for="company">Company</label>
-                                            <input type="text" id="company" name="company" class="dr-input" t-att-value="values.get('company','')"/>
+                                            <input type="text" id="company" name="company" placeholder="Company" class="dr-input" t-att-value="values.get('company','')"/>
                                         </div>
                                     </div>
                                     <div class="dr-row dr-col-1">
                                         <div class="dr-field">
-                                            <label for="street">Street Address<span class="req">*</span></label>
-                                            <input type="text" id="street" name="street" t-att-class="'dr-input error' if error.get('street') else 'dr-input'" t-att-value="values.get('street','')"/>
+                                            <label for="street">Address<span class="req">*</span></label>
+                                            <input type="text" id="street" name="street" placeholder="Address" t-att-class="'dr-input error' if error.get('street') else 'dr-input'" t-att-value="values.get('street','')"/>
                                             <div class="dr-error-msg">Please provide your address.</div>
                                         </div>
                                     </div>
                                     <div class="dr-row dr-col-532">
                                         <div class="dr-field">
                                             <label for="city">City<span class="req">*</span></label>
-                                            <input type="text" id="city" name="city" t-att-class="'dr-input error' if error.get('city') else 'dr-input'" t-att-value="values.get('city','')"/>
+                                            <input type="text" id="city" name="city" placeholder="City" t-att-class="'dr-input error' if error.get('city') else 'dr-input'" t-att-value="values.get('city','')"/>
                                             <div class="dr-error-msg">Required.</div>
                                         </div>
                                         <div class="dr-field">
                                             <label for="state_id">State<span class="req">*</span></label>
                                             <select id="state_id" name="state_id" t-att-class="'dr-input error' if error.get('state_id') else 'dr-input'">
-                                                <option value="">Select…</option>
+                                                <option value="">State</option>
                                                 <t t-foreach="states" t-as="state">
                                                     <option t-att-value="state.id" t-att-selected="str(state.id)==str(values.get('state_id',''))">
                                                         <t t-esc="state.name"/>
@@ -439,18 +439,18 @@
                                         </div>
                                         <div class="dr-field">
                                             <label for="zip">Zip Code<span class="req">*</span></label>
-                                            <input type="text" id="zip" name="zip" t-att-class="'dr-input error' if error.get('zip') else 'dr-input'" t-att-value="values.get('zip','')"/>
+                                            <input type="text" id="zip" name="zip" placeholder="Zip Code" t-att-class="'dr-input error' if error.get('zip') else 'dr-input'" t-att-value="values.get('zip','')"/>
                                             <div class="dr-error-msg">Required.</div>
                                         </div>
                                     </div>
                                     <div class="dr-row dr-col-2">
                                         <div class="dr-field">
                                             <label for="work_phone">Work Phone</label>
-                                            <input type="tel" id="work_phone" name="work_phone" class="dr-input" t-att-value="values.get('work_phone','')"/>
+                                            <input type="tel" id="work_phone" name="work_phone" placeholder="Work Phone" class="dr-input" t-att-value="values.get('work_phone','')"/>
                                         </div>
                                         <div class="dr-field">
                                             <label for="email">Email<span class="req">*</span></label>
-                                            <input type="email" id="email" name="email" t-att-class="'dr-input error' if error.get('email') else 'dr-input'" t-att-value="values.get('email','')"/>
+                                            <input type="email" id="email" name="email" placeholder="Email" t-att-class="'dr-input error' if error.get('email') else 'dr-input'" t-att-value="values.get('email','')"/>
                                             <div class="dr-error-msg">Please provide your email.</div>
                                         </div>
                                     </div>
@@ -466,7 +466,7 @@
                                 <div class="dr-fields">
                                     <div class="dr-row dr-col-1">
                                         <div class="dr-field">
-                                            <label>Type of Business</label>
+                                            <label>What type of business are you?</label>
                                             <div class="dr-check-group">
                                                 <label class="dr-check-item">
                                                     <input type="checkbox" name="is_distributor" value="1" t-att-checked="values.get('is_distributor')"/>
@@ -485,11 +485,11 @@
                                     </div>
                                     <div class="dr-row dr-col-2">
                                         <div class="dr-field">
-                                            <label for="years_in_business">Years in Business</label>
-                                            <input type="text" id="years_in_business" name="years_in_business" class="dr-input" t-att-value="values.get('years_in_business','')"/>
+                                            <label for="years_in_business">How long have you been in business?</label>
+                                            <input type="text" id="years_in_business" name="years_in_business" class="dr-input" placeholder="How long have you been in business?" t-att-value="values.get('years_in_business','')"/>
                                         </div>
                                         <div class="dr-field">
-                                            <label for="has_showroom">Do You Have a Showroom?</label>
+                                            <label for="has_showroom">Do you have a showroom?</label>
                                             <select id="has_showroom" name="has_showroom" class="dr-input">
                                                 <option value="no"   t-att-selected="values.get('has_showroom','no')=='no'">No</option>
                                                 <option value="soon" t-att-selected="values.get('has_showroom')=='soon'">No, but will soon</option>
@@ -499,8 +499,8 @@
                                     </div>
                                     <div class="dr-row dr-col-1">
                                         <div class="dr-field">
-                                            <label for="how_heard">How Did You Hear About Sunair®?</label>
-                                            <input type="text" id="how_heard" name="how_heard" class="dr-input" t-att-value="values.get('how_heard','')"/>
+                                            <label for="how_heard">How did you hear about Sunair®?</label>
+                                            <input type="text" id="how_heard" name="how_heard" class="dr-input" placeholder="How did you hear about Sunair®?" t-att-value="values.get('how_heard','')"/>
                                         </div>
                                     </div>
                                     <div class="dr-row dr-col-1">
@@ -523,7 +523,7 @@
                                     <!-- Retractable Awnings -->
                                     <div class="dr-row dr-col-1" style="margin-bottom:8px">
                                         <div class="dr-field">
-                                            <label>Do You Sell Retractable Awnings?</label>
+                                            <label>Do you currently sell retractable awnings?</label>
                                             <div class="dr-yn">
                                                 <label>
                                                     <input type="radio" name="sells_retractable_awnings" value="no" t-att-checked="values.get('sells_retractable_awnings','no')=='no'"/>
@@ -540,17 +540,17 @@
                                         <div class="dr-sub">
                                             <div class="dr-row dr-col-2">
                                                 <div class="dr-field">
-                                                    <label for="retractable_awnings_supplier">Current Supplier</label>
-                                                    <input type="text" id="retractable_awnings_supplier" name="retractable_awnings_supplier" class="dr-input" t-att-value="values.get('retractable_awnings_supplier','')"/>
+                                                    <label for="retractable_awnings_supplier">If yes, who are you buying from?</label>
+                                                    <input type="text" id="retractable_awnings_supplier" name="retractable_awnings_supplier" class="dr-input" placeholder="If yes, who are you buying from?" t-att-value="values.get('retractable_awnings_supplier','')"/>
                                                 </div>
                                                 <div class="dr-field">
-                                                    <label for="retractable_awnings_sales_pct">% of Total Sales</label>
+                                                    <label for="retractable_awnings_sales_pct">What is your current percentage of awning sales?</label>
                                                     <select id="retractable_awnings_sales_pct" name="retractable_awnings_sales_pct" class="dr-input">
-                                                        <option value="0_10"   t-att-selected="values.get('retractable_awnings_sales_pct','0_10')=='0_10'">0% – 10%</option>
-                                                        <option value="11_25"  t-att-selected="values.get('retractable_awnings_sales_pct')=='11_25'">10% – 25%</option>
-                                                        <option value="26_50"  t-att-selected="values.get('retractable_awnings_sales_pct')=='26_50'">25% – 50%</option>
-                                                        <option value="51_75"  t-att-selected="values.get('retractable_awnings_sales_pct')=='51_75'">50% – 75%</option>
-                                                        <option value="76_100" t-att-selected="values.get('retractable_awnings_sales_pct')=='76_100'">75% – 100%</option>
+                                                        <option value="0_10"   t-att-selected="values.get('retractable_awnings_sales_pct','0_10')=='0_10'">0% - 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('retractable_awnings_sales_pct')=='11_25'">10% - 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('retractable_awnings_sales_pct')=='26_50'">25% - 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('retractable_awnings_sales_pct')=='51_75'">50% - 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('retractable_awnings_sales_pct')=='76_100'">75% - 100%</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -560,7 +560,7 @@
                                     <!-- Solar Screens -->
                                     <div class="dr-row dr-col-1" style="margin-top:24px;margin-bottom:8px">
                                         <div class="dr-field">
-                                            <label>Do You Sell Solar Screens?</label>
+                                            <label>Do you currently sell solar screens?</label>
                                             <div class="dr-yn">
                                                 <label>
                                                     <input type="radio" name="sells_solar_screens" value="no" t-att-checked="values.get('sells_solar_screens','no')=='no'"/>
@@ -577,21 +577,21 @@
                                         <div class="dr-sub">
                                             <div class="dr-row dr-col-3">
                                                 <div class="dr-field">
-                                                    <label for="solar_screens_supplier">Current Supplier</label>
-                                                    <input type="text" id="solar_screens_supplier" name="solar_screens_supplier" class="dr-input" t-att-value="values.get('solar_screens_supplier','')"/>
+                                                    <label for="solar_screens_supplier">If yes, who are you buying from?</label>
+                                                    <input type="text" id="solar_screens_supplier" name="solar_screens_supplier" class="dr-input" placeholder="If yes, who are you buying from?" t-att-value="values.get('solar_screens_supplier','')"/>
                                                 </div>
                                                 <div class="dr-field">
-                                                    <label for="solar_screens_sales_pct">% of Total Sales</label>
+                                                    <label for="solar_screens_sales_pct">What is your current percentage of solar screen sales?</label>
                                                     <select id="solar_screens_sales_pct" name="solar_screens_sales_pct" class="dr-input">
-                                                        <option value="0_10"   t-att-selected="values.get('solar_screens_sales_pct','0_10')=='0_10'">0% – 10%</option>
-                                                        <option value="11_25"  t-att-selected="values.get('solar_screens_sales_pct')=='11_25'">10% – 25%</option>
-                                                        <option value="26_50"  t-att-selected="values.get('solar_screens_sales_pct')=='26_50'">25% – 50%</option>
-                                                        <option value="51_75"  t-att-selected="values.get('solar_screens_sales_pct')=='51_75'">50% – 75%</option>
-                                                        <option value="76_100" t-att-selected="values.get('solar_screens_sales_pct')=='76_100'">75% – 100%</option>
+                                                        <option value="0_10"   t-att-selected="values.get('solar_screens_sales_pct','0_10')=='0_10'">0% - 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('solar_screens_sales_pct')=='11_25'">10% - 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('solar_screens_sales_pct')=='26_50'">25% - 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('solar_screens_sales_pct')=='51_75'">50% - 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('solar_screens_sales_pct')=='76_100'">75% - 100%</option>
                                                     </select>
                                                 </div>
                                                 <div class="dr-field">
-                                                    <label for="solar_screens_type">Screen Type</label>
+                                                    <label for="solar_screens_type">If yes, what type?</label>
                                                     <select id="solar_screens_type" name="solar_screens_type" class="dr-input">
                                                         <option value="exterior" t-att-selected="values.get('solar_screens_type','exterior')=='exterior'">Exterior</option>
                                                         <option value="interior" t-att-selected="values.get('solar_screens_type')=='interior'">Interior</option>
@@ -605,7 +605,7 @@
                                     <!-- Pergola / Louvered -->
                                     <div class="dr-row dr-col-1" style="margin-top:24px;margin-bottom:8px">
                                         <div class="dr-field">
-                                            <label>Do You Sell Pergola® Awnings or Adjustable Louvered Systems?</label>
+                                            <label>Do you currently sell Pergola® Awnings or Adjustable Louvered Systems?</label>
                                             <div class="dr-yn">
                                                 <label>
                                                     <input type="radio" name="sells_pergola_louvered" value="no" t-att-checked="values.get('sells_pergola_louvered','no')=='no'"/>
@@ -622,17 +622,17 @@
                                         <div class="dr-sub">
                                             <div class="dr-row dr-col-2">
                                                 <div class="dr-field">
-                                                    <label for="pergola_louvered_supplier">Current Supplier</label>
-                                                    <input type="text" id="pergola_louvered_supplier" name="pergola_louvered_supplier" class="dr-input" t-att-value="values.get('pergola_louvered_supplier','')"/>
+                                                    <label for="pergola_louvered_supplier">If yes, who are you buying from?</label>
+                                                    <input type="text" id="pergola_louvered_supplier" name="pergola_louvered_supplier" class="dr-input" placeholder="If yes, who are you buying from?" t-att-value="values.get('pergola_louvered_supplier','')"/>
                                                 </div>
                                                 <div class="dr-field">
-                                                    <label for="pergola_louvered_sales_pct">% of Total Sales</label>
+                                                    <label for="pergola_louvered_sales_pct">What is your current percentage of Pergola® or Adjustable Louvered Systems sales?</label>
                                                     <select id="pergola_louvered_sales_pct" name="pergola_louvered_sales_pct" class="dr-input">
-                                                        <option value="0_10"   t-att-selected="values.get('pergola_louvered_sales_pct','0_10')=='0_10'">0% – 10%</option>
-                                                        <option value="11_25"  t-att-selected="values.get('pergola_louvered_sales_pct')=='11_25'">10% – 25%</option>
-                                                        <option value="26_50"  t-att-selected="values.get('pergola_louvered_sales_pct')=='26_50'">25% – 50%</option>
-                                                        <option value="51_75"  t-att-selected="values.get('pergola_louvered_sales_pct')=='51_75'">50% – 75%</option>
-                                                        <option value="76_100" t-att-selected="values.get('pergola_louvered_sales_pct')=='76_100'">75% – 100%</option>
+                                                        <option value="0_10"   t-att-selected="values.get('pergola_louvered_sales_pct','0_10')=='0_10'">0% - 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('pergola_louvered_sales_pct')=='11_25'">10% - 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('pergola_louvered_sales_pct')=='26_50'">25% - 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('pergola_louvered_sales_pct')=='51_75'">50% - 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('pergola_louvered_sales_pct')=='76_100'">75% - 100%</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -646,7 +646,7 @@
                                     <div class="dr-submit-note">
                                         Fields marked <span>*</span> are required
                                     </div>
-                                    <button type="submit" class="dr-btn">Submit Application</button>
+                                    <button type="submit" class="dr-btn">Submit</button>
                                 </div>
 
                             </div><!-- /dr-card -->
