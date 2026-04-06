@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Product Line: List -->
+    <record id="view_product_line_list" model="ir.ui.view">
+        <field name="name">product.line.list</field>
+        <field name="model">product.line</field>
+        <field name="arch" type="xml">
+            <list string="Product Lines" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="color" widget="color_picker"/>
+                <field name="dealer_count" string="Dealers"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Product Line: Form -->
+    <record id="view_product_line_form" model="ir.ui.view">
+        <field name="name">product.line.form</field>
+        <field name="model">product.line</field>
+        <field name="arch" type="xml">
+            <form string="Product Line">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Retractable Awnings"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1" placeholder="Optional description…"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Product Line: Action -->
+    <record id="action_product_line" model="ir.actions.act_window">
+        <field name="name">Product Lines</field>
+        <field name="res_model">product.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Configuration > Product Lines -->
+    <menuitem id="menu_product_line"
+              name="Product Lines"
+              parent="sunair_crm.menu_dealer_configuration"
+              action="action_product_line"
+              sequence="20"/>
+
+    <!-- Inherit partner form: add Product Lines section inside Dealer Info tab -->
+    <record id="view_partner_form_inherit_product_lines" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.product.lines</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@string='Dealer Info']" position="inside">
+                <group string="Product Lines">
+                    <field name="product_line_ids" nolabel="1" invisible="not is_dealer">
+                        <list editable="bottom">
+                            <field name="product_line_id" options="{'no_create': False}"/>
+                            <field name="notes"/>
+                            <field name="active" column_invisible="True"/>
+                        </list>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -12,4 +12,5 @@ from . import dealer_activity
 from . import dealer_request_state
 from . import dealer_request
 from . import dealer_application_state
+from . import product_line
 from . import dealer_status

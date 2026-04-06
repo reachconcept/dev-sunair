@@ -7,5 +7,7 @@ access_crm_product_category,access_crm_product_category,model_crm_product_catego
 access_dealer_activity,dealer.activity,model_dealer_activity,base.group_user,1,1,1,1
 access_dealer_request_state,dealer.request.state,model_dealer_request_state,base.group_user,1,1,1,1
 access_dealer_application_state,dealer.application.state,model_dealer_application_state,base.group_user,1,1,1,1
+access_product_line,product.line,model_product_line,base.group_user,1,1,1,1
+access_product_line_mapping,product.line.mapping,model_product_line_mapping,base.group_user,1,1,1,1
 access_dealer_status,dealer.status,model_dealer_status,base.group_user,1,1,1,1
 access_dealer_request,dealer.request,model_dealer_request,base.group_user,1,1,1,1

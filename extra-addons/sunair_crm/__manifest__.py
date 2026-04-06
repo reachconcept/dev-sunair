@@ -27,6 +27,7 @@
         "views/dealer_request_state_views.xml",
         "views/dealer_application_state_views.xml",
         "views/dealer_status_views.xml",
+        "views/product_line_views.xml",
         "views/dealer_request_form_views.xml",
         "views/crm_lead2opportunity_partner.xml",
         "views/res_partner_view.xml",
