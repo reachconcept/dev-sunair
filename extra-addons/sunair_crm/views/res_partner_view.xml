@@ -222,14 +222,14 @@
                 <separator/>
                 <filter name="no_rep" string="No Representative"
                         domain="[('dealer_representative_id', '=', False)]"/>
-                <group expand="0" string="Group By">
+                <!-- <group expand="0" string="Group By">
                     <filter name="group_by_status" string="Dealer Status"
                             context="{'group_by': 'dealer_status_id'}"/>
                     <filter name="group_by_territory" string="Territory"
                             context="{'group_by': 'territory_id'}"/>
                     <filter name="group_by_rep" string="Representative"
                             context="{'group_by': 'dealer_representative_id'}"/>
-                </group>
+                </group> -->
             </search>
         </field>
     </record>
