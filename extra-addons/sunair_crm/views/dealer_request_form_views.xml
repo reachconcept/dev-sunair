@@ -25,11 +25,27 @@
         <field name="arch" type="xml">
             <form string="Dealer Request">
                 <header>
+                    <button name="action_create_application" string="Create Application"
+                            type="object" class="btn-primary"
+                            invisible="application_id != False"/>
                     <field name="state_id" widget="statusbar"
                            options="{'clickable': True}"/>
                     <field name="kanban_state" widget="statusbar"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_application"
+                                icon="fa-file-text-o"
+                                invisible="not application_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Application</span>
+                                <span class="o_stat_value">
+                                    <field name="application_id" string=""/>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <label for="name" string="Reference"/>
                         <h1><field name="name" readonly="1"/></h1>
@@ -180,7 +196,7 @@
 
                                 <!-- Header row: ref + kanban state dot + state badge -->
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <small class="text-muted fw-semibold" style="font-size: 11px; letter-spacing: 0.5px;">
+                                    <small class="text-muted fw-semibold" style="letter-spacing: 0.5px;">
                                         <field name="name"/>
                                     </small>
                                     <div class="d-flex align-items-center gap-1">
@@ -199,21 +215,20 @@
                                                                                                  '#adb5bd'
                                                 };"/>
                                         <!-- State badge -->
-                                        <span class="badge rounded-pill text-bg-secondary"
-                                              style="font-size: 10px;">
+                                        <span class="badge rounded-pill text-bg-secondary">
                                             <t t-esc="record.state_id.value or 'No State'"/>
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Contact name -->
-                                <div class="fw-bold mb-0" style="font-size: 15px; line-height: 1.3;">
+                                <div class="fw-bold mb-0" style="line-height: 1.3;">
                                     <t t-esc="record.first_name.value"/> <t t-esc="record.last_name.value"/>
                                 </div>
 
                                 <!-- Company -->
                                 <t t-if="record.company.raw_value">
-                                    <div class="text-muted mb-2" style="font-size: 12px;">
+                                    <div class="text-muted mb-2">
                                         <i class="fa fa-building-o me-1"/>
                                         <t t-esc="record.company.value"/>
                                     </div>
@@ -221,7 +236,7 @@
 
                                 <!-- Location -->
                                 <t t-if="record.city.raw_value or record.country_state_id.raw_value">
-                                    <div class="text-muted mb-1" style="font-size: 12px;">
+                                    <div class="text-muted mb-1">
                                         <i class="fa fa-map-marker me-1"/>
                                         <t t-if="record.city.raw_value"><t t-esc="record.city.value"/></t>
                                         <t t-if="record.city.raw_value and record.country_state_id.raw_value">, </t>
@@ -231,7 +246,7 @@
 
                                 <!-- Phone -->
                                 <t t-if="record.work_phone.raw_value">
-                                    <div class="text-muted mb-1" style="font-size: 12px;">
+                                    <div class="text-muted mb-1">
                                         <i class="fa fa-phone me-1"/>
                                         <t t-esc="record.work_phone.value"/>
                                     </div>
@@ -239,7 +254,7 @@
 
                                 <!-- Email -->
                                 <t t-if="record.email.raw_value">
-                                    <div class="text-muted mb-2" style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <div class="text-muted mb-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         <i class="fa fa-envelope-o me-1"/>
                                         <t t-esc="record.email.value"/>
                                     </div>
@@ -250,19 +265,19 @@
                                     <div class="d-flex flex-wrap gap-1 mb-2">
                                         <t t-if="record.is_distributor.raw_value">
                                             <span class="badge rounded-pill"
-                                                  style="background:#0d6efd22; color:#0d6efd; border:1px solid #0d6efd55; font-size:10px;">
+                                                  style="background:#0d6efd22; color:#0d6efd; border:1px solid #0d6efd55;">
                                                 Distributor
                                             </span>
                                         </t>
                                         <t t-if="record.is_retail.raw_value">
                                             <span class="badge rounded-pill"
-                                                  style="background:#6f42c122; color:#6f42c1; border:1px solid #6f42c155; font-size:10px;">
+                                                  style="background:#6f42c122; color:#6f42c1; border:1px solid #6f42c155;">
                                                 Retail
                                             </span>
                                         </t>
                                         <t t-if="record.is_wholesale.raw_value">
                                             <span class="badge rounded-pill"
-                                                  style="background:#20c99722; color:#198754; border:1px solid #20c99755; font-size:10px;">
+                                                  style="background:#20c99722; color:#198754; border:1px solid #20c99755;">
                                                 Wholesale
                                             </span>
                                         </t>
@@ -275,25 +290,22 @@
                                 <!-- Products sold indicators + showroom -->
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex gap-2">
-                                        <span style="font-size: 11px;"
-                                              t-att-title="'Retractable Awnings'"
+                                        <span t-att-title="'Retractable Awnings'"
                                               t-attf-class="#{record.sells_retractable_awnings.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
                                             <i t-attf-class="fa #{record.sells_retractable_awnings.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Awnings
                                         </span>
-                                        <span style="font-size: 11px;"
-                                              t-att-title="'Solar Screens'"
+                                        <span t-att-title="'Solar Screens'"
                                               t-attf-class="#{record.sells_solar_screens.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
                                             <i t-attf-class="fa #{record.sells_solar_screens.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Screens
                                         </span>
-                                        <span style="font-size: 11px;"
-                                              t-att-title="'Pergola / Louvered Systems'"
+                                        <span t-att-title="'Pergola / Louvered Systems'"
                                               t-attf-class="#{record.sells_pergola_louvered.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
                                             <i t-attf-class="fa #{record.sells_pergola_louvered.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Pergola
                                         </span>
                                     </div>
                                     <t t-if="record.has_showroom.raw_value == 'yes'">
                                         <span class="badge"
-                                              style="background:#fff3cd; color:#856404; border:1px solid #ffc10733; font-size:10px;"
+                                              style="background:#fff3cd; color:#856404; border:1px solid #ffc10733;"
                                               title="Has Showroom">
                                             <i class="fa fa-home me-1"/>Showroom
                                         </span>

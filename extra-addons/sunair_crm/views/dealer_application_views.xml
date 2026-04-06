@@ -8,7 +8,7 @@
             <list>
                 <field name="name"/>
                 <field name="company_legal_name"/>
-                <field name="state"/>
+                <field name="stage_id" widget="badge"/>
                 <field name="city"/>
                 <field name="state_id"/>
                 <field name="email"/>
@@ -21,57 +21,157 @@
         <field name="name">dealer.application.kanban</field>
         <field name="model">dealer.application</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="state" class="o_kanban_small_column">
-
-                <field name="state"/>
+            <kanban default_group_by="stage_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="stage_id"/>
+                <field name="state_type"/>
+                <field name="company_legal_name"/>
                 <field name="partner_id"/>
-                <field name="lead_id"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="business_type"/>
                 <field name="document_count"/>
                 <field name="is_awcbn"/>
-
-                <progressbar field="state"
-    colors='{"sent":"warning","ar_approval":"info","manager_approval":"primary","completed":"success","cancelled":"danger"}'/>
+                <field name="order_id"/>
+                <field name="request_id"/>
+                <field name="user_id"/>
+                <field name="territory_id"/>
                 <templates>
                     <t t-name="card">
-                        <div class="oe_kanban_card oe_kanban_global_click">
+                        <div class="oe_kanban_global_click" style="padding: 0;">
 
-                            <div class="o_kanban_content">
+                            <!-- State color bar -->
+                            <div t-attf-style="
+                                height: 4px;
+                                border-radius: 4px 4px 0 0;
+                                background: #{
+                                    record.state_type.raw_value == 'draft'            ? '#adb5bd' :
+                                    record.state_type.raw_value == 'sent'             ? '#0d6efd' :
+                                    record.state_type.raw_value == 'ar_approval'      ? '#f6a609' :
+                                    record.state_type.raw_value == 'manager_approval' ? '#6f42c1' :
+                                    record.state_type.raw_value == 'completed'        ? '#28a745' :
+                                    record.state_type.raw_value == 'cancelled'        ? '#dc3545' :
+                                                                                        '#dee2e6'
+                                };"/>
 
-                                <div class="o_kanban_record_top">
-                                    <strong>
+                            <div style="padding: 10px 12px 12px 12px;">
+
+                                <!-- Header row: ref + state badge -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted fw-semibold" style="letter-spacing: 0.5px;">
                                         <field name="name"/>
-                                    </strong>
+                                    </small>
+                                    <span t-attf-class="badge rounded-pill #{
+                                        record.state_type.raw_value == 'draft'            ? 'text-bg-secondary' :
+                                        record.state_type.raw_value == 'sent'             ? 'text-bg-primary'   :
+                                        record.state_type.raw_value == 'ar_approval'      ? 'text-bg-warning'   :
+                                        record.state_type.raw_value == 'manager_approval' ? 'text-bg-info'      :
+                                        record.state_type.raw_value == 'completed'        ? 'text-bg-success'   :
+                                        record.state_type.raw_value == 'cancelled'        ? 'text-bg-danger'    :
+                                                                                            'text-bg-secondary'
+                                    }">
+                                        <t t-esc="record.stage_id.value or 'No Stage'"/>
+                                    </span>
                                 </div>
 
-                                <div class="o_kanban_record_body">
-                                    <div>
-                                        <i class="fa fa-user"/> <field name="partner_id"/>
-                                    </div>
-
-                                    <div t-if="record.is_awcbn.raw_value">
-                                        <span class="badge badge-info">AWCBN</span>
-                                    </div>
+                                <!-- Company name -->
+                                <div class="fw-bold mb-0" style="line-height: 1.3;">
+                                    <t t-esc="record.company_legal_name.value or record.partner_id.value or '—'"/>
                                 </div>
 
-                                <div class="o_kanban_record_bottom">
-
-                                    <div>
-                                        <i class="fa fa-file"/>
-                                        <t t-esc="record.document_count.value"/> docs
+                                <!-- Partner (if different from company) -->
+                                <t t-if="record.partner_id.raw_value and record.company_legal_name.raw_value">
+                                    <div class="text-muted mb-2">
+                                        <i class="fa fa-user me-1"/>
+                                        <t t-esc="record.partner_id.value"/>
                                     </div>
+                                </t>
 
-                                    <div class="oe_kanban_bottom_right">
-                                        <field name="create_date" widget="date"/>
+                                <!-- Location -->
+                                <t t-if="record.city.raw_value or record.state_id.raw_value">
+                                    <div class="text-muted mb-1">
+                                        <i class="fa fa-map-marker me-1"/>
+                                        <t t-if="record.city.raw_value"><t t-esc="record.city.value"/></t>
+                                        <t t-if="record.city.raw_value and record.state_id.raw_value">, </t>
+                                        <t t-if="record.state_id.raw_value"><t t-esc="record.state_id.value"/></t>
                                     </div>
+                                </t>
 
+                                <!-- Phone -->
+                                <t t-if="record.phone.raw_value">
+                                    <div class="text-muted mb-1">
+                                        <i class="fa fa-phone me-1"/>
+                                        <t t-esc="record.phone.value"/>
+                                    </div>
+                                </t>
+
+                                <!-- Email -->
+                                <t t-if="record.email.raw_value">
+                                    <div class="text-muted mb-2" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        <i class="fa fa-envelope-o me-1"/>
+                                        <t t-esc="record.email.value"/>
+                                    </div>
+                                </t>
+
+                                <!-- Business type + AWCBN badges -->
+                                <t t-if="record.business_type.raw_value or record.is_awcbn.raw_value">
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        <t t-if="record.business_type.raw_value">
+                                            <span class="badge rounded-pill"
+                                                  style="background:#0d6efd22; color:#0d6efd; border:1px solid #0d6efd55;">
+                                                <t t-esc="record.business_type.value"/>
+                                            </span>
+                                        </t>
+                                        <t t-if="record.is_awcbn.raw_value">
+                                            <span class="badge rounded-pill"
+                                                  style="background:#6f42c122; color:#6f42c1; border:1px solid #6f42c155;">
+                                                AWCBN
+                                            </span>
+                                        </t>
+                                    </div>
+                                </t>
+
+                                <!-- Divider -->
+                                <hr style="margin: 8px 0; border-color: #e9ecef;"/>
+
+                                <!-- Footer: docs + order + territory + user avatar -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <!-- Documents -->
+                                        <span t-attf-class="#{record.document_count.raw_value > 0 ? 'text-success' : 'text-muted'}">
+                                            <i t-attf-class="fa #{record.document_count.raw_value > 0 ? 'fa-files-o' : 'fa-file-o'} me-1"/>
+                                            <t t-esc="record.document_count.value"/>
+                                        </span>
+                                        <!-- Sales order indicator -->
+                                        <t t-if="record.order_id.raw_value">
+                                            <span class="text-success" title="Has Sales Order">
+                                                <i class="fa fa-shopping-cart"/>
+                                            </span>
+                                        </t>
+                                        <!-- Linked request indicator -->
+                                        <t t-if="record.request_id.raw_value">
+                                            <span class="text-muted" title="Linked to a Dealer Request">
+                                                <i class="fa fa-inbox"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <t t-if="record.territory_id.raw_value">
+                                            <small class="text-muted">
+                                                <i class="fa fa-map me-1"/>
+                                                <t t-esc="record.territory_id.value"/>
+                                            </small>
+                                        </t>
+                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                    </div>
                                 </div>
 
                             </div>
-
                         </div>
                     </t>
                 </templates>
-
             </kanban>
         </field>
     </record>
@@ -83,16 +183,27 @@
             <form string="Dealer Application">
                 <header>
                     <button name="action_create_partner" type="object" string="Create Partner" class="btn-secondary" invisible="partner_id"/>
-                    <button name="action_send_application" type="object" string="Send Application" class="btn-primary" invisible="state != 'draft'"/>
-                    <button name="action_send_to_finance" type="object" string="Send to Finance" class="btn-primary" invisible="state != 'sent'"/>
-                    <button name="action_ar_approve" type="object" string="AR Approve" class="btn-primary" invisible="state != 'ar_approval'" confirm="Approve this application for AR?"/>
-                    <button name="action_manager_approve" type="object" string="Manager Approve" class="btn-success" invisible="state != 'manager_approval'" confirm="This will create a sales order. Proceed?"/>
-                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('completed','cancelled')" confirm="Cancel this application?"/>
-                    <field name="state" widget="statusbar" statusbar_visible="sent,ar_approval,manager_approval,completed"/>
+                    <button name="action_send_application" type="object" string="Send Application" class="btn-primary" invisible="state_type != 'draft'"/>
+                    <button name="action_send_to_finance" type="object" string="Send to Finance" class="btn-primary" invisible="state_type != 'sent'"/>
+                    <button name="action_ar_approve" type="object" string="AR Approve" class="btn-primary" invisible="state_type != 'ar_approval'" confirm="Approve this application for AR?"/>
+                    <button name="action_manager_approve" type="object" string="Manager Approve" class="btn-success" invisible="state_type != 'manager_approval'" confirm="This will create a sales order. Proceed?"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state_type in ('completed', 'cancelled')" confirm="Cancel this application?"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': True}"/>
                 </header>
 
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_request"
+                                icon="fa-inbox"
+                                invisible="not request_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Request</span>
+                                <span class="o_stat_value">
+                                    <field name="request_id" string=""/>
+                                </span>
+                            </div>
+                        </button>
                         <button class="oe_stat_button" type="object" name="action_view_documents" icon="fa-file-o">
                             <field name="document_count" widget="statinfo" string="Documents"/>
                         </button>
@@ -111,8 +222,8 @@
 
                     <group>
                         <group>
-                            <field name="lead_id" readonly="state != 'sent'"/>
-                            <field name="partner_id" readonly="state != 'sent'"/>
+                            <field name="lead_id"/>
+                            <field name="partner_id"/>
                             <field name="is_awcbn"/>
                             <field name="awcbn_number" invisible="not is_awcbn"/>
                         </group>

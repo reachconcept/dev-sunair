@@ -15,7 +15,7 @@
     'data': [
         "security/ir.model.access.csv",
         "data/sequence.xml",
-        "data/dealer_request_state_data.xml",
+        "data/dealer_application_state_data.xml",
         "views/crm_stage_views.xml",
         "views/customer_type_views.xml",
         "views/lead_type_views.xml",
@@ -24,6 +24,7 @@
         "views/dealer_request_views.xml",
         "views/dealer_activity_views.xml",
         "views/dealer_request_state_views.xml",
+        "views/dealer_application_state_views.xml",
         "views/dealer_request_form_views.xml",
         "views/dealer_application_views.xml",
         "views/crm_lead2opportunity_partner.xml",

@@ -98,6 +98,81 @@ class DealerRequest(models.Model):
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
+    application_id = fields.Many2one('dealer.application', string='Application', readonly=True, copy=False)
+
+    application_count = fields.Integer(compute='_compute_application_count')
+
+    # Fields that are kept in sync with dealer.application (request field -> application field)
+    _SYNC_TO_APPLICATION = {
+        'company':           'company_legal_name',
+        'street':            'street',
+        'city':              'city',
+        'country_state_id':  'state_id',
+        'zip':               'zip_code',
+        'work_phone':        'phone',
+        'email':             'email',
+        'partner_id':        'partner_id',
+        'lead_id':           'lead_id',
+    }
+
+    def _compute_application_count(self):
+        for rec in self:
+            rec.application_count = 1 if rec.application_id else 0
+
+    def action_view_application(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Dealer Application',
+            'res_model': 'dealer.application',
+            'view_mode': 'form',
+            'res_id': self.application_id.id,
+            'target': 'current',
+        }
+
+    def action_create_application(self):
+        self.ensure_one()
+        if self.application_id:
+            return self.action_view_application()
+        application = self.env['dealer.application'].create({
+            'company_legal_name': self.company,
+            'street': self.street,
+            'city': self.city,
+            'state_id': self.country_state_id.id,
+            'zip_code': self.zip,
+            'phone': self.work_phone,
+            'email': self.email,
+            'lead_id': self.lead_id.id,
+            'partner_id': self.partner_id.id,
+            'request_id': self.id,
+        })
+        self.application_id = application.id
+        application.message_post(
+            body=f'Application created from Dealer Request <a href="/odoo/dealer-requests/{self.id}">{self.name}</a>.'
+        )
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Dealer Application',
+            'res_model': 'dealer.application',
+            'view_mode': 'form',
+            'res_id': application.id,
+            'target': 'current',
+        }
+
+    def write(self, vals):
+        res = super().write(vals)
+        if self.env.context.get('dealer_sync_skip'):
+            return res
+        sync_vals = {
+            app_field: vals[req_field]
+            for req_field, app_field in self._SYNC_TO_APPLICATION.items()
+            if req_field in vals
+        }
+        if sync_vals:
+            for rec in self:
+                if rec.application_id:
+                    rec.application_id.with_context(dealer_sync_skip=True).write(sync_vals)
+        return res
 
     @api.model
     def _read_group_state_ids(self, states, _domain):

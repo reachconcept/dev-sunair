@@ -9,14 +9,18 @@ class DealerApplication(models.Model):
     _order = 'id desc'
 
     name = fields.Char(default='New', readonly=True, copy=False)
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('sent', 'Application Sent'),
-        ('ar_approval', 'AR Approval'),
-        ('manager_approval', 'Manager Approval'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled')
-    ], default='draft', tracking=True)
+    stage_id = fields.Many2one(
+        'dealer.application.state',
+        string='Stage',
+        tracking=True,
+        ondelete='set null',
+        group_expand='_read_group_stage_ids',
+    )
+    state_type = fields.Selection(
+        related='stage_id.state_type',
+        string='State Type',
+        store=True,
+    )
 
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
@@ -25,8 +29,22 @@ class DealerApplication(models.Model):
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     order_id = fields.Many2one('sale.order', string='Sales Order', readonly=True)
+    request_id = fields.Many2one('dealer.request', string='Dealer Request', readonly=True, copy=False)
 
     document_count = fields.Integer(compute='_compute_document_count')
+
+    # Fields that are kept in sync with dealer.request (application field -> request field)
+    _SYNC_TO_REQUEST = {
+        'company_legal_name': 'company',
+        'street':             'street',
+        'city':               'city',
+        'state_id':           'country_state_id',
+        'zip_code':           'zip',
+        'phone':              'work_phone',
+        'email':              'email',
+        'partner_id':         'partner_id',
+        'lead_id':            'lead_id',
+    }
 
     company_legal_name = fields.Char(string='Company Legal Name', tracking=True)
     dba_name = fields.Char(string='Trading As / DBA Name(s)', tracking=True)
@@ -114,21 +132,63 @@ class DealerApplication(models.Model):
     is_awcbn = fields.Boolean(string='AWCBN Member')
     awcbn_number = fields.Char(string='AWCBN Number')
 
+    def write(self, vals):
+        res = super().write(vals)
+        if self.env.context.get('dealer_sync_skip'):
+            return res
+        sync_vals = {
+            req_field: vals[app_field]
+            for app_field, req_field in self._SYNC_TO_REQUEST.items()
+            if app_field in vals
+        }
+        if sync_vals:
+            for rec in self:
+                if rec.request_id:
+                    rec.request_id.with_context(dealer_sync_skip=True).write(sync_vals)
+        return res
+
+    def action_view_request(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Dealer Request',
+            'res_model': 'dealer.request',
+            'view_mode': 'form',
+            'res_id': self.request_id.id,
+            'target': 'current',
+        }
+
+    def _get_state(self, state_type):
+        return self.env['dealer.application.state'].search(
+            [('state_type', '=', state_type)], limit=1
+        )
+
+    @api.model
+    def _read_group_stage_ids(self, states, _domain):
+        return states.search([])
+
     def action_send_application(self):
-        self.state = 'sent'
+        state = self._get_state('sent')
+        if state:
+            self.stage_id = state
 
     def action_send_to_finance(self):
+        state = self._get_state('ar_approval')
         for rec in self:
             if rec.document_count == 0:
                 raise ValidationError("Please attach the Dealer Application documents received.")
             if not rec.signed_by_name or not rec.signature_date:
                 raise ValidationError("Please ensure the application is signed and dated.")
-            rec.state = 'ar_approval'
+            if state:
+                rec.stage_id = state
 
     def action_ar_approve(self):
-        self.state = 'manager_approval'
+        state = self._get_state('manager_approval')
+        if state:
+            self.stage_id = state
 
     def action_manager_approve(self):
+        state = self._get_state('completed')
         for rec in self:
             if rec.partner_id:
                 rec.partner_id.write({
@@ -150,7 +210,6 @@ class DealerApplication(models.Model):
                 order = self.env['sale.order'].create({
                     'partner_id': rec.partner_id.id,
                 })
-
                 for product in products:
                     self.env['sale.order.line'].create({
                         'order_id': order.id,
@@ -158,12 +217,14 @@ class DealerApplication(models.Model):
                         'product_uom_qty': 1,
                         'price_unit': product.lst_price,
                     })
-
                 rec.order_id = order.id
-            rec.state = 'completed'
+            if state:
+                rec.stage_id = state
 
     def action_cancel(self):
-        self.state = 'cancelled'
+        state = self._get_state('cancelled')
+        if state:
+            self.stage_id = state
 
     def action_view_documents(self):
         return {

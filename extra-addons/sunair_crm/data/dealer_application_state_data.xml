@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="dealer_application_state_draft" model="dealer.application.state">
+        <field name="name">Draft</field>
+        <field name="sequence">1</field>
+        <field name="state_type">draft</field>
+        <field name="fold">False</field>
+        <field name="is_closed">False</field>
+        <field name="color">0</field>
+    </record>
+
+    <record id="dealer_application_state_sent" model="dealer.application.state">
+        <field name="name">Application Sent</field>
+        <field name="sequence">2</field>
+        <field name="state_type">sent</field>
+        <field name="fold">False</field>
+        <field name="is_closed">False</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="dealer_application_state_ar_approval" model="dealer.application.state">
+        <field name="name">AR Approval</field>
+        <field name="sequence">3</field>
+        <field name="state_type">ar_approval</field>
+        <field name="fold">False</field>
+        <field name="is_closed">False</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="dealer_application_state_manager_approval" model="dealer.application.state">
+        <field name="name">Manager Approval</field>
+        <field name="sequence">4</field>
+        <field name="state_type">manager_approval</field>
+        <field name="fold">False</field>
+        <field name="is_closed">False</field>
+        <field name="color">7</field>
+    </record>
+
+    <record id="dealer_application_state_completed" model="dealer.application.state">
+        <field name="name">Completed</field>
+        <field name="sequence">5</field>
+        <field name="state_type">completed</field>
+        <field name="fold">False</field>
+        <field name="is_closed">True</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="dealer_application_state_cancelled" model="dealer.application.state">
+        <field name="name">Cancelled</field>
+        <field name="sequence">6</field>
+        <field name="state_type">cancelled</field>
+        <field name="fold">True</field>
+        <field name="is_closed">True</field>
+        <field name="color">1</field>
+    </record>
+
+</odoo>
