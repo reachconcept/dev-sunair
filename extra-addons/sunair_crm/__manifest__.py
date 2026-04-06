@@ -10,7 +10,7 @@
     'maintainer': 'Reach Concept',
     'website': 'https://www.reachconcept.com',
 
-    'depends': ['base','crm','mail','sale'],
+    'depends': ['base','crm','mail','sale', 'website'],
 
     'data': [
         "security/ir.model.access.csv",
