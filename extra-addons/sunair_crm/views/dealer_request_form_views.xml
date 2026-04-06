@@ -144,6 +144,7 @@
                         <group>
                             <field name="lead_id"/>
                             <field name="partner_id"/>
+                            <field name="dealer_representative_id" widget="many2one_avatar_user"/>
                         </group>
                     </group>
 
@@ -176,6 +177,7 @@
                 <field name="sells_retractable_awnings"/>
                 <field name="sells_solar_screens"/>
                 <field name="sells_pergola_louvered"/>
+                <field name="dealer_representative_id"/>
                 <field name="create_date"/>
                 <templates>
                     <t t-name="card">
@@ -312,6 +314,18 @@
                                     </t>
                                 </div>
 
+                                <!-- Divider -->
+                                <hr style="margin: 8px 0; border-color: #e9ecef;"/>
+
+                                <!-- Footer: dealer representative -->
+                                <t t-if="record.dealer_representative_id.raw_value">
+                                    <div class="d-flex align-items-center gap-1"
+                                         style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
+                                        <field name="dealer_representative_id" widget="many2one_avatar_user"/>
+                                        <small class="text-muted" style="white-space:nowrap;">Rep</small>
+                                    </div>
+                                </t>
+
                             </div>
                         </div>
                     </t>
@@ -320,11 +334,40 @@
         </field>
     </record>
 
+    <!-- Search View -->
+    <record id="view_dealer_request_search" model="ir.ui.view">
+        <field name="name">dealer.request.search</field>
+        <field name="model">dealer.request</field>
+        <field name="arch" type="xml">
+            <search string="Dealer Requests">
+                <field name="first_name"/>
+                <!-- <field name="last_name"/>
+                <field name="company"/>
+                <field name="email"/>
+                <field name="dealer_representative_id"/>
+                <field name="state_id"/>
+                <filter name="my_dealers" string="My Dealers"
+                        domain="[('dealer_representative_id', '=', uid)]"/>
+                <separator/>
+                <filter name="no_rep" string="No Representative"
+                        domain="[('dealer_representative_id', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state" string="State"
+                            context="{'group_by': 'state_id'}"/>
+                    <filter name="group_by_rep" string="Representative"
+                            context="{'group_by': 'dealer_representative_id'}"/>
+                </group> -->
+            </search>
+        </field>
+    </record>
+
     <!-- Action -->
     <record id="action_dealer_request_model" model="ir.actions.act_window">
         <field name="name">Dealer Requests</field>
         <field name="res_model">dealer.request</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_dealer_request_search"/>
+        <field name="context">{'search_default_my_dealers': 1}</field>
         <field name="view_ids" eval="[
             (5, 0, 0),
             (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dealer_request_model_kanban')}),

@@ -36,7 +36,7 @@
                 <field name="is_awcbn"/>
                 <field name="order_id"/>
                 <field name="request_id"/>
-                <field name="user_id"/>
+                <field name="dealer_representative_id"/>
                 <field name="territory_id"/>
                 <templates>
                     <t t-name="card">
@@ -164,9 +164,17 @@
                                                 <t t-esc="record.territory_id.value"/>
                                             </small>
                                         </t>
-                                        <field name="user_id" widget="many2one_avatar_user"/>
                                     </div>
                                 </div>
+
+                                <!-- Footer: dealer representative -->
+                                <t t-if="record.dealer_representative_id.raw_value">
+                                    <div class="d-flex align-items-center gap-1 mt-2"
+                                         style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
+                                        <field name="dealer_representative_id" widget="many2one_avatar_user"/>
+                                        <small class="text-muted" style="white-space:nowrap;">Rep</small>
+                                    </div>
+                                </t>
 
                             </div>
                         </div>
@@ -232,7 +240,7 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="order_id" readonly="1" invisible="not order_id"/>
                             <field name="territory_id"/>
-                            <field name="user_id" widget="many2one_avatar_user  1"/>
+                            <field name="dealer_representative_id" widget="many2one_avatar_user"/>
                         </group>
                     </group>
 
@@ -407,10 +415,40 @@
         </field>
     </record>
 
+    <!-- Search View -->
+    <record id="view_dealer_application_search" model="ir.ui.view">
+        <field name="name">dealer.application.search</field>
+        <field name="model">dealer.application</field>
+        <field name="arch" type="xml">
+            <search string="Dealer Applications">
+                <field name="company_legal_name"/>
+                <field name="email"/>
+                <field name="dealer_representative_id"/>
+                <field name="stage_id"/>
+                <field name="partner_id"/>
+                <filter name="my_dealers" string="My Dealers"
+                        domain="[('dealer_representative_id', '=', uid)]"/>
+                <separator/>
+                <filter name="no_rep" string="No Representative"
+                        domain="[('dealer_representative_id', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_stage" string="Stage"
+                            context="{'group_by': 'stage_id'}"/>
+                    <filter name="group_by_rep" string="Representative"
+                            context="{'group_by': 'dealer_representative_id'}"/>
+                    <filter name="group_by_territory" string="Territory"
+                            context="{'group_by': 'territory_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_dealer_application" model="ir.actions.act_window">
         <field name="name">Dealer Applications</field>
         <field name="res_model">dealer.application</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_dealer_application_search"/>
+        <field name="context">{'search_default_my_dealers': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a new Dealer Application

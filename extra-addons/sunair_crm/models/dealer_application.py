@@ -25,7 +25,7 @@ class DealerApplication(models.Model):
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
     territory_id = fields.Many2one('crm.territory', string='Territory', tracking=True)
-    user_id = fields.Many2one('res.users', string='Salesperson', tracking=True)
+    dealer_representative_id = fields.Many2one('res.users', string='Dealer Representative', tracking=True)
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     order_id = fields.Many2one('sale.order', string='Sales Order', readonly=True)
