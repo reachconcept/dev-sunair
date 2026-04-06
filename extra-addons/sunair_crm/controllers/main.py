@@ -10,7 +10,7 @@ class DealerRequestController(http.Controller):
         states = request.env['res.country.state'].sudo().search([
             ('country_id.code', '=', 'US')
         ], order='name asc')
-        return request.render('your_module.dealer_request_form', {
+        return request.render('sunair_crm.dealer_request_form', {
             'states': states,
             'error': {},
             'values': {},
@@ -31,7 +31,7 @@ class DealerRequestController(http.Controller):
         ], order='name asc')
 
         if error:
-            return request.render('your_module.dealer_request_form', {
+            return request.render('sunair_crm.dealer_request_form', {
                 'states': states,
                 'error': error,
                 'values': post,
@@ -88,4 +88,4 @@ class DealerRequestController(http.Controller):
 
         request.env['dealer.request'].sudo().create([vals])
 
-        return request.render('your_module.dealer_request_success', {})
+        return request.render('sunair_crm.dealer_request_success', {})

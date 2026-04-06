@@ -1,429 +1,763 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ══════════════════════════════════════════════════════
-         Become a Dealer — Main Form Page
-    ══════════════════════════════════════════════════════ -->
-    <template id="dealer_request_form" name="Become a Dealer">
-        <t t-call="website.layout">
-            <div class="container py-5">
+<template id="dealer_request_form" name="Become a Dealer">
+    <t t-call="website.layout">
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap"/>
+
+        <style>
+            :root {
+                --sun-gold:    #C9A84C;
+                --sun-dark:    #1A1A1A;
+                --sun-cream:   #FAF8F4;
+                --sun-mid:     #F2EDE4;
+                --sun-border:  #DDD5C4;
+                --sun-muted:   #7A7266;
+                --sun-white:   #FFFFFF;
+                --sun-error:   #C0392B;
+                --sun-success: #27AE60;
+            }
+
+            body { background: var(--sun-cream) !important; }
+
+            /* ── Hero Banner ─────────────────────────────── */
+            .dr-hero {
+                background: var(--sun-dark);
+                padding: 72px 0 56px;
+                position: relative;
+                overflow: hidden;
+            }
+            .dr-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background:
+                    repeating-linear-gradient(
+                        45deg,
+                        transparent,
+                        transparent 40px,
+                        rgba(201,168,76,.04) 40px,
+                        rgba(201,168,76,.04) 41px
+                    );
+            }
+            .dr-hero-inner { position: relative; z-index: 1; }
+            .dr-eyebrow {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: .2em;
+                text-transform: uppercase;
+                color: var(--sun-gold);
+                margin-bottom: 16px;
+            }
+            .dr-hero h1 {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: clamp(40px, 6vw, 64px);
+                font-weight: 600;
+                color: var(--sun-white);
+                line-height: 1.1;
+                margin: 0 0 20px;
+            }
+            .dr-hero p {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 16px;
+                font-weight: 300;
+                color: rgba(255,255,255,.65);
+                max-width: 520px;
+                line-height: 1.7;
+                margin: 0;
+            }
+            .dr-hero-line {
+                width: 48px;
+                height: 2px;
+                background: var(--sun-gold);
+                margin-bottom: 24px;
+            }
+
+            /* ── Perks Strip ─────────────────────────────── */
+            .dr-perks {
+                background: var(--sun-gold);
+                padding: 0;
+            }
+            .dr-perks-inner {
+                display: flex;
+                gap: 0;
+            }
+            .dr-perk {
+                flex: 1;
+                padding: 20px 24px;
+                border-right: 1px solid rgba(255,255,255,.25);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .dr-perk:last-child { border-right: none; }
+            .dr-perk-icon {
+                font-size: 20px;
+                color: var(--sun-dark);
+                opacity: .85;
+            }
+            .dr-perk-text {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--sun-dark);
+                line-height: 1.4;
+            }
+
+            /* ── Form Shell ──────────────────────────────── */
+            .dr-body {
+                padding: 60px 0 80px;
+            }
+            .dr-card {
+                background: var(--sun-white);
+                border: 1px solid var(--sun-border);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            /* ── Section Headers ─────────────────────────── */
+            .dr-section-head {
+                background: var(--sun-mid);
+                border-bottom: 1px solid var(--sun-border);
+                padding: 18px 36px;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+            .dr-section-num {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: var(--sun-dark);
+                color: var(--sun-white);
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .dr-section-title {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 20px;
+                font-weight: 600;
+                color: var(--sun-dark);
+                margin: 0;
+                letter-spacing: .01em;
+            }
+
+            /* ── Form Fields ─────────────────────────────── */
+            .dr-fields {
+                padding: 32px 36px;
+            }
+            .dr-row {
+                display: grid;
+                gap: 20px 24px;
+                margin-bottom: 20px;
+            }
+            .dr-row:last-child { margin-bottom: 0; }
+            .dr-col-2  { grid-template-columns: 1fr 1fr; }
+            .dr-col-3  { grid-template-columns: 1fr 1fr 1fr; }
+            .dr-col-1  { grid-template-columns: 1fr; }
+            .dr-col-532 { grid-template-columns: 5fr 3fr 2fr; }
+
+            .dr-field label {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+                color: var(--sun-muted);
+                display: block;
+                margin-bottom: 8px;
+            }
+            .dr-field label .req {
+                color: var(--sun-gold);
+                margin-left: 2px;
+            }
+            .dr-input {
+                width: 100%;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 15px;
+                font-weight: 400;
+                color: var(--sun-dark);
+                background: var(--sun-cream);
+                border: 1px solid var(--sun-border);
+                border-radius: 2px;
+                padding: 12px 16px;
+                outline: none;
+                transition: border-color .2s, box-shadow .2s;
+                appearance: none;
+                -webkit-appearance: none;
+            }
+            .dr-input:focus {
+                border-color: var(--sun-gold);
+                box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+                background: var(--sun-white);
+            }
+            .dr-input.error {
+                border-color: var(--sun-error);
+                box-shadow: 0 0 0 3px rgba(192,57,43,.08);
+            }
+            .dr-error-msg {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px;
+                color: var(--sun-error);
+                margin-top: 5px;
+                display: none;
+            }
+            .dr-input.error + .dr-error-msg { display: block; }
+
+            select.dr-input {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C9A84C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 14px center;
+                padding-right: 38px;
+            }
+            textarea.dr-input { resize: vertical; min-height: 100px; }
+
+            /* ── Checkbox / Radio Groups ─────────────────── */
+            .dr-check-group {
+                display: flex;
+                gap: 0;
+                flex-wrap: wrap;
+            }
+            .dr-check-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 20px 10px 14px;
+                border: 1px solid var(--sun-border);
+                border-right: none;
+                background: var(--sun-cream);
+                cursor: pointer;
+                transition: background .15s;
+                user-select: none;
+            }
+            .dr-check-item:first-child { border-radius: 2px 0 0 2px; }
+            .dr-check-item:last-child  { border-right: 1px solid var(--sun-border); border-radius: 0 2px 2px 0; }
+            .dr-check-item:hover { background: var(--sun-mid); }
+            .dr-check-item input[type="checkbox"],
+            .dr-check-item input[type="radio"] {
+                width: 16px; height: 16px;
+                accent-color: var(--sun-gold);
+                cursor: pointer;
+            }
+            .dr-check-item span {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 14px;
+                color: var(--sun-dark);
+            }
+
+            /* ── Conditional Sub-sections ────────────────── */
+            .dr-sub {
+                background: var(--sun-mid);
+                border: 1px solid var(--sun-border);
+                border-radius: 2px;
+                padding: 24px 28px;
+                margin-top: 16px;
+            }
+
+            /* ── Yes/No Toggle Pills ─────────────────────── */
+            .dr-yn { display: flex; gap: 0; }
+            .dr-yn label {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 11px 24px;
+                border: 1px solid var(--sun-border);
+                border-right: none;
+                font-family: 'DM Sans', sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--sun-dark);
+                background: var(--sun-cream);
+                cursor: pointer;
+                transition: all .15s;
+                text-transform: none;
+                letter-spacing: 0;
+            }
+            .dr-yn label:first-child { border-radius: 2px 0 0 2px; }
+            .dr-yn label:last-child  { border-right: 1px solid var(--sun-border); border-radius: 0 2px 2px 0; }
+            .dr-yn input[type="radio"] { display: none; }
+            .dr-yn input[type="radio"]:checked + span,
+            .dr-yn label:has(input:checked) {
+                background: var(--sun-dark);
+                color: var(--sun-white);
+                border-color: var(--sun-dark);
+            }
+
+            /* ── Divider between sections ────────────────── */
+            .dr-divider { height: 1px; background: var(--sun-border); }
+
+            /* ── Submit Bar ──────────────────────────────── */
+            .dr-submit-bar {
+                background: var(--sun-mid);
+                border-top: 1px solid var(--sun-border);
+                padding: 28px 36px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .dr-submit-note {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 13px;
+                color: var(--sun-muted);
+            }
+            .dr-submit-note span { color: var(--sun-gold); }
+            .dr-btn {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: .12em;
+                text-transform: uppercase;
+                color: var(--sun-dark);
+                background: var(--sun-gold);
+                border: none;
+                padding: 16px 40px;
+                border-radius: 2px;
+                cursor: pointer;
+                transition: background .2s, transform .1s;
+            }
+            .dr-btn:hover { background: #b8943f; }
+            .dr-btn:active { transform: scale(.98); }
+
+            /* ── Responsive ──────────────────────────────── */
+            @media (max-width: 768px) {
+                .dr-fields { padding: 24px 20px; }
+                .dr-section-head { padding: 16px 20px; }
+                .dr-col-2, .dr-col-3, .dr-col-532 { grid-template-columns: 1fr; }
+                .dr-perks-inner { flex-direction: column; }
+                .dr-perk { border-right: none; border-bottom: 1px solid rgba(255,255,255,.25); }
+                .dr-submit-bar { flex-direction: column; gap: 16px; align-items: flex-start; }
+                .dr-btn { width: 100%; text-align: center; }
+            }
+        </style>
+
+        <!-- ── Hero ──────────────────────────────────── -->
+        <div class="dr-hero">
+            <div class="container dr-hero-inner">
+                <div class="dr-eyebrow">Sunair® Dealer Network</div>
+                <div class="dr-hero-line"/>
+                <h1>Become A Dealer</h1>
+                <p>Join North America's most trusted awning and screen supplier. Fill out the form below and our sales team will contact you promptly.</p>
+            </div>
+        </div>
+
+        <!-- ── Perks Strip ────────────────────────────── -->
+        <div class="dr-perks d-none d-md-block">
+            <div class="container">
+                <div class="dr-perks-inner">
+                    <div class="dr-perk">
+                        <span class="dr-perk-icon">&#9679;</span>
+                        <div class="dr-perk-text">Family owned<br/>since 1978</div>
+                    </div>
+                    <div class="dr-perk">
+                        <span class="dr-perk-icon">&#9679;</span>
+                        <div class="dr-perk-text">East &amp; West Coast<br/>manufacturing</div>
+                    </div>
+                    <div class="dr-perk">
+                        <span class="dr-perk-icon">&#9679;</span>
+                        <div class="dr-perk-text">Industry-leading<br/>product range</div>
+                    </div>
+                    <div class="dr-perk">
+                        <span class="dr-perk-icon">&#9679;</span>
+                        <div class="dr-perk-text">Local territory<br/>sales support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Form ──────────────────────────────────── -->
+        <div class="dr-body">
+            <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-8">
+                    <div class="col-xl-9 col-lg-10">
 
-                        <h1 class="mb-2">Become A Dealer</h1>
-                        <p class="text-muted mb-4">
-                            If you are interested in joining the Sunair® dealer network, please fill out
-                            the questionnaire below. Once the request is received, our sales department
-                            will promptly contact you.
-                        </p>
-
-                        <form action="/become-a-dealer/submit" method="post">
+                        <form action="/become-a-dealer/submit" method="post" id="dealerForm">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
-                            <!-- ── Contact Information ─────────────────────── -->
-                            <h4 class="mt-4 mb-3 border-bottom pb-2">Contact Information</h4>
+                            <div class="dr-card">
 
-                            <div class="row g-3">
-                                <!-- First Name -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="first_name">
-                                        First Name <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="first_name" name="first_name"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('first_name') else ''"
-                                           t-att-value="values.get('first_name', '')"/>
-                                    <div class="invalid-feedback">Please provide your first name.</div>
+                                <!-- ══ 1. Contact Information ══ -->
+                                <div class="dr-section-head">
+                                    <div class="dr-section-num">1</div>
+                                    <h2 class="dr-section-title">Contact Information</h2>
                                 </div>
-
-                                <!-- Last Name -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="last_name">
-                                        Last Name <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="last_name" name="last_name"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('last_name') else ''"
-                                           t-att-value="values.get('last_name', '')"/>
-                                    <div class="invalid-feedback">Please provide your last name.</div>
-                                </div>
-
-                                <!-- Title -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="title">Title</label>
-                                    <input type="text" id="title" name="title"
-                                           class="form-control"
-                                           t-att-value="values.get('title', '')"/>
-                                </div>
-
-                                <!-- Company -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="company">Company</label>
-                                    <input type="text" id="company" name="company"
-                                           class="form-control"
-                                           t-att-value="values.get('company', '')"/>
-                                </div>
-
-                                <!-- Address -->
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold" for="street">
-                                        Address <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="street" name="street"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('street') else ''"
-                                           t-att-value="values.get('street', '')"/>
-                                    <div class="invalid-feedback">Please provide your address.</div>
-                                </div>
-
-                                <!-- City -->
-                                <div class="col-md-5">
-                                    <label class="form-label fw-semibold" for="city">
-                                        City <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="city" name="city"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('city') else ''"
-                                           t-att-value="values.get('city', '')"/>
-                                    <div class="invalid-feedback">Please provide your city.</div>
-                                </div>
-
-                                <!-- State -->
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold" for="state_id">
-                                        State <span class="text-danger">*</span>
-                                    </label>
-                                    <select id="state_id" name="state_id"
-                                            class="form-select"
-                                            t-att-class="'is-invalid' if error.get('state_id') else ''">
-                                        <option value="">-- Select State --</option>
-                                        <t t-foreach="states" t-as="state">
-                                            <option t-att-value="state.id"
-                                                    t-att-selected="str(state.id) == str(values.get('state_id', ''))">
-                                                <t t-esc="state.name"/>
-                                            </option>
-                                        </t>
-                                    </select>
-                                    <div class="invalid-feedback">Please select your state.</div>
-                                </div>
-
-                                <!-- Zip -->
-                                <div class="col-md-3">
-                                    <label class="form-label fw-semibold" for="zip">
-                                        Zip Code <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" id="zip" name="zip"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('zip') else ''"
-                                           t-att-value="values.get('zip', '')"/>
-                                    <div class="invalid-feedback">Please provide your zip code.</div>
-                                </div>
-
-                                <!-- Work Phone -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="work_phone">Work Phone</label>
-                                    <input type="tel" id="work_phone" name="work_phone"
-                                           class="form-control"
-                                           t-att-value="values.get('work_phone', '')"/>
-                                </div>
-
-                                <!-- Email -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="email">
-                                        Email <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="email" id="email" name="email"
-                                           class="form-control"
-                                           t-att-class="'is-invalid' if error.get('email') else ''"
-                                           t-att-value="values.get('email', '')"/>
-                                    <div class="invalid-feedback">Please provide your email.</div>
-                                </div>
-                            </div>
-
-                            <!-- ── Business Type ───────────────────────────── -->
-                            <h4 class="mt-5 mb-3 border-bottom pb-2">Business Information</h4>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">What type of business are you?</label>
-                                <div class="d-flex gap-4">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                               id="is_distributor" name="is_distributor" value="1"
-                                               t-att-checked="values.get('is_distributor')"/>
-                                        <label class="form-check-label" for="is_distributor">Distributor</label>
+                                <div class="dr-fields">
+                                    <div class="dr-row dr-col-2">
+                                        <div class="dr-field">
+                                            <label for="first_name">First Name<span class="req">*</span></label>
+                                            <input type="text" id="first_name" name="first_name" class="dr-input" t-att-class="'dr-input error' if error.get('first_name') else 'dr-input'" t-att-value="values.get('first_name','')"/>
+                                            <div class="dr-error-msg">Please provide your first name.</div>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="last_name">Last Name<span class="req">*</span></label>
+                                            <input type="text" id="last_name" name="last_name" t-att-class="'dr-input error' if error.get('last_name') else 'dr-input'" t-att-value="values.get('last_name','')"/>
+                                            <div class="dr-error-msg">Please provide your last name.</div>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                               id="is_retail" name="is_retail" value="1"
-                                               t-att-checked="values.get('is_retail')"/>
-                                        <label class="form-check-label" for="is_retail">Retail</label>
+                                    <div class="dr-row dr-col-2">
+                                        <div class="dr-field">
+                                            <label for="title">Title</label>
+                                            <input type="text" id="title" name="title" class="dr-input" t-att-value="values.get('title','')"/>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="company">Company</label>
+                                            <input type="text" id="company" name="company" class="dr-input" t-att-value="values.get('company','')"/>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                               id="is_wholesale" name="is_wholesale" value="1"
-                                               t-att-checked="values.get('is_wholesale')"/>
-                                        <label class="form-check-label" for="is_wholesale">Wholesale</label>
+                                    <div class="dr-row dr-col-1">
+                                        <div class="dr-field">
+                                            <label for="street">Street Address<span class="req">*</span></label>
+                                            <input type="text" id="street" name="street" t-att-class="'dr-input error' if error.get('street') else 'dr-input'" t-att-value="values.get('street','')"/>
+                                            <div class="dr-error-msg">Please provide your address.</div>
+                                        </div>
+                                    </div>
+                                    <div class="dr-row dr-col-532">
+                                        <div class="dr-field">
+                                            <label for="city">City<span class="req">*</span></label>
+                                            <input type="text" id="city" name="city" t-att-class="'dr-input error' if error.get('city') else 'dr-input'" t-att-value="values.get('city','')"/>
+                                            <div class="dr-error-msg">Required.</div>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="state_id">State<span class="req">*</span></label>
+                                            <select id="state_id" name="state_id" t-att-class="'dr-input error' if error.get('state_id') else 'dr-input'">
+                                                <option value="">Select…</option>
+                                                <t t-foreach="states" t-as="state">
+                                                    <option t-att-value="state.id" t-att-selected="str(state.id)==str(values.get('state_id',''))">
+                                                        <t t-esc="state.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <div class="dr-error-msg">Required.</div>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="zip">Zip Code<span class="req">*</span></label>
+                                            <input type="text" id="zip" name="zip" t-att-class="'dr-input error' if error.get('zip') else 'dr-input'" t-att-value="values.get('zip','')"/>
+                                            <div class="dr-error-msg">Required.</div>
+                                        </div>
+                                    </div>
+                                    <div class="dr-row dr-col-2">
+                                        <div class="dr-field">
+                                            <label for="work_phone">Work Phone</label>
+                                            <input type="tel" id="work_phone" name="work_phone" class="dr-input" t-att-value="values.get('work_phone','')"/>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="email">Email<span class="req">*</span></label>
+                                            <input type="email" id="email" name="email" t-att-class="'dr-input error' if error.get('email') else 'dr-input'" t-att-value="values.get('email','')"/>
+                                            <div class="dr-error-msg">Please provide your email.</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row g-3">
-                                <!-- Years in Business -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="years_in_business">
-                                        How long have you been in business?
-                                    </label>
-                                    <input type="text" id="years_in_business" name="years_in_business"
-                                           class="form-control"
-                                           t-att-value="values.get('years_in_business', '')"/>
+                                <div class="dr-divider"/>
+
+                                <!-- ══ 2. Business Information ══ -->
+                                <div class="dr-section-head">
+                                    <div class="dr-section-num">2</div>
+                                    <h2 class="dr-section-title">Business Information</h2>
                                 </div>
-
-                                <!-- Showroom -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="has_showroom">
-                                        Do you have a showroom?
-                                    </label>
-                                    <select id="has_showroom" name="has_showroom" class="form-select">
-                                        <option value="no"
-                                                t-att-selected="values.get('has_showroom', 'no') == 'no'">No</option>
-                                        <option value="soon"
-                                                t-att-selected="values.get('has_showroom') == 'soon'">No, but will soon</option>
-                                        <option value="yes"
-                                                t-att-selected="values.get('has_showroom') == 'yes'">Yes</option>
-                                    </select>
-                                </div>
-
-                                <!-- How heard -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="how_heard">
-                                        How did you hear about Sunair®?
-                                    </label>
-                                    <input type="text" id="how_heard" name="how_heard"
-                                           class="form-control"
-                                           t-att-value="values.get('how_heard', '')"/>
-                                </div>
-
-                                <!-- Comments -->
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold" for="comments">Comments</label>
-                                    <textarea id="comments" name="comments" rows="4"
-                                              class="form-control"><t t-esc="values.get('comments', '')"/></textarea>
-                                </div>
-                            </div>
-
-                            <!-- ── Retractable Awnings ─────────────────────── -->
-                            <h4 class="mt-5 mb-3 border-bottom pb-2">Retractable Awnings</h4>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    Do you currently sell retractable awnings?
-                                </label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_retractable_awnings" id="ra_no" value="no"
-                                               t-att-checked="values.get('sells_retractable_awnings', 'no') == 'no'"/>
-                                        <label class="form-check-label" for="ra_no">No</label>
+                                <div class="dr-fields">
+                                    <div class="dr-row dr-col-1">
+                                        <div class="dr-field">
+                                            <label>Type of Business</label>
+                                            <div class="dr-check-group">
+                                                <label class="dr-check-item">
+                                                    <input type="checkbox" name="is_distributor" value="1" t-att-checked="values.get('is_distributor')"/>
+                                                    <span>Distributor</span>
+                                                </label>
+                                                <label class="dr-check-item">
+                                                    <input type="checkbox" name="is_retail" value="1" t-att-checked="values.get('is_retail')"/>
+                                                    <span>Retail</span>
+                                                </label>
+                                                <label class="dr-check-item">
+                                                    <input type="checkbox" name="is_wholesale" value="1" t-att-checked="values.get('is_wholesale')"/>
+                                                    <span>Wholesale</span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_retractable_awnings" id="ra_yes" value="yes"
-                                               t-att-checked="values.get('sells_retractable_awnings') == 'yes'"/>
-                                        <label class="form-check-label" for="ra_yes">Yes</label>
+                                    <div class="dr-row dr-col-2">
+                                        <div class="dr-field">
+                                            <label for="years_in_business">Years in Business</label>
+                                            <input type="text" id="years_in_business" name="years_in_business" class="dr-input" t-att-value="values.get('years_in_business','')"/>
+                                        </div>
+                                        <div class="dr-field">
+                                            <label for="has_showroom">Do You Have a Showroom?</label>
+                                            <select id="has_showroom" name="has_showroom" class="dr-input">
+                                                <option value="no"   t-att-selected="values.get('has_showroom','no')=='no'">No</option>
+                                                <option value="soon" t-att-selected="values.get('has_showroom')=='soon'">No, but will soon</option>
+                                                <option value="yes"  t-att-selected="values.get('has_showroom')=='yes'">Yes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="dr-row dr-col-1">
+                                        <div class="dr-field">
+                                            <label for="how_heard">How Did You Hear About Sunair®?</label>
+                                            <input type="text" id="how_heard" name="how_heard" class="dr-input" t-att-value="values.get('how_heard','')"/>
+                                        </div>
+                                    </div>
+                                    <div class="dr-row dr-col-1">
+                                        <div class="dr-field">
+                                            <label for="comments">Comments</label>
+                                            <textarea id="comments" name="comments" class="dr-input"><t t-esc="values.get('comments','')"/></textarea>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row g-3 ms-1 retractable-awnings-details"
-                                 id="retractable_awnings_details"
-                                 t-att-style="'' if values.get('sells_retractable_awnings') == 'yes' else 'display:none'">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="retractable_awnings_supplier">
-                                        If yes, who are you buying from?
-                                    </label>
-                                    <input type="text" id="retractable_awnings_supplier"
-                                           name="retractable_awnings_supplier"
-                                           class="form-control"
-                                           t-att-value="values.get('retractable_awnings_supplier', '')"/>
+                                <div class="dr-divider"/>
+
+                                <!-- ══ 3. Products You Sell ══ -->
+                                <div class="dr-section-head">
+                                    <div class="dr-section-num">3</div>
+                                    <h2 class="dr-section-title">Products You Currently Sell</h2>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="retractable_awnings_sales_pct">
-                                        Current percentage of awning sales
-                                    </label>
-                                    <select id="retractable_awnings_sales_pct"
-                                            name="retractable_awnings_sales_pct" class="form-select">
-                                        <option value="0_10"   t-att-selected="values.get('retractable_awnings_sales_pct', '0_10') == '0_10'">0% – 10%</option>
-                                        <option value="11_25"  t-att-selected="values.get('retractable_awnings_sales_pct') == '11_25'">10% – 25%</option>
-                                        <option value="26_50"  t-att-selected="values.get('retractable_awnings_sales_pct') == '26_50'">25% – 50%</option>
-                                        <option value="51_75"  t-att-selected="values.get('retractable_awnings_sales_pct') == '51_75'">50% – 75%</option>
-                                        <option value="76_100" t-att-selected="values.get('retractable_awnings_sales_pct') == '76_100'">75% – 100%</option>
-                                    </select>
-                                </div>
-                            </div>
+                                <div class="dr-fields">
 
-                            <!-- ── Solar Screens ───────────────────────────── -->
-                            <h4 class="mt-5 mb-3 border-bottom pb-2">Solar Screens</h4>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    Do you currently sell solar screens?
-                                </label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_solar_screens" id="ss_no" value="no"
-                                               t-att-checked="values.get('sells_solar_screens', 'no') == 'no'"/>
-                                        <label class="form-check-label" for="ss_no">No</label>
+                                    <!-- Retractable Awnings -->
+                                    <div class="dr-row dr-col-1" style="margin-bottom:8px">
+                                        <div class="dr-field">
+                                            <label>Do You Sell Retractable Awnings?</label>
+                                            <div class="dr-yn">
+                                                <label>
+                                                    <input type="radio" name="sells_retractable_awnings" value="no" t-att-checked="values.get('sells_retractable_awnings','no')=='no'"/>
+                                                    <span>No</span>
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="sells_retractable_awnings" value="yes" t-att-checked="values.get('sells_retractable_awnings')=='yes'"/>
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_solar_screens" id="ss_yes" value="yes"
-                                               t-att-checked="values.get('sells_solar_screens') == 'yes'"/>
-                                        <label class="form-check-label" for="ss_yes">Yes</label>
+                                    <div id="ra_details" t-att-style="'' if values.get('sells_retractable_awnings')=='yes' else 'display:none'">
+                                        <div class="dr-sub">
+                                            <div class="dr-row dr-col-2">
+                                                <div class="dr-field">
+                                                    <label for="retractable_awnings_supplier">Current Supplier</label>
+                                                    <input type="text" id="retractable_awnings_supplier" name="retractable_awnings_supplier" class="dr-input" t-att-value="values.get('retractable_awnings_supplier','')"/>
+                                                </div>
+                                                <div class="dr-field">
+                                                    <label for="retractable_awnings_sales_pct">% of Total Sales</label>
+                                                    <select id="retractable_awnings_sales_pct" name="retractable_awnings_sales_pct" class="dr-input">
+                                                        <option value="0_10"   t-att-selected="values.get('retractable_awnings_sales_pct','0_10')=='0_10'">0% – 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('retractable_awnings_sales_pct')=='11_25'">10% – 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('retractable_awnings_sales_pct')=='26_50'">25% – 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('retractable_awnings_sales_pct')=='51_75'">50% – 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('retractable_awnings_sales_pct')=='76_100'">75% – 100%</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row g-3 ms-1"
-                                 id="solar_screens_details"
-                                 t-att-style="'' if values.get('sells_solar_screens') == 'yes' else 'display:none'">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="solar_screens_supplier">
-                                        If yes, who are you buying from?
-                                    </label>
-                                    <input type="text" id="solar_screens_supplier"
-                                           name="solar_screens_supplier"
-                                           class="form-control"
-                                           t-att-value="values.get('solar_screens_supplier', '')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="solar_screens_sales_pct">
-                                        Current percentage of solar screen sales
-                                    </label>
-                                    <select id="solar_screens_sales_pct"
-                                            name="solar_screens_sales_pct" class="form-select">
-                                        <option value="0_10"   t-att-selected="values.get('solar_screens_sales_pct', '0_10') == '0_10'">0% – 10%</option>
-                                        <option value="11_25"  t-att-selected="values.get('solar_screens_sales_pct') == '11_25'">10% – 25%</option>
-                                        <option value="26_50"  t-att-selected="values.get('solar_screens_sales_pct') == '26_50'">25% – 50%</option>
-                                        <option value="51_75"  t-att-selected="values.get('solar_screens_sales_pct') == '51_75'">50% – 75%</option>
-                                        <option value="76_100" t-att-selected="values.get('solar_screens_sales_pct') == '76_100'">75% – 100%</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="solar_screens_type">
-                                        If yes, what type?
-                                    </label>
-                                    <select id="solar_screens_type" name="solar_screens_type" class="form-select">
-                                        <option value="exterior" t-att-selected="values.get('solar_screens_type', 'exterior') == 'exterior'">Exterior</option>
-                                        <option value="interior" t-att-selected="values.get('solar_screens_type') == 'interior'">Interior</option>
-                                        <option value="both"     t-att-selected="values.get('solar_screens_type') == 'both'">Both</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- ── Pergola / Louvered Systems ─────────────── -->
-                            <h4 class="mt-5 mb-3 border-bottom pb-2">Pergola® / Adjustable Louvered Systems</h4>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">
-                                    Do you currently sell Pergola® Awnings or Adjustable Louvered Systems?
-                                </label>
-                                <div class="d-flex gap-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_pergola_louvered" id="pl_no" value="no"
-                                               t-att-checked="values.get('sells_pergola_louvered', 'no') == 'no'"/>
-                                        <label class="form-check-label" for="pl_no">No</label>
+                                    <!-- Solar Screens -->
+                                    <div class="dr-row dr-col-1" style="margin-top:24px;margin-bottom:8px">
+                                        <div class="dr-field">
+                                            <label>Do You Sell Solar Screens?</label>
+                                            <div class="dr-yn">
+                                                <label>
+                                                    <input type="radio" name="sells_solar_screens" value="no" t-att-checked="values.get('sells_solar_screens','no')=='no'"/>
+                                                    <span>No</span>
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="sells_solar_screens" value="yes" t-att-checked="values.get('sells_solar_screens')=='yes'"/>
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                               name="sells_pergola_louvered" id="pl_yes" value="yes"
-                                               t-att-checked="values.get('sells_pergola_louvered') == 'yes'"/>
-                                        <label class="form-check-label" for="pl_yes">Yes</label>
+                                    <div id="ss_details" t-att-style="'' if values.get('sells_solar_screens')=='yes' else 'display:none'">
+                                        <div class="dr-sub">
+                                            <div class="dr-row dr-col-3">
+                                                <div class="dr-field">
+                                                    <label for="solar_screens_supplier">Current Supplier</label>
+                                                    <input type="text" id="solar_screens_supplier" name="solar_screens_supplier" class="dr-input" t-att-value="values.get('solar_screens_supplier','')"/>
+                                                </div>
+                                                <div class="dr-field">
+                                                    <label for="solar_screens_sales_pct">% of Total Sales</label>
+                                                    <select id="solar_screens_sales_pct" name="solar_screens_sales_pct" class="dr-input">
+                                                        <option value="0_10"   t-att-selected="values.get('solar_screens_sales_pct','0_10')=='0_10'">0% – 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('solar_screens_sales_pct')=='11_25'">10% – 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('solar_screens_sales_pct')=='26_50'">25% – 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('solar_screens_sales_pct')=='51_75'">50% – 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('solar_screens_sales_pct')=='76_100'">75% – 100%</option>
+                                                    </select>
+                                                </div>
+                                                <div class="dr-field">
+                                                    <label for="solar_screens_type">Screen Type</label>
+                                                    <select id="solar_screens_type" name="solar_screens_type" class="dr-input">
+                                                        <option value="exterior" t-att-selected="values.get('solar_screens_type','exterior')=='exterior'">Exterior</option>
+                                                        <option value="interior" t-att-selected="values.get('solar_screens_type')=='interior'">Interior</option>
+                                                        <option value="both"     t-att-selected="values.get('solar_screens_type')=='both'">Both</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row g-3 ms-1"
-                                 id="pergola_details"
-                                 t-att-style="'' if values.get('sells_pergola_louvered') == 'yes' else 'display:none'">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="pergola_louvered_supplier">
-                                        If yes, who are you buying from?
-                                    </label>
-                                    <input type="text" id="pergola_louvered_supplier"
-                                           name="pergola_louvered_supplier"
-                                           class="form-control"
-                                           t-att-value="values.get('pergola_louvered_supplier', '')"/>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="pergola_louvered_sales_pct">
-                                        Current percentage of Pergola® / Louvered Systems sales
-                                    </label>
-                                    <select id="pergola_louvered_sales_pct"
-                                            name="pergola_louvered_sales_pct" class="form-select">
-                                        <option value="0_10"   t-att-selected="values.get('pergola_louvered_sales_pct', '0_10') == '0_10'">0% – 10%</option>
-                                        <option value="11_25"  t-att-selected="values.get('pergola_louvered_sales_pct') == '11_25'">10% – 25%</option>
-                                        <option value="26_50"  t-att-selected="values.get('pergola_louvered_sales_pct') == '26_50'">25% – 50%</option>
-                                        <option value="51_75"  t-att-selected="values.get('pergola_louvered_sales_pct') == '51_75'">50% – 75%</option>
-                                        <option value="76_100" t-att-selected="values.get('pergola_louvered_sales_pct') == '76_100'">75% – 100%</option>
-                                    </select>
-                                </div>
-                            </div>
+                                    <!-- Pergola / Louvered -->
+                                    <div class="dr-row dr-col-1" style="margin-top:24px;margin-bottom:8px">
+                                        <div class="dr-field">
+                                            <label>Do You Sell Pergola® Awnings or Adjustable Louvered Systems?</label>
+                                            <div class="dr-yn">
+                                                <label>
+                                                    <input type="radio" name="sells_pergola_louvered" value="no" t-att-checked="values.get('sells_pergola_louvered','no')=='no'"/>
+                                                    <span>No</span>
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="sells_pergola_louvered" value="yes" t-att-checked="values.get('sells_pergola_louvered')=='yes'"/>
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="pl_details" t-att-style="'' if values.get('sells_pergola_louvered')=='yes' else 'display:none'">
+                                        <div class="dr-sub">
+                                            <div class="dr-row dr-col-2">
+                                                <div class="dr-field">
+                                                    <label for="pergola_louvered_supplier">Current Supplier</label>
+                                                    <input type="text" id="pergola_louvered_supplier" name="pergola_louvered_supplier" class="dr-input" t-att-value="values.get('pergola_louvered_supplier','')"/>
+                                                </div>
+                                                <div class="dr-field">
+                                                    <label for="pergola_louvered_sales_pct">% of Total Sales</label>
+                                                    <select id="pergola_louvered_sales_pct" name="pergola_louvered_sales_pct" class="dr-input">
+                                                        <option value="0_10"   t-att-selected="values.get('pergola_louvered_sales_pct','0_10')=='0_10'">0% – 10%</option>
+                                                        <option value="11_25"  t-att-selected="values.get('pergola_louvered_sales_pct')=='11_25'">10% – 25%</option>
+                                                        <option value="26_50"  t-att-selected="values.get('pergola_louvered_sales_pct')=='26_50'">25% – 50%</option>
+                                                        <option value="51_75"  t-att-selected="values.get('pergola_louvered_sales_pct')=='51_75'">50% – 75%</option>
+                                                        <option value="76_100" t-att-selected="values.get('pergola_louvered_sales_pct')=='76_100'">75% – 100%</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <!-- ── Submit ──────────────────────────────────── -->
-                            <div class="mt-5 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary btn-lg px-5">
-                                    Submit Request
-                                </button>
-                            </div>
+                                </div>
 
+                                <!-- ══ Submit Bar ══ -->
+                                <div class="dr-submit-bar">
+                                    <div class="dr-submit-note">
+                                        Fields marked <span>*</span> are required
+                                    </div>
+                                    <button type="submit" class="dr-btn">Submit Application</button>
+                                </div>
+
+                            </div><!-- /dr-card -->
                         </form>
 
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Toggle JS for conditional sections -->
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    function toggleSection(radioName, sectionId) {
-                        const radios = document.querySelectorAll('input[name="' + radioName + '"]');
-                        const section = document.getElementById(sectionId);
-                        function update() {
-                            const checked = document.querySelector('input[name="' + radioName + '"]:checked');
-                            section.style.display = (checked &amp;&amp; checked.value === 'yes') ? '' : 'none';
-                        }
-                        radios.forEach(r => r.addEventListener('change', update));
-                        update();
+        <!-- ── Toggle JS ──────────────────────────────── -->
+        <script>
+            (function() {
+                function toggle(radioName, sectionId) {
+                    var radios  = document.querySelectorAll('input[name="' + radioName + '"]');
+                    var section = document.getElementById(sectionId);
+                    function upd() {
+                        var checked = document.querySelector('input[name="' + radioName + '"]:checked');
+                        section.style.display = (checked &amp;&amp; checked.value === 'yes') ? '' : 'none';
                     }
-                    toggleSection('sells_retractable_awnings', 'retractable_awnings_details');
-                    toggleSection('sells_solar_screens',       'solar_screens_details');
-                    toggleSection('sells_pergola_louvered',    'pergola_details');
-                });
-            </script>
-        </t>
-    </template>
+                    radios.forEach(function(r){ r.addEventListener('change', upd); });
+                    upd();
+                }
+                toggle('sells_retractable_awnings', 'ra_details');
+                toggle('sells_solar_screens',       'ss_details');
+                toggle('sells_pergola_louvered',    'pl_details');
 
-    <!-- ══════════════════════════════════════════════════════
-         Thank-you page after successful submission
-    ══════════════════════════════════════════════════════ -->
-    <template id="dealer_request_success" name="Dealer Request — Success">
-        <t t-call="website.layout">
-            <div class="container py-5 text-center">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <i class="fa fa-check-circle fa-4x text-success mb-4"/>
-                        <h2 class="mb-3">Thank You!</h2>
-                        <p class="lead text-muted">
-                            Your dealer request has been submitted. Our sales department will
-                            contact you shortly.
-                        </p>
-                        <a href="/" class="btn btn-outline-primary mt-3">Back to Home</a>
-                    </div>
-                </div>
+                /* Yes/No pill active state via JS for older browsers */
+                document.querySelectorAll('.dr-yn label').forEach(function(lbl) {
+                    lbl.addEventListener('click', function() {
+                        var name = lbl.querySelector('input').name;
+                        document.querySelectorAll('.dr-yn label input[name="' + name + '"]').forEach(function(r){
+                            r.closest('label').style.background = '';
+                            r.closest('label').style.color = '';
+                            r.closest('label').style.borderColor = '';
+                        });
+                        lbl.style.background   = 'var(--sun-dark)';
+                        lbl.style.color        = 'var(--sun-white)';
+                        lbl.style.borderColor  = 'var(--sun-dark)';
+                    });
+                });
+                /* Init pill states on page load */
+                document.querySelectorAll('.dr-yn input[type="radio"]:checked').forEach(function(r){
+                    var lbl = r.closest('label');
+                    lbl.style.background  = 'var(--sun-dark)';
+                    lbl.style.color       = 'var(--sun-white)';
+                    lbl.style.borderColor = 'var(--sun-dark)';
+                });
+            })();
+        </script>
+
+    </t>
+</template>
+
+<!-- ══ Success Page ══════════════════════════════════════ -->
+<template id="dealer_request_success" name="Dealer Request — Success">
+    <t t-call="website.layout">
+        <style>
+            body { background: #FAF8F4 !important; }
+            .dr-success {
+                min-height: 60vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 80px 20px;
+            }
+            .dr-success-card {
+                max-width: 480px;
+                text-align: center;
+                background: #fff;
+                border: 1px solid #DDD5C4;
+                border-radius: 2px;
+                padding: 56px 48px;
+            }
+            .dr-success-icon {
+                width: 56px; height: 56px;
+                border-radius: 50%;
+                background: #C9A84C;
+                display: flex; align-items: center; justify-content: center;
+                margin: 0 auto 28px;
+                font-size: 24px; color: #fff;
+            }
+            .dr-success-card h2 {
+                font-family: 'Cormorant Garamond', serif;
+                font-size: 32px; font-weight: 600;
+                color: #1A1A1A; margin-bottom: 14px;
+            }
+            .dr-success-card p {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 15px; color: #7A7266;
+                line-height: 1.7; margin-bottom: 32px;
+            }
+            .dr-success-btn {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 12px; font-weight: 600;
+                letter-spacing: .12em; text-transform: uppercase;
+                color: #1A1A1A; background: #C9A84C;
+                border: none; padding: 14px 32px; border-radius: 2px;
+                text-decoration: none; display: inline-block;
+            }
+        </style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=DM+Sans:wght@400;600&amp;display=swap"/>
+        <div class="dr-success">
+            <div class="dr-success-card">
+                <div class="dr-success-icon">✓</div>
+                <h2>Request Received</h2>
+                <p>Thank you for your interest in the Sunair® dealer network. Our sales team will review your application and be in touch shortly.</p>
+                <a href="/" class="dr-success-btn">Back to Home</a>
             </div>
-        </t>
-    </template>
+        </div>
+    </t>
+</template>
 
 </odoo>
