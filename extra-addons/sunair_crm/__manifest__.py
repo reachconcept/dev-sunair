@@ -10,7 +10,7 @@
     'maintainer': 'Reach Concept',
     'website': 'https://www.reachconcept.com',
 
-    'depends': ['base','crm','mail','sale'],
+    'depends': ['base','crm','mail','sale', 'website'],
 
     'data': [
         "security/ir.model.access.csv",
@@ -21,17 +21,19 @@
         "views/lead_type_views.xml",
         "views/crm_territory_views.xml",
         "views/crm_lead_views.xml",
+        "views/dealer_application_views.xml",
         "views/dealer_request_views.xml",
         "views/dealer_activity_views.xml",
         "views/dealer_request_state_views.xml",
         "views/dealer_application_state_views.xml",
         "views/dealer_status_views.xml",
         "views/dealer_request_form_views.xml",
-        "views/dealer_application_views.xml",
         "views/crm_lead2opportunity_partner.xml",
         "views/res_partner_view.xml",
         "views/product_views.xml",
         "views/crm_product_category_views.xml",
+        "views/dealer_form.xml",
+
     ],
     'assets': {
 

@@ -41,8 +41,9 @@ class DealerRequest(models.Model):
     # Business Background
     years_in_business = fields.Char(string='How Long in Business')
     has_showroom = fields.Selection([
-        ('yes', 'Yes'),
-        ('no', 'No'),
+        ('no',   'No'),
+        ('soon', 'No, but will soon'),
+        ('yes',  'Yes'),
     ], string='Do You Have a Showroom?', default='no')
     how_heard = fields.Char(string='How Did You Hear About Sunair?')
     comments = fields.Text(string='Comments')

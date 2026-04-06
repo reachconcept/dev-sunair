@@ -333,6 +333,23 @@
             </kanban>
         </field>
     </record>
+   
+    <record id="view_dealer_request_search" model="ir.ui.view">
+        <field name="name">dealer.request.dealer.request.search</field>
+        <field name="model">dealer.request</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <field name="name"/>
+                <field name="partner_id"/>
+
+                <filter name="my_dealers"
+                        string="My Dealers"
+                        domain="[('partner_id.user_ids', 'in', [uid])]"/>
+
+            </search>
+        </field>
+    </record>
 
     <!-- Search View -->
     <record id="view_dealer_request_search" model="ir.ui.view">
@@ -374,6 +391,9 @@
             (0, 0, {'view_mode': 'list',   'view_id': ref('view_dealer_request_model_list')}),
             (0, 0, {'view_mode': 'form',   'view_id': ref('view_dealer_request_model_form')}),
         ]"/>
+        <field name="context">
+            {'search_default_my_dealers': 1}
+        </field>
     </record>
 
     <!-- Menu -->
