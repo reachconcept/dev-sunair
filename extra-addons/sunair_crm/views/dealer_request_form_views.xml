@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_dealer_request_model_list" model="ir.ui.view">
+        <field name="name">dealer.request.list</field>
+        <field name="model">dealer.request</field>
+        <field name="arch" type="xml">
+            <list string="Dealer Requests">
+                <field name="name"/>
+                <field name="first_name"/>
+                <field name="last_name"/>
+                <field name="company"/>
+                <field name="email"/>
+                <field name="work_phone"/>
+                <field name="state_id" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_dealer_request_model_form" model="ir.ui.view">
+        <field name="name">dealer.request.form</field>
+        <field name="model">dealer.request</field>
+        <field name="arch" type="xml">
+            <form string="Dealer Request">
+                <header>
+                    <field name="state_id" widget="statusbar"
+                           options="{'clickable': True}"/>
+                    <field name="kanban_state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Reference"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <group string="Contact Information">
+                        <group>
+                            <field name="first_name"/>
+                            <field name="last_name"/>
+                            <field name="title"/>
+                            <field name="company"/>
+                        </group>
+                        <group>
+                            <field name="work_phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+
+                    <group string="Address">
+                        <group>
+                            <field name="street"/>
+                            <field name="city"/>
+                        </group>
+                        <group>
+                            <field name="country_state_id"/>
+                            <field name="zip"/>
+                        </group>
+                    </group>
+
+                    <!-- Business Type -->
+                    <group string="What Type of Business Are You?">
+                        <group>
+                            <field name="is_distributor"/>
+                            <field name="is_retail"/>
+                            <field name="is_wholesale"/>
+                        </group>
+                    </group>
+
+                    <!-- Business Background -->
+                    <group string="Business Background">
+                        <group>
+                            <field name="years_in_business"/>
+                            <field name="has_showroom"/>
+                        </group>
+                        <group>
+                            <field name="how_heard"/>
+                        </group>
+                        <group col="1">
+                            <field name="comments" nolabel="1" placeholder="Comments..."/>
+                        </group>
+                    </group>
+
+                    <!-- Retractable Awnings -->
+                    <group string="Retractable Awnings">
+                        <group>
+                            <field name="sells_retractable_awnings" widget="radio"/>
+                        </group>
+                        <group invisible="sells_retractable_awnings != 'yes'">
+                            <field name="retractable_awnings_supplier"
+                                   string="If yes, who are you buying from?"/>
+                            <field name="retractable_awnings_sales_pct"
+                                   string="Current Percentage of Awning Sales"/>
+                        </group>
+                    </group>
+
+                    <!-- Solar Screens -->
+                    <group string="Solar Screens">
+                        <group>
+                            <field name="sells_solar_screens" widget="radio"/>
+                        </group>
+                        <group invisible="sells_solar_screens != 'yes'">
+                            <field name="solar_screens_supplier"
+                                   string="If yes, who are you buying from?"/>
+                            <field name="solar_screens_sales_pct"
+                                   string="Current Percentage of Solar Screen Sales"/>
+                            <field name="solar_screens_type" string="If yes, what type?"/>
+                        </group>
+                    </group>
+
+                    <!-- Pergola / Louvered Systems -->
+                    <group string="Pergola&#174; Awnings or Adjustable Louvered Systems">
+                        <group>
+                            <field name="sells_pergola_louvered" widget="radio"/>
+                        </group>
+                        <group invisible="sells_pergola_louvered != 'yes'">
+                            <field name="pergola_louvered_supplier"
+                                   string="If yes, who are you buying from?"/>
+                            <field name="pergola_louvered_sales_pct"
+                                   string="Current Percentage of Pergola / Louvered Sales"/>
+                        </group>
+                    </group>
+
+                    <!-- Internal Relations -->
+                    <group string="Internal">
+                        <group>
+                            <field name="lead_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_dealer_request_model_kanban" model="ir.ui.view">
+        <field name="name">dealer.request.kanban</field>
+        <field name="model">dealer.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state_id" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="first_name"/>
+                <field name="last_name"/>
+                <field name="company"/>
+                <field name="city"/>
+                <field name="country_state_id"/>
+                <field name="work_phone"/>
+                <field name="email"/>
+                <field name="state_id"/>
+                <field name="kanban_state"/>
+                <field name="is_distributor"/>
+                <field name="is_retail"/>
+                <field name="is_wholesale"/>
+                <field name="has_showroom"/>
+                <field name="sells_retractable_awnings"/>
+                <field name="sells_solar_screens"/>
+                <field name="sells_pergola_louvered"/>
+                <field name="create_date"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click" style="padding: 0;">
+
+                            <!-- State color bar using state_id color index -->
+                            <div t-attf-style="
+                                height: 4px;
+                                border-radius: 4px 4px 0 0;
+                                background: #{
+                                    record.state_id.raw_value == false  ? '#dee2e6' :
+                                    record.kanban_state.raw_value == 'blocked' ? '#dc3545' :
+                                    record.kanban_state.raw_value == 'done'    ? '#28a745' :
+                                                                                 '#0d6efd'
+                                };"/>
+
+                            <div style="padding: 10px 12px 12px 12px;">
+
+                                <!-- Header row: ref + kanban state dot + state badge -->
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted fw-semibold" style="font-size: 11px; letter-spacing: 0.5px;">
+                                        <field name="name"/>
+                                    </small>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <!-- Kanban state dot -->
+                                        <span t-attf-title="#{
+                                                record.kanban_state.raw_value == 'done'    ? 'Ready' :
+                                                record.kanban_state.raw_value == 'blocked' ? 'Blocked' :
+                                                                                              'In Progress'
+                                              }"
+                                              t-attf-style="
+                                                width: 10px; height: 10px;
+                                                border-radius: 50%; display: inline-block;
+                                                background: #{
+                                                    record.kanban_state.raw_value == 'done'    ? '#28a745' :
+                                                    record.kanban_state.raw_value == 'blocked' ? '#dc3545' :
+                                                                                                 '#adb5bd'
+                                                };"/>
+                                        <!-- State badge -->
+                                        <span class="badge rounded-pill text-bg-secondary"
+                                              style="font-size: 10px;">
+                                            <t t-esc="record.state_id.value or 'No State'"/>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Contact name -->
+                                <div class="fw-bold mb-0" style="font-size: 15px; line-height: 1.3;">
+                                    <t t-esc="record.first_name.value"/> <t t-esc="record.last_name.value"/>
+                                </div>
+
+                                <!-- Company -->
+                                <t t-if="record.company.raw_value">
+                                    <div class="text-muted mb-2" style="font-size: 12px;">
+                                        <i class="fa fa-building-o me-1"/>
+                                        <t t-esc="record.company.value"/>
+                                    </div>
+                                </t>
+
+                                <!-- Location -->
+                                <t t-if="record.city.raw_value or record.country_state_id.raw_value">
+                                    <div class="text-muted mb-1" style="font-size: 12px;">
+                                        <i class="fa fa-map-marker me-1"/>
+                                        <t t-if="record.city.raw_value"><t t-esc="record.city.value"/></t>
+                                        <t t-if="record.city.raw_value and record.country_state_id.raw_value">, </t>
+                                        <t t-if="record.country_state_id.raw_value"><t t-esc="record.country_state_id.value"/></t>
+                                    </div>
+                                </t>
+
+                                <!-- Phone -->
+                                <t t-if="record.work_phone.raw_value">
+                                    <div class="text-muted mb-1" style="font-size: 12px;">
+                                        <i class="fa fa-phone me-1"/>
+                                        <t t-esc="record.work_phone.value"/>
+                                    </div>
+                                </t>
+
+                                <!-- Email -->
+                                <t t-if="record.email.raw_value">
+                                    <div class="text-muted mb-2" style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        <i class="fa fa-envelope-o me-1"/>
+                                        <t t-esc="record.email.value"/>
+                                    </div>
+                                </t>
+
+                                <!-- Business type badges -->
+                                <t t-if="record.is_distributor.raw_value or record.is_retail.raw_value or record.is_wholesale.raw_value">
+                                    <div class="d-flex flex-wrap gap-1 mb-2">
+                                        <t t-if="record.is_distributor.raw_value">
+                                            <span class="badge rounded-pill"
+                                                  style="background:#0d6efd22; color:#0d6efd; border:1px solid #0d6efd55; font-size:10px;">
+                                                Distributor
+                                            </span>
+                                        </t>
+                                        <t t-if="record.is_retail.raw_value">
+                                            <span class="badge rounded-pill"
+                                                  style="background:#6f42c122; color:#6f42c1; border:1px solid #6f42c155; font-size:10px;">
+                                                Retail
+                                            </span>
+                                        </t>
+                                        <t t-if="record.is_wholesale.raw_value">
+                                            <span class="badge rounded-pill"
+                                                  style="background:#20c99722; color:#198754; border:1px solid #20c99755; font-size:10px;">
+                                                Wholesale
+                                            </span>
+                                        </t>
+                                    </div>
+                                </t>
+
+                                <!-- Divider -->
+                                <hr style="margin: 8px 0; border-color: #e9ecef;"/>
+
+                                <!-- Products sold indicators + showroom -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex gap-2">
+                                        <span style="font-size: 11px;"
+                                              t-att-title="'Retractable Awnings'"
+                                              t-attf-class="#{record.sells_retractable_awnings.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
+                                            <i t-attf-class="fa #{record.sells_retractable_awnings.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Awnings
+                                        </span>
+                                        <span style="font-size: 11px;"
+                                              t-att-title="'Solar Screens'"
+                                              t-attf-class="#{record.sells_solar_screens.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
+                                            <i t-attf-class="fa #{record.sells_solar_screens.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Screens
+                                        </span>
+                                        <span style="font-size: 11px;"
+                                              t-att-title="'Pergola / Louvered Systems'"
+                                              t-attf-class="#{record.sells_pergola_louvered.raw_value == 'yes' ? 'text-success' : 'text-muted'}">
+                                            <i t-attf-class="fa #{record.sells_pergola_louvered.raw_value == 'yes' ? 'fa-check-circle' : 'fa-circle-o'} me-1"/>Pergola
+                                        </span>
+                                    </div>
+                                    <t t-if="record.has_showroom.raw_value == 'yes'">
+                                        <span class="badge"
+                                              style="background:#fff3cd; color:#856404; border:1px solid #ffc10733; font-size:10px;"
+                                              title="Has Showroom">
+                                            <i class="fa fa-home me-1"/>Showroom
+                                        </span>
+                                    </t>
+                                </div>
+
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_dealer_request_model" model="ir.actions.act_window">
+        <field name="name">Dealer Requests</field>
+        <field name="res_model">dealer.request</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_dealer_request_model_kanban')}),
+            (0, 0, {'view_mode': 'list',   'view_id': ref('view_dealer_request_model_list')}),
+            (0, 0, {'view_mode': 'form',   'view_id': ref('view_dealer_request_model_form')}),
+        ]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_dealer_request_model"
+              name="Dealer Requests"
+              parent="sunair_crm.menu_dealer_application_root"
+              action="action_dealer_request_model"
+              sequence="10"/>
+
+</odoo>

@@ -69,12 +69,12 @@ class CrmLead(models.Model):
                         
     def _compute_application_count(self):
         for rec in self:
-            rec.application_count = self.env['crm.application'].search_count([
+            rec.application_count = self.env['dealer.application'].search_count([
                 ('lead_id', '=', rec.id)
             ])
             
     def action_create_application(self):
-        app = self.env['crm.application'].create({
+        app = self.env['dealer.application'].create({
             'lead_id': self.id,
             'partner_id': self.partner_id.id,
             'company_legal_name': self.partner_name,
@@ -90,7 +90,7 @@ class CrmLead(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Application',
-            'res_model': 'crm.application',
+            'res_model': 'dealer.application',
             'view_mode': 'form',
             'res_id': app.id,
             'target': 'current',
@@ -100,7 +100,7 @@ class CrmLead(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Applications',
-            'res_model': 'crm.application',
+            'res_model': 'dealer.application',
             'view_mode': 'kanban,list,form',
             'domain': [('lead_id', '=', self.id)],
         }

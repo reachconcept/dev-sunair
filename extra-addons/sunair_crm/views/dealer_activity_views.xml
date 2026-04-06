@@ -114,7 +114,7 @@
     <!-- Menu under Dealers -->
     <menuitem id="menu_dealer_activity"
               name="Activities"
-              parent="sunair_crm.menu_crm_application_root"
+              parent="sunair_crm.menu_dealer_application_root"
               action="action_dealer_activity"
               sequence="2"/>
 

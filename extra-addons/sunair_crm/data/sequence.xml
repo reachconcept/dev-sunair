@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="seq_crm_application" model="ir.sequence">
+    <record id="seq_dealer_application" model="ir.sequence">
         <field name="name">CRM Application</field>
-        <field name="code">crm.application</field>
+        <field name="code">dealer.application</field>
         <field name="prefix">APP/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_dealer_request" model="ir.sequence">
+        <field name="name">Dealer Request</field>
+        <field name="code">dealer.request</field>
+        <field name="prefix">REQ/</field>
         <field name="padding">5</field>
     </record>
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_crm_application_tree" model="ir.ui.view">
-        <field name="name">crm.application.tree</field>
-        <field name="model">crm.application</field>
+    <record id="view_dealer_application_tree" model="ir.ui.view">
+        <field name="name">dealer.application.tree</field>
+        <field name="model">dealer.application</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
@@ -17,9 +17,9 @@
         </field>
     </record>
 
-    <record id="view_crm_application_kanban" model="ir.ui.view">
-        <field name="name">crm.application.kanban</field>
-        <field name="model">crm.application</field>
+    <record id="view_dealer_application_kanban" model="ir.ui.view">
+        <field name="name">dealer.application.kanban</field>
+        <field name="model">dealer.application</field>
         <field name="arch" type="xml">
             <kanban default_group_by="state" class="o_kanban_small_column">
 
@@ -76,9 +76,9 @@
         </field>
     </record>
 
-    <record id="view_crm_application_form" model="ir.ui.view">
-        <field name="name">crm.application.form</field>
-        <field name="model">crm.application</field>
+    <record id="view_dealer_application_form" model="ir.ui.view">
+        <field name="name">dealer.application.form</field>
+        <field name="model">dealer.application</field>
         <field name="arch" type="xml">
             <form string="Dealer Application">
                 <header>
@@ -296,9 +296,9 @@
         </field>
     </record>
 
-    <record id="action_crm_application" model="ir.actions.act_window">
+    <record id="action_dealer_application" model="ir.actions.act_window">
         <field name="name">Dealer Applications</field>
-        <field name="res_model">crm.application</field>
+        <field name="res_model">dealer.application</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -307,9 +307,7 @@
         </field>
     </record>
 
-    <menuitem id="menu_crm_application_root" name="Dealers" sequence="10" web_icon="sunair_crm,static/description/dealer_icon.svg"/>
-    <menuitem id="menu_crm_application" name="Applications" parent="menu_crm_application_root" action="action_crm_application" sequence="10"/>
-
-
+    <menuitem id="menu_dealer_application_root" name="Dealers" sequence="10" web_icon="sunair_crm,static/description/dealer_icon.svg"/>
+    <menuitem id="menu_dealer_application" name="Applications" parent="menu_dealer_application_root" action="action_dealer_application" sequence="10"/>
 
 </odoo>

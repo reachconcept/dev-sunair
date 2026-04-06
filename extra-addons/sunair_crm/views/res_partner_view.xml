@@ -62,7 +62,7 @@
 
     <menuitem id="menu_dealers"
               name="Dealers"
-              parent="sunair_crm.menu_crm_application_root"
+              parent="sunair_crm.menu_dealer_application_root"
               action="action_dealers"
               sequence="1"/>
 

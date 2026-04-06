@@ -2,8 +2,8 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
 
-class CrmApplication(models.Model):
-    _name = 'crm.application'
+class DealerApplication(models.Model):
+    _name = 'dealer.application'
     _description = 'Dealer Application'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
@@ -171,8 +171,8 @@ class CrmApplication(models.Model):
             'name': 'Documents',
             'res_model': 'ir.attachment',
             'view_mode': 'kanban,list,form',
-            'domain': [('res_model', '=', 'crm.application'), ('res_id', '=', self.id)],
-            'context': {'default_res_model': 'crm.application', 'default_res_id': self.id}
+            'domain': [('res_model', '=', 'dealer.application'), ('res_id', '=', self.id)],
+            'context': {'default_res_model': 'dealer.application', 'default_res_id': self.id}
         }
 
     def action_view_order(self):
@@ -206,7 +206,7 @@ class CrmApplication(models.Model):
     def _compute_document_count(self):
         for rec in self:
             rec.document_count = self.env['ir.attachment'].search_count([
-                ('res_model', '=', 'crm.application'),
+                ('res_model', '=', 'dealer.application'),
                 ('res_id', '=', rec.id)
             ])
 
@@ -226,5 +226,5 @@ class CrmApplication(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
-                vals['name'] = self.env['ir.sequence'].next_by_code('crm.application') or 'New'
+                vals['name'] = self.env['ir.sequence'].next_by_code('dealer.application') or 'New'
         return super().create(vals_list)

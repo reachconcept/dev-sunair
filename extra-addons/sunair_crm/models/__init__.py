@@ -3,9 +3,11 @@ from . import crm_stage
 from . import lead_type
 from . import crm_territory
 from . import crm_lead
-from . import crm_application
+from . import dealer_application
 from . import res_partner
 from . import crm_lead2opportunity_partner
 from . import product
 from . import crm_product_category
 from . import dealer_activity
+from . import dealer_request_state
+from . import dealer_request

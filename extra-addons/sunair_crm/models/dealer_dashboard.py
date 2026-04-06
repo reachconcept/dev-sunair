@@ -29,7 +29,7 @@ class DealerDashboard(models.Model):
                 ('user_id', '=', user.id)
             ])
 
-            rec.my_applications = self.env['crm.application'].search_count([
+            rec.my_applications = self.env['dealer.application'].search_count([
                 ('lead_id.user_id', '=', user.id)
             ])
 
@@ -78,7 +78,7 @@ class DealerDashboard(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'My Applications',
-            'res_model': 'crm.application',
+            'res_model': 'dealer.application',
             'view_mode': 'kanban,list,form',
             'domain': [('lead_id.user_id', '=', self.env.user.id)],
         }
