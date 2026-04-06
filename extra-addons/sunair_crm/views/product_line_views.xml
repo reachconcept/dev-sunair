@@ -60,24 +60,5 @@
               action="action_product_line"
               sequence="20"/>
 
-    <!-- Inherit partner form: add Product Lines section inside Dealer Info tab -->
-    <record id="view_partner_form_inherit_product_lines" model="ir.ui.view">
-        <field name="name">res.partner.form.inherit.product.lines</field>
-        <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//page[@string='Dealer Info']" position="inside">
-                <group string="Product Lines">
-                    <field name="product_line_ids" nolabel="1" invisible="not is_dealer">
-                        <list editable="bottom">
-                            <field name="product_line_id" options="{'no_create': False}"/>
-                            <field name="notes"/>
-                            <field name="active" column_invisible="True"/>
-                        </list>
-                    </field>
-                </group>
-            </xpath>
-        </field>
-    </record>
-
+   
 </odoo>

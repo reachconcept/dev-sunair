@@ -415,39 +415,10 @@
         </field>
     </record>
 
-    <!-- Search View -->
-    <record id="view_dealer_application_search" model="ir.ui.view">
-        <field name="name">dealer.application.search</field>
-        <field name="model">dealer.application</field>
-        <field name="arch" type="xml">
-            <search string="Dealer Applications">
-                <field name="company_legal_name"/>
-                <field name="email"/>
-                <field name="dealer_representative_id"/>
-                <field name="stage_id"/>
-                <field name="partner_id"/>
-                <filter name="my_dealers" string="My Dealers"
-                        domain="[('dealer_representative_id', '=', uid)]"/>
-                <separator/>
-                <filter name="no_rep" string="No Representative"
-                        domain="[('dealer_representative_id', '=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_stage" string="Stage"
-                            context="{'group_by': 'stage_id'}"/>
-                    <filter name="group_by_rep" string="Representative"
-                            context="{'group_by': 'dealer_representative_id'}"/>
-                    <filter name="group_by_territory" string="Territory"
-                            context="{'group_by': 'territory_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
     <record id="action_dealer_application" model="ir.actions.act_window">
         <field name="name">Dealer Applications</field>
         <field name="res_model">dealer.application</field>
         <field name="view_mode">kanban,list,form</field>
-        <field name="search_view_id" ref="view_dealer_application_search"/>
         <field name="context">{'search_default_my_dealers': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
