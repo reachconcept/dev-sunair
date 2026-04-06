@@ -128,7 +128,6 @@ class DealerApplication(models.Model):
     signed_by_title = fields.Char(string='Title')
     signature_date = fields.Date(string='Date')
     dealer_representative = fields.Char(string='Dealer Representative')
-
     is_awcbn = fields.Boolean(string='AWCBN Member')
     awcbn_number = fields.Char(string='AWCBN Number')
 

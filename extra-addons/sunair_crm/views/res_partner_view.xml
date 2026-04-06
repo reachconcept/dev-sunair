@@ -30,34 +30,48 @@
     </field>
 </record> -->
 
-<record id="res_partner_kanban_inherit_dealer" model="ir.ui.view">
-    <field name="name">res.partner.kanban.inherit.dealer</field>
-    <field name="model">res.partner</field>
-    <field name="inherit_id" ref="base.res_partner_kanban_view"/>
-    <field name="arch" type="xml">
+    <record id="res_partner_kanban_inherit_dealer" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inherit.dealer</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
 
-        <xpath expr="//kanban" position="inside">
-            <field name="is_dealer"/>
-        </xpath>
+            <xpath expr="//kanban" position="inside">
+                <field name="is_dealer"/>
+            </xpath>
 
-        <!-- YOUR BADGE -->
-        <xpath expr="//t[@t-name='card']" position="inside">
-            <t t-if="record.is_dealer and record.is_dealer.raw_value">
-                <div class="position-absolute top-0 end-0 m-1">
-                    <span class="badge bg-success">Dealer</span>
-                </div>
-            </t>
-        </xpath>
+            <!-- YOUR BADGE -->
+            <xpath expr="//t[@t-name='card']" position="inside">
+                <t t-if="record.is_dealer and record.is_dealer.raw_value">
+                    <div class="position-absolute top-0 end-0 m-1">
+                        <span class="badge bg-success">Dealer</span>
+                    </div>
+                </t>
+            </xpath>
 
-    </field>
-</record>
+        </field>
+    </record>
 
+    <record id="res_partner_view_search_inherit" model="ir.ui.view">
+        <field name="name">res.partner.search.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_person']" position="before">
+                <filter name="my_dealers"
+                        string="My Dealers"
+                        domain="[('user_id', '=', uid)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+    
     <record id="action_dealers" model="ir.actions.act_window">
         <field name="name">Dealers</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="domain">[('is_dealer', '=', True)]</field>
-        <field name="context">{'default_is_dealer': True}</field>
+        <field name="context">{'default_is_dealer': True, 'search_default_my_dealers': 1}</field>
     </record>
 
     <menuitem id="menu_dealers"
