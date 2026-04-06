@@ -73,6 +73,10 @@
                 <field name="dealer_status_color"/>
                 <field name="territory_id"/>
                 <field name="dealer_representative_id"/>
+                <field name="product_line_kanban_html"/>
+                <field name="dealer_win_rate"/>
+                <field name="dealer_lead_count"/>
+                <field name="dealer_won_lead_count"/>
                 <field name="activity_ids"/>
                 <field name="activity_state"/>
                 <templates>
@@ -176,23 +180,74 @@
                                     </div>
                                 </t>
 
+                                <!-- Product Lines -->
+                                <t t-if="record.product_line_kanban_html.raw_value">
+                                    <div style="margin-bottom:6px;">
+                                        <div style="font-size:10px; font-weight:600; text-transform:uppercase;
+                                                    letter-spacing:0.5px; color:#6c757d; margin-bottom:2px;">
+                                            Product Lines
+                                        </div>
+                                        <t t-out="record.product_line_kanban_html.value"/>
+                                    </div>
+                                </t>
+
                                 <!-- Divider -->
                                 <hr style="margin: 8px 0; border-color: #e9ecef;"/>
 
-                                <!-- Footer: labeled user pills -->
-                                <div class="d-flex flex-wrap gap-2">
-                                    <t t-if="record.user_id.raw_value">
-                                        <div class="d-flex align-items-center gap-1"
-                                             style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
-                                            <field name="user_id" widget="many2one_avatar_user"/>
-                                            <small class="text-muted" style="white-space:nowrap;">Salesperson</small>
-                                        </div>
-                                    </t>
-                                    <t t-if="record.dealer_representative_id.raw_value">
-                                        <div class="d-flex align-items-center gap-1"
-                                             style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
-                                            <field name="dealer_representative_id" widget="many2one_avatar_user"/>
-                                            <small class="text-muted" style="white-space:nowrap;">Rep</small>
+                                <!-- Footer: user pills + win rate -->
+                                <div class="d-flex justify-content-between align-items-end gap-2">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <t t-if="record.user_id.raw_value">
+                                            <div class="d-flex align-items-center gap-1"
+                                                 style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
+                                                <field name="user_id" widget="many2one_avatar_user"/>
+                                                <small class="text-muted" style="white-space:nowrap;">Salesperson</small>
+                                            </div>
+                                        </t>
+                                        <t t-if="record.dealer_representative_id.raw_value">
+                                            <div class="d-flex align-items-center gap-1"
+                                                 style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
+                                                <field name="dealer_representative_id" widget="many2one_avatar_user"/>
+                                                <small class="text-muted" style="white-space:nowrap;">Rep</small>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="record.dealer_lead_count.raw_value">
+                                        <div style="text-align:right; flex-shrink:0;">
+                                            <div style="color:#6c757d; margin-bottom:2px;">
+                                                <span style="margin-right:6px;">
+                                                    <i class="fa fa-list me-1"/>
+                                                    <t t-esc="record.dealer_lead_count.raw_value"/> Assigned
+                                                </span>
+                                                <span style="color:#1e8449;">
+                                                    <i class="fa fa-trophy me-1"/>
+                                                    <t t-esc="record.dealer_won_lead_count.raw_value"/> Won
+                                                </span>
+                                            </div>
+                                            <div t-attf-style="
+                                                display:inline-block;
+                                                padding:2px 10px;
+                                                border-radius:12px;
+                                                font-size:12px;
+                                                font-weight:700;
+                                                background: #{
+                                                    record.dealer_win_rate.raw_value >= 66 ? '#d1f2eb' :
+                                                    record.dealer_win_rate.raw_value >= 33 ? '#fef9e7' :
+                                                                                             '#fdedec'
+                                                };
+                                                color: #{
+                                                    record.dealer_win_rate.raw_value >= 66 ? '#1e8449' :
+                                                    record.dealer_win_rate.raw_value >= 33 ? '#b7950b' :
+                                                                                             '#c0392b'
+                                                };
+                                                border: 1px solid #{
+                                                    record.dealer_win_rate.raw_value >= 66 ? '#a9dfbf' :
+                                                    record.dealer_win_rate.raw_value >= 33 ? '#f9e79f' :
+                                                                                             '#f5b7b1'
+                                                };">
+                                                <i class="fa fa-percent me-1"/>
+                                                <t t-esc="Math.round(record.dealer_win_rate.raw_value)"/>% Win Rate
+                                            </div>
                                         </div>
                                     </t>
                                 </div>
@@ -272,6 +327,20 @@
                         <span class="o_stat_text">Dealer</span>
                     </div>
                 </button>
+                <button class="oe_stat_button"
+                        name="action_view_dealer_leads"
+                        type="object"
+                        icon="fa-phone"
+                        invisible="not is_dealer">
+                    <field name="dealer_lead_count" widget="statinfo" string="Leads"/>
+                </button>
+                <button class="oe_stat_button"
+                        name="action_view_dealer_activities"
+                        type="object"
+                        icon="fa-calendar"
+                        invisible="not is_dealer">
+                    <field name="dealer_activity_count" widget="statinfo" string="Activities"/>
+                </button>
             </xpath>
 
             <!-- Dealer Info tab appended after existing tabs -->
@@ -285,15 +354,20 @@
                             <field name="dealer_representative_id" widget="many2one_avatar_user"/>
                         </group>
                     </group>
-                    <group string="Product Lines">
-                        <field name="product_line_ids" nolabel="1" invisible="not is_dealer">
-                            <list editable="bottom">
-                                <field name="product_line_id" options="{'no_create': False}"/>
-                                <field name="notes"/>
-                                <field name="active" column_invisible="True"/>
-                            </list>
-                        </field>
-                    </group>
+                    <notebook invisible="not is_dealer">
+                        <page string="Product Lines">
+                            <field name="product_line_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="product_line_id"
+                                           options="{'no_create': False}"
+                                           domain="[('id', 'in', parent.available_product_line_ids)]"/>
+                                    <field name="rating" widget="priority"/>
+                                    <field name="notes"/>
+                                    <field name="active" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </page>
             </xpath>
 
@@ -301,17 +375,25 @@
                  when the partner is not yet a dealer (so it can be set) -->
             <xpath expr="//field[@name='lang']" position="after">
                 <field name="is_dealer" widget="boolean_toggle"/>
-                <field name="dealer_status_id"
-                       options="{'no_create': True}"
-                       invisible="not is_dealer"/>
-                <field name="territory_id"
-                       options="{'no_create': True}"
-                       invisible="not is_dealer"/>
-                <field name="dealer_representative_id"
-                       widget="many2one_avatar_user"
-                       invisible="not is_dealer"/>
             </xpath>
 
+            <xpath expr="//div[@name='button_box']" position="after">
+                <widget name="web_ribbon" title="Dealer" bg_color="text-bg-info" invisible="not is_dealer"/>
+            </xpath>
+
+            <!-- DealerIQ banner -->
+            <xpath expr="//sheet" position="before">
+                <div invisible="not is_dealer"
+                     style="background: linear-gradient(135deg, #f8f9ff 0%, #eef2ff 100%);
+                            border-radius: 12px;
+                            padding: 18px 22px;
+                            margin-bottom: 16px;
+                            border-left: 4px solid #6c63ff;
+                            box-shadow: 0 2px 8px rgba(108,99,255,0.08);">
+                    <field name="dealer_iq_html" widget="html" readonly="1" nolabel="1"
+                           style="background:transparent; border:none; padding:0; margin:0;"/>
+                </div>
+            </xpath>
         </field>
     </record>
 

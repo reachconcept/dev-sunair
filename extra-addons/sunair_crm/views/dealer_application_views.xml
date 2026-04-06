@@ -167,7 +167,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Footer: dealer representative -->
+                                <!-- Footer: Representative -->
                                 <t t-if="record.dealer_representative_id.raw_value">
                                     <div class="d-flex align-items-center gap-1 mt-2"
                                          style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:20px; padding: 2px 8px 2px 2px;">
@@ -403,7 +403,7 @@
                                 <field name="signed_by_name" placeholder="Signer Name (Please Print)"/>
                                 <field name="signed_by_title" placeholder="Title"/>
                                 <field name="signature_date"/>
-                                <field name="dealer_representative" placeholder="Dealer Representative"/>
+                                <field name="dealer_representative" placeholder="Representative"/>
                             </group>
                         </page>
 

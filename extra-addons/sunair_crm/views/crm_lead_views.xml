@@ -90,6 +90,7 @@
                 <field name="territory_id" readonly="1"/>
                 <field name="allowed_tag_ids" invisible="1"/>
                 <field name="crm_product_category_id"/>
+                <field name="dealer_id" options="{'no_create': True}"/>
             </xpath>
 
         </field>

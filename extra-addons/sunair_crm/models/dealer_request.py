@@ -98,7 +98,7 @@ class DealerRequest(models.Model):
     # Relations
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
-    dealer_representative_id = fields.Many2one('res.users', string='Dealer Representative', tracking=True)
+    dealer_representative_id = fields.Many2one('res.users', string='Representative', tracking=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     application_id = fields.Many2one('dealer.application', string='Application', readonly=True, copy=False)
 

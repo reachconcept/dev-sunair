@@ -25,7 +25,7 @@ class DealerApplication(models.Model):
     lead_id = fields.Many2one('crm.lead', string='Lead', tracking=True)
     partner_id = fields.Many2one('res.partner', string='Partner', tracking=True)
     territory_id = fields.Many2one('crm.territory', string='Territory', tracking=True)
-    dealer_representative_id = fields.Many2one('res.users', string='Dealer Representative', tracking=True)
+    dealer_representative_id = fields.Many2one('res.users', string='Representative', tracking=True)
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
     order_id = fields.Many2one('sale.order', string='Sales Order', readonly=True)
@@ -127,7 +127,7 @@ class DealerApplication(models.Model):
     signed_by_name = fields.Char(string='Signer Name')
     signed_by_title = fields.Char(string='Title')
     signature_date = fields.Date(string='Date')
-    dealer_representative = fields.Char(string='Dealer Representative')
+    dealer_representative = fields.Char(string='Representative')
     is_awcbn = fields.Boolean(string='AWCBN Member')
     awcbn_number = fields.Char(string='AWCBN Number')
 
