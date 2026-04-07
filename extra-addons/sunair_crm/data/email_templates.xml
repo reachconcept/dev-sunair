@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Email to the dealer when a lead is assigned to them -->
+    <record id="email_template_dealer_lead_assigned" model="mail.template">
+        <field name="name">Lead Assigned to Dealer</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="subject">New Lead Assigned to You: {{ object.name }}</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) | safe }}</field>
+        <field name="email_to">{{ object.dealer_id.email | safe }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 600px; margin: 0 auto;">
+
+                <div style="background-color: #2c5364; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+                    <h2 style="color: #ffffff; margin: 0; font-size: 20px;">New Lead Assigned to You</h2>
+                    <p style="color: rgba(255,255,255,0.75); margin: 6px 0 0 0; font-size: 13px;">Sunair Shades — Dealer Portal</p>
+                </div>
+
+                <div style="background-color: #f9f9f9; padding: 28px 32px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px;">
+
+                    <p style="margin-top: 0;">Dear <strong><t t-out="object.dealer_id.name or 'Dealer'"/></strong>,</p>
+
+                    <p>A new sales lead has been assigned to you. Please review the details below and reach out to the prospect at your earliest convenience.</p>
+
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px;">
+                        <tr style="background-color: #f0f4ff;">
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; width: 35%; border-bottom: 1px solid #e0e0e0;">Lead</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="object.name"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; border-bottom: 1px solid #e0e0e0;">Contact Name</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="object.contact_name or object.partner_name or '—'"/></td>
+                        </tr>
+                        <tr style="background-color: #f0f4ff;">
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; border-bottom: 1px solid #e0e0e0;">Email</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="object.email_from or '—'"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; border-bottom: 1px solid #e0e0e0;">Phone</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="object.phone or '—'"/></td>
+                        </tr>
+                        <tr style="background-color: #f0f4ff;">
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; border-bottom: 1px solid #e0e0e0;">Location</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="(object.city or '') + (', ' + object.state_id.name if object.state_id else '') + (' ' + object.zip if object.zip else '') or '—'"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b; border-bottom: 1px solid #e0e0e0;">Territory</td>
+                            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0;"><t t-out="object.territory_id.name or '—'"/></td>
+                        </tr>
+                        <tr style="background-color: #f0f4ff;">
+                            <td style="padding: 10px 14px; font-weight: 600; color: #1e1b4b;">Notes</td>
+                            <td style="padding: 10px 14px;"><t t-out="object.description or '—'"/></td>
+                        </tr>
+                    </table>
+
+                    <p>Please make contact with this prospect as soon as possible. If you have any questions or need assistance, do not hesitate to contact your Sunair representative.</p>
+
+                    <p style="margin-bottom: 0;">Best regards,<br/><strong>Sunair Shades Team</strong></p>
+
+                </div>
+
+                <p style="font-size: 11px; color: #aaa; text-align: center; margin-top: 16px;">
+                    This is an automated message from Sunair Shades. Please do not reply directly to this email.
+                </p>
+
+            </div>
+        </field>
+        <field name="lang">{{ object.dealer_id.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- Email to the lead contact when a dealer has been assigned -->
+    <record id="email_template_lead_dealer_assigned" model="mail.template">
+        <field name="name">Dealer Assigned — Notification to Lead</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="subject">Great News — A Sunair Dealer Has Been Assigned to You</field>
+        <field name="email_from">{{ (object.company_id.email or user.email) | safe }}</field>
+        <field name="email_to">{{ object.email_from | safe }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 600px; margin: 0 auto;">
+
+                <div style="background-color: #20c997; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+                    <h2 style="color: #ffffff; margin: 0; font-size: 20px;">A Dealer Has Been Assigned to You</h2>
+                    <p style="color: rgba(255,255,255,0.85); margin: 6px 0 0 0; font-size: 13px;">Sunair Shades — Your Inquiry Update</p>
+                </div>
+
+                <div style="background-color: #f9f9f9; padding: 28px 32px; border: 1px solid #e5e5e5; border-top: none; border-radius: 0 0 8px 8px;">
+
+                    <p style="margin-top: 0;">Dear <strong><t t-out="object.contact_name or object.partner_name or 'Valued Customer'"/></strong>,</p>
+
+                    <p>Thank you for your interest in Sunair Shades products. We are pleased to let you know that a certified Sunair dealer in your area has been assigned to assist you.</p>
+
+                    <div style="background-color: #f0fdf9; border: 1px solid #a7f3d0; border-radius: 8px; padding: 18px 22px; margin: 20px 0;">
+                        <p style="margin: 0 0 6px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #065f46;">Your Assigned Dealer</p>
+                        <p style="margin: 0; font-size: 16px; font-weight: 700; color: #1e1b4b;"><t t-out="object.dealer_id.name or '—'"/></p>
+                        <t t-if="object.dealer_id.phone or object.dealer_id.email">
+                            <p style="margin: 8px 0 0 0; font-size: 13px; color: #374151;">
+                                <t t-if="object.dealer_id.phone">📞 <t t-out="object.dealer_id.phone"/><br/></t>
+                                <t t-if="object.dealer_id.email">✉️ <t t-out="object.dealer_id.email"/></t>
+                            </p>
+                        </t>
+                    </div>
+
+                    <p>Your dealer will be in touch with you shortly to discuss your requirements and guide you through our product range. You can also reach out to them directly using the contact details above.</p>
+
+                    <p>We look forward to helping you find the perfect Sunair solution.</p>
+
+                    <p style="margin-bottom: 0;">Warm regards,<br/><strong>Sunair Shades Team</strong></p>
+
+                </div>
+
+                <p style="font-size: 11px; color: #aaa; text-align: center; margin-top: 16px;">
+                    This is an automated message from Sunair Shades. Please do not reply directly to this email.
+                </p>
+
+            </div>
+        </field>
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

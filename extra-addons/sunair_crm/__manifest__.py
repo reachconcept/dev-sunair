@@ -16,6 +16,7 @@
         "security/ir.model.access.csv",
         "data/sequence.xml",
         "data/dealer_application_state_data.xml",
+        "data/email_templates.xml",
         "views/crm_stage_views.xml",
         "views/customer_type_views.xml",
         "views/lead_type_views.xml",
