@@ -135,9 +135,6 @@ class DealerMatchWizard(models.TransientModel):
         return {'type': 'ir.actions.act_window_close'}
 
     def _send_dealer_emails(self, lead, dealer):
-        """Render both email templates and send immediately via mail.mail."""
-        IrMail = self.env['mail.mail']
-
         template_dealer = self.env.ref(
             'sunair_crm.email_template_dealer_lead_assigned', raise_if_not_found=False
         )
@@ -145,29 +142,11 @@ class DealerMatchWizard(models.TransientModel):
             'sunair_crm.email_template_lead_dealer_assigned', raise_if_not_found=False
         )
 
-        mails = IrMail
         if template_dealer and dealer.email:
-            values = template_dealer.generate_email(lead.id, ['subject', 'body_html', 'email_from'])
-            mails |= IrMail.create({
-                'subject': values.get('subject', ''),
-                'body_html': values.get('body_html', ''),
-                'email_from': values.get('email_from', self.env.user.email),
-                'email_to': dealer.email,
-                'auto_delete': True,
-            })
+            template_dealer.send_mail(lead.id, force_send=True, raise_exception=False)
 
         if template_lead and lead.email_from:
-            values = template_lead.generate_email(lead.id, ['subject', 'body_html', 'email_from'])
-            mails |= IrMail.create({
-                'subject': values.get('subject', ''),
-                'body_html': values.get('body_html', ''),
-                'email_from': values.get('email_from', self.env.user.email),
-                'email_to': lead.email_from,
-                'auto_delete': True,
-            })
-
-        if mails:
-            mails.send(raise_exception=False)
+            template_lead.send_mail(lead.id, force_send=True, raise_exception=False)
 
 
 class DealerMatchLine(models.TransientModel):

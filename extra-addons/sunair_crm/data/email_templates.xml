@@ -6,8 +6,8 @@
         <field name="name">Lead Assigned to Dealer</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="subject">New Lead Assigned to You: {{ object.name }}</field>
-        <field name="email_from">{{ (object.company_id.email or user.email) | safe }}</field>
-        <field name="email_to">{{ object.dealer_id.email | safe }}</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.dealer_id.email }}</field>
         <field name="body_html" type="html">
             <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 600px; margin: 0 auto;">
 
@@ -74,8 +74,8 @@
         <field name="name">Dealer Assigned — Notification to Lead</field>
         <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="subject">Great News — A Sunair Dealer Has Been Assigned to You</field>
-        <field name="email_from">{{ (object.company_id.email or user.email) | safe }}</field>
-        <field name="email_to">{{ object.email_from | safe }}</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.email_from }}</field>
         <field name="body_html" type="html">
             <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333; max-width: 600px; margin: 0 auto;">
 
