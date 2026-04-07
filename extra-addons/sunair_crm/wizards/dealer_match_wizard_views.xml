@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_dealer_match_wizard_form" model="ir.ui.view">
+        <field name="name">crm.lead.dealer.match.wizard.form</field>
+        <field name="model">crm.lead.dealer.match.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Find Best Dealer">
+                <sheet>
+
+                    <!-- Header info bar -->
+                    <div style="background:#f0f4ff; border:1px solid #c7d2fe; border-radius:10px;
+                                padding:14px 18px; margin-bottom:16px; display:flex; gap:24px; align-items:center;">
+                        <div>
+                            <span style="font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Lead</span>
+                            <div style="font-weight:600; color:#1e1b4b;">
+                                <field name="lead_id" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">ZIP</span>
+                            <div style="font-weight:600; color:#1e1b4b;">
+                                <field name="zip_code" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="font-size:11px; color:#6b7280; text-transform:uppercase; letter-spacing:0.5px;">Territory</span>
+                            <div style="font-weight:600; color:#1e1b4b;">
+                                <field name="territory_id" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product line selector -->
+                    <group string="Select Required Product Lines">
+                        <field name="product_line_ids" widget="many2many_tags"
+                               nolabel="1"
+                               options="{'no_create': True}"
+                               placeholder="Select one or more product lines this lead requires…"/>
+                    </group>
+
+                    <!-- Results -->
+                    <div invisible="not matched" style="margin-top:8px;">
+                        <div style="font-size:13px; font-weight:600; color:#1e1b4b; margin-bottom:8px;">
+                            <i class="fa fa-trophy me-1" style="color:#6c63ff;"/> Matched Dealers
+                            <span style="font-size:11px; font-weight:400; color:#6b7280; margin-left:6px;">
+                                — sorted by product line score · select one and click Assign
+                            </span>
+                        </div>
+                        <field name="result_ids" nolabel="1">
+                            <list>
+                                <field name="selected" widget="boolean_toggle" string="✓"/>
+                                <field name="partner_id" string="Dealer"/>
+                                <field name="territory_id" string="Territory"/>
+                                <field name="dealer_status_id" string="Status" widget="badge"/>
+                                <field name="coverage" string="Coverage"/>
+                                <field name="score" string="Score"
+                                       decoration-success="score >= 8"
+                                       decoration-warning="score >= 4 and score &lt; 8"
+                                       decoration-danger="score &lt; 4"/>
+                                <field name="lead_count" string="Leads"/>
+                                <field name="won_lead_count" string="Won"/>
+                                <field name="win_rate" string="Win Rate %"
+                                       widget="float"
+                                       decoration-success="win_rate >= 66"
+                                       decoration-warning="win_rate >= 33 and win_rate &lt; 66"
+                                       decoration-danger="win_rate &lt; 33"/>
+                            </list>
+                        </field>
+                    </div>
+
+                    <div invisible="matched"
+                         style="text-align:center; padding:24px; color:#9ca3af; font-size:13px;">
+                        <i class="fa fa-search fa-2x" style="display:block; margin-bottom:8px;"/>
+                        Select product lines above and click <strong>Find Best Dealers</strong>
+                    </div>
+
+                </sheet>
+                <footer>
+                    <button name="action_find_dealers" type="object"
+                            string="Find Best Dealers"
+                            class="btn-primary"/>
+                    <button name="action_assign_dealer" type="object"
+                            string="Assign Selected Dealer"
+                            class="btn-success"
+                            invisible="not matched"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

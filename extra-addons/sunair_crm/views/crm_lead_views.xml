@@ -58,6 +58,14 @@
                 </button>
             </xpath>
 
+            <xpath expr="//header" position="inside">
+                <button name="action_open_dealer_match_wizard"
+                        type="object"
+                        string="Find Best Dealer"
+                        class="btn-secondary"
+                        invisible="dealer_id != False"/>
+            </xpath>
+
             <!-- Filter stage_id to exclude dealer-only stages in regular CRM -->
             <xpath expr="//field[@name='stage_id']" position="attributes">
                 <attribute name="domain">[('pipeline_type', 'in', ['all', 'regular'])]</attribute>

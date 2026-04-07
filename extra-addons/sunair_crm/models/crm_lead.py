@@ -97,6 +97,18 @@ class CrmLead(models.Model):
             'target': 'current',
         }
 
+    def action_open_dealer_match_wizard(self):
+        self.ensure_one()
+        wizard = self.env['crm.lead.dealer.match.wizard'].create({'lead_id': self.id})
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Find Best Dealer',
+            'res_model': 'crm.lead.dealer.match.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
     def action_view_applications(self):
         return {
             'type': 'ir.actions.act_window',

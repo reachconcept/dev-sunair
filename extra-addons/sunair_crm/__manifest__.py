@@ -21,6 +21,7 @@
         "views/lead_type_views.xml",
         "views/crm_territory_views.xml",
         "views/crm_lead_views.xml",
+        "wizards/dealer_match_wizard_views.xml",
         "views/dealer_application_views.xml",
         "views/dealer_request_views.xml",
         "views/dealer_activity_views.xml",
