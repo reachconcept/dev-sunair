@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="dealer_dashboard.DealerOverview">
+<div class="dealer_overview_dashboard">
+
+    <t t-if="state.loading">
+        <div class="dd-loading">
+            <div class="dd-spinner"/>
+            <p>Loading dealer data…</p>
+        </div>
+    </t>
+
+    <t t-else="">
+
+        <!-- ── Sticky Header ── -->
+        <div class="dd-header">
+            <div class="dd-header-left">
+                <div class="dd-logo-mark"><i class="fa fa-building"/></div>
+                <div class="dd-header-text">
+                    <h1>Dealer Overview</h1>
+                    <p>Network performance &amp; distribution intelligence</p>
+                </div>
+            </div>
+            <div class="dd-header-right">
+                <!-- Period selector -->
+                <div class="dd-period-bar">
+                    <button t-att-class="state.period === '7'    ? 'dd-period-btn active' : 'dd-period-btn'" t-on-click="() => this.setPeriod('7')">7D</button>
+                    <button t-att-class="state.period === '30'   ? 'dd-period-btn active' : 'dd-period-btn'" t-on-click="() => this.setPeriod('30')">30D</button>
+                    <button t-att-class="state.period === '90'   ? 'dd-period-btn active' : 'dd-period-btn'" t-on-click="() => this.setPeriod('90')">90D</button>
+                    <button t-att-class="state.period === 'year' ? 'dd-period-btn active' : 'dd-period-btn'" t-on-click="() => this.setPeriod('year')">This Year</button>
+                    <button t-att-class="state.period === 'all'  ? 'dd-period-btn active' : 'dd-period-btn'" t-on-click="() => this.setPeriod('all')">All Time</button>
+                </div>
+                <button class="dd-btn-refresh" t-on-click="onRefresh">
+                    <i class="fa fa-refresh"/> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Scrollable Body ── -->
+        <div class="dd-body">
+
+            <!-- KPI Row -->
+            <div class="dd-kpi-row">
+
+                <div class="dd-kpi-card kpi-active" t-on-click="actionViewAllDealers">
+                    <div class="dd-kpi-header">
+                        <span class="dd-kpi-label">Total Dealers</span>
+                        <div class="dd-kpi-icon" style="--icon-bg:#EEEFFE;--icon-color:#5B73F5">
+                            <i class="fa fa-building"/>
+                        </div>
+                    </div>
+                    <div class="dd-kpi-number"><t t-esc="state.kpis.total_dealers || 0"/></div>
+                    <div class="dd-kpi-foot">
+                        <span class="dd-chip ch-indigo"><t t-esc="getActivePercent()"/>% active</span>
+                    </div>
+                </div>
+
+                <div class="dd-kpi-card" t-on-click="actionViewActiveDealers">
+                    <div class="dd-kpi-header">
+                        <span class="dd-kpi-label">Active</span>
+                        <div class="dd-kpi-icon" style="--icon-bg:#E8FBF4;--icon-color:#10B981">
+                            <i class="fa fa-check-circle"/>
+                        </div>
+                    </div>
+                    <div class="dd-kpi-number"><t t-esc="state.kpis.active_dealers || 0"/></div>
+                    <div class="dd-kpi-foot">
+                        <span class="dd-chip ch-rose"><t t-esc="state.kpis.inactive_dealers || 0"/> inactive</span>
+                    </div>
+                </div>
+
+                <div class="dd-kpi-card">
+                    <div class="dd-kpi-header">
+                        <span class="dd-kpi-label">New This Month</span>
+                        <div class="dd-kpi-icon" style="--icon-bg:#FEF4E3;--icon-color:#F5A623">
+                            <i class="fa fa-star"/>
+                        </div>
+                    </div>
+                    <div class="dd-kpi-number"><t t-esc="state.kpis.new_this_month || 0"/></div>
+                    <div class="dd-kpi-foot">
+                        <span class="dd-chip ch-amber"><t t-esc="state.kpis.new_this_quarter || 0"/> this qtr</span>
+                    </div>
+                </div>
+
+                <div class="dd-kpi-card" t-on-click="actionViewApplications">
+                    <div class="dd-kpi-header">
+                        <span class="dd-kpi-label">Applications</span>
+                        <div class="dd-kpi-icon" style="--icon-bg:#EEEFFE;--icon-color:#5B73F5">
+                            <i class="fa fa-file-text"/>
+                        </div>
+                    </div>
+                    <div class="dd-kpi-number"><t t-esc="state.kpis.total_applications || 0"/></div>
+                    <div class="dd-kpi-foot">
+                        <span class="dd-chip ch-ghost">click to view</span>
+                    </div>
+                </div>
+
+                <div class="dd-kpi-card" t-on-click="actionViewRequests">
+                    <div class="dd-kpi-header">
+                        <span class="dd-kpi-label">Requests</span>
+                        <div class="dd-kpi-icon" style="--icon-bg:#F3EEFF;--icon-color:#8B5CF6">
+                            <i class="fa fa-inbox"/>
+                        </div>
+                    </div>
+                    <div class="dd-kpi-number"><t t-esc="state.kpis.total_requests || 0"/></div>
+                    <div class="dd-kpi-foot">
+                        <span class="dd-chip ch-ghost">click to view</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main 2x2 Grid -->
+            <div class="dd-main-grid">
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#5B73F5"/>
+                            Dealers by territory
+                        </div>
+                        <p class="dd-card-sub">Geographic distribution across sales regions</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-chart-wrap h-220"><canvas t-ref="barChart"/></div>
+                    </div>
+                </div>
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#10B5AD"/>
+                            Product line split
+                        </div>
+                        <p class="dd-card-sub">Distribution by assigned product line</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-chart-wrap h-200"><canvas t-ref="donutChart"/></div>
+                    </div>
+                </div>
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#5B73F5"/>
+                            New dealer growth
+                        </div>
+                        <p class="dd-card-sub">Monthly onboarding trend — last 6 months</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-chart-wrap h-200"><canvas t-ref="lineChart"/></div>
+                    </div>
+                </div>
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#8B5CF6"/>
+                            Knowledge levels
+                        </div>
+                        <p class="dd-card-sub">Dealer product expertise distribution</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-chart-wrap h-185"><canvas t-ref="knowledgeChart"/></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom 3-col Grid -->
+            <div class="dd-bottom-grid">
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#5B73F5"/>
+                            Application pipeline
+                        </div>
+                        <p class="dd-card-sub">By current stage</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-bar-list">
+                            <t t-foreach="state.appFunnel" t-as="item" t-key="item.name">
+                                <div class="dd-bar-row">
+                                    <span class="dd-bar-label"><t t-esc="item.name"/></span>
+                                    <div class="dd-bar-track">
+                                        <div class="dd-bar-fill fill-indigo" t-att-style="getStatusBarStyle(item.count)"/>
+                                    </div>
+                                    <span class="dd-bar-count"><t t-esc="item.count"/></span>
+                                </div>
+                            </t>
+                            <t t-if="!state.appFunnel.length">
+                                <div class="dd-empty">No application data</div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#10B5AD"/>
+                            Request states
+                        </div>
+                        <p class="dd-card-sub">By workflow state</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-bar-list">
+                            <t t-foreach="state.requestStates" t-as="item" t-key="item.name">
+                                <div class="dd-bar-row">
+                                    <span class="dd-bar-label"><t t-esc="item.name"/></span>
+                                    <div class="dd-bar-track">
+                                        <div class="dd-bar-fill fill-teal" t-att-style="getReqBarStyle(item.count)"/>
+                                    </div>
+                                    <span class="dd-bar-count"><t t-esc="item.count"/></span>
+                                </div>
+                            </t>
+                            <t t-if="!state.requestStates.length">
+                                <div class="dd-empty">No request data</div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dd-card">
+                    <div class="dd-card-head">
+                        <div class="dd-card-title">
+                            <span class="dd-title-dot" style="--dot-color:#8B5CF6"/>
+                            Top states
+                        </div>
+                        <p class="dd-card-sub">Dealer concentration by US state</p>
+                    </div>
+                    <div class="dd-card-divider"/>
+                    <div class="dd-card-body">
+                        <div class="dd-state-list">
+                            <t t-foreach="state.stateData.slice(0, 8)" t-as="item" t-key="item.name">
+                                <div class="dd-state-row">
+                                    <span class="dd-state-badge"><t t-esc="item.name"/></span>
+                                    <div class="dd-bar-track">
+                                        <div class="dd-bar-fill fill-violet" t-att-style="getStateBarStyle(item.count)"/>
+                                    </div>
+                                    <span class="dd-bar-count"><t t-esc="item.count"/></span>
+                                </div>
+                            </t>
+                            <t t-if="!state.stateData.length">
+                                <div class="dd-empty">No state data</div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </t>
+</div>
+</t>
+
+</templates>

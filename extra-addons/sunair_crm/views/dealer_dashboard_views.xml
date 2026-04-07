@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_dealer_overview_dashboard" model="ir.actions.client">
+        <field name="name">Dealer Overview</field>
+        <field name="tag">dealer_overview_dashboard</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_dealers_dashboard"
+              name="Dealer Overview"
+              parent="sunair_crm.menu_dealer_application_root"
+              action="action_dealer_overview_dashboard"
+              sequence="-1"/>
+
+</odoo>

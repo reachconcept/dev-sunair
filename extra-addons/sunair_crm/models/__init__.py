@@ -15,3 +15,4 @@ from . import dealer_application_state
 from . import product_line
 from . import dealer_product_line
 from . import dealer_status
+from . import dealer_dashboard

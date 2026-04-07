@@ -1,0 +1,365 @@
+
+.dealer_overview_dashboard {
+    --c-bg:        #F4F6FA;
+    --c-surf:      #FFFFFF;
+    --c-surf2:     #F8FAFC;
+    --c-bdr:       #E8EDF5;
+    --c-bdr2:      #D1D9E6;
+    --c-ink:       #0F1A2E;
+    --c-ink2:      #3B4A63;
+    --c-ink3:      #8B9BB4;
+    --c-ind:       #5B73F5;
+    --c-ind-lt:    #EEF0FE;
+    --c-ind-dk:    #3D52D1;
+    --c-teal:      #10B5AD;
+    --c-teal-lt:   #E3F7F6;
+    --c-amb:       #F5A623;
+    --c-amb-lt:    #FEF4E3;
+    --c-rose:      #F5476A;
+    --c-rose-lt:   #FEF0F3;
+    --c-vio:       #8B5CF6;
+    --c-vio-lt:    #F3EEFF;
+    --c-grn:       #10B981;
+    --c-grn-lt:    #E8FBF4;
+    --r:    16px;
+    --rsm:  10px;
+    --sh:   0 1px 4px rgba(15,26,46,.06), 0 0 0 1px rgba(15,26,46,.04);
+    --shh:  0 12px 32px rgba(91,115,245,.14), 0 0 0 1.5px rgba(91,115,245,.2);
+    --fh:   'Sora', system-ui, sans-serif;
+    --fb:   'Nunito Sans', system-ui, sans-serif;
+
+    font-family: var(--fb);
+    background: var(--c-bg);
+
+    // ── KRITIK: scroll fix ───────────────────────────────────
+    // Odoo action container height'ı sınırlar,
+    // dashboard'un kendi scroll'u olmalı
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // ── Loading ──────────────────────────────────────────────
+    .dd-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 60vh;
+        gap: 16px;
+        p { font-size: 14px; color: var(--c-ink3); }
+    }
+
+    .dd-spinner {
+        width: 40px; height: 40px;
+        border: 3px solid var(--c-bdr2);
+        border-top-color: var(--c-ind);
+        border-radius: 50%;
+        animation: dd-spin .75s linear infinite;
+    }
+    @keyframes dd-spin { to { transform: rotate(360deg); } }
+
+    // ── Header ───────────────────────────────────────────────
+    .dd-header {
+        background: var(--c-surf);
+        border-bottom: 1px solid var(--c-bdr);
+        padding: 0 2rem;
+        height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        flex-shrink: 0;
+    }
+
+    .dd-header-left  { display: flex; align-items: center; gap: 12px; }
+    .dd-header-right { display: flex; align-items: center; gap: 8px; }
+
+    .dd-logo-mark {
+        width: 38px; height: 38px;
+        background: linear-gradient(140deg, var(--c-ind) 0%, var(--c-ind-dk) 100%);
+        border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 4px 12px rgba(91,115,245,.3);
+        flex-shrink: 0;
+        i { color: #fff; font-size: 15px; }
+    }
+
+    .dd-header-text {
+        h1 {
+            font-family: var(--fh);
+            font-size: 15.5px; font-weight: 600;
+            color: var(--c-ink); margin: 0 0 1px;
+            letter-spacing: -.25px;
+        }
+        p { font-size: 11px; color: var(--c-ink3); margin: 0; }
+    }
+
+    .dd-live-badge {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 11px; font-weight: 600;
+        color: var(--c-grn); background: var(--c-grn-lt);
+        padding: 4px 11px; border-radius: 20px;
+        .dd-dot {
+            width: 5px; height: 5px;
+            background: var(--c-grn); border-radius: 50%;
+            animation: dd-blink 2s ease infinite;
+        }
+    }
+    @keyframes dd-blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .dd-btn-refresh {
+        display: flex; align-items: center; gap: 6px;
+        padding: 7px 15px;
+        font-family: var(--fb); font-size: 12.5px; font-weight: 600;
+        color: var(--c-ind); background: var(--c-ind-lt);
+        border: 1.5px solid transparent; border-radius: var(--rsm); cursor: pointer;
+        transition: all .18s;
+        &:hover {
+            background: var(--c-ind); color: #fff;
+            box-shadow: 0 4px 14px rgba(91,115,245,.35);
+        }
+        i { font-size: 11px; }
+    }
+
+    // ── Period pill selector ─────────────────────────────────
+    .dd-period-bar {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        background: var(--c-surf2);
+        border: 1px solid var(--c-bdr);
+        border-radius: 10px;
+        padding: 3px;
+    }
+
+    .dd-period-btn {
+        padding: 5px 12px;
+        font-family: var(--fb);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--c-ink3);
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: all .15s ease;
+        white-space: nowrap;
+        line-height: 1;
+
+        &:hover:not(.active) {
+            color: var(--c-ink2);
+            background: rgba(255,255,255,.7);
+        }
+
+        &.active {
+            background: var(--c-surf);
+            color: var(--c-ind);
+            box-shadow: 0 1px 4px rgba(15,23,42,.08), 0 0 0 1px rgba(15,23,42,.04);
+        }
+    }
+
+    // ── Body ─────────────────────────────────────────────────
+    .dd-body {
+        padding: 1.75rem 2rem 3rem;
+    }
+
+    // ── KPI Row ──────────────────────────────────────────────
+    .dd-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 1.5rem;
+    }
+
+    .dd-kpi-card {
+        background: var(--c-surf);
+        border-radius: var(--r);
+        padding: 1.25rem 1.3rem 1.1rem;
+        box-shadow: var(--sh);
+        cursor: pointer;
+        transition: transform .22s ease, box-shadow .22s ease;
+        position: relative;
+        overflow: hidden;
+
+        // renkli üst çizgi
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 1rem; right: 1rem;
+            height: 2px;
+            background: var(--kpi-line, transparent);
+            border-radius: 0 0 3px 3px;
+            transition: left .22s, right .22s;
+        }
+
+        &.kpi-active { --kpi-line: var(--c-ind); }
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shh);
+            &::after { left: 0; right: 0; --kpi-line: var(--c-ind); }
+        }
+    }
+
+    .dd-kpi-header {
+        display: flex; align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .dd-kpi-label {
+        font-size: 10.5px; font-weight: 700;
+        color: var(--c-ink3);
+        text-transform: uppercase; letter-spacing: .8px;
+    }
+
+    .dd-kpi-icon {
+        width: 32px; height: 32px; border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--icon-bg, var(--c-ind-lt));
+        color: var(--icon-color, var(--c-ind));
+        i { font-size: 13px; }
+    }
+
+    .dd-kpi-number {
+        font-family: var(--fh);
+        font-size: 34px; font-weight: 700;
+        color: var(--c-ink);
+        letter-spacing: -2px; line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .dd-kpi-foot { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .dd-chip {
+        font-size: 11px; font-weight: 600;
+        padding: 2px 9px; border-radius: 20px; white-space: nowrap;
+        &.ch-indigo { background: var(--c-ind-lt); color: var(--c-ind-dk); }
+        &.ch-teal   { background: var(--c-teal-lt); color: var(--c-teal); }
+        &.ch-amber  { background: var(--c-amb-lt);  color: #9A5B00; }
+        &.ch-ghost  { background: var(--c-surf2); color: var(--c-ink3); border: 1px solid var(--c-bdr); }
+        &.ch-green  { background: var(--c-grn-lt); color: #0A7A56; }
+        &.ch-rose   { background: var(--c-rose-lt); color: var(--c-rose); }
+    }
+
+    // ── Cards ────────────────────────────────────────────────
+    .dd-card {
+        background: var(--c-surf);
+        border-radius: var(--r);
+        box-shadow: var(--sh);
+        overflow: visible; // donut legend için
+    }
+
+    .dd-card-head   { padding: 1.2rem 1.4rem .8rem; }
+
+    .dd-card-title {
+        font-family: var(--fh);
+        font-size: 14px; font-weight: 600;
+        color: var(--c-ink);
+        display: flex; align-items: center; gap: 8px; margin-bottom: 3px;
+        .dd-title-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--dot-color, var(--c-ind));
+            flex-shrink: 0;
+        }
+    }
+
+    .dd-card-sub     { font-size: 11.5px; color: var(--c-ink3); padding-left: 16px; }
+    .dd-card-divider { height: 1px; background: var(--c-bdr); margin: 0; }
+    .dd-card-body    { padding: 1.2rem 1.4rem 1.4rem; }
+
+    // ── Charts ───────────────────────────────────────────────
+    .dd-chart-wrap {
+        position: relative;
+        &.h-220 { height: 220px; }
+        &.h-200 { height: 200px; }
+        &.h-185 { height: 185px; }
+    }
+
+    // ── Grids ────────────────────────────────────────────────
+    .dd-main-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .dd-bottom-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        // scroll fix: alt kısmın görünmesi için
+        padding-bottom: 1rem;
+    }
+
+    // ── Bar list ─────────────────────────────────────────────
+    .dd-bar-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .dd-bar-row {
+        display: grid;
+        grid-template-columns: 115px 1fr 32px;
+        align-items: center; gap: 10px;
+    }
+
+    .dd-bar-label {
+        font-size: 12.5px; font-weight: 500; color: var(--c-ink2);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .dd-bar-track {
+        height: 7px; background: var(--c-bdr);
+        border-radius: 99px; overflow: hidden;
+    }
+
+    .dd-bar-fill {
+        height: 100%; border-radius: 99px;
+        transition: width .55s cubic-bezier(.4,0,.2,1);
+        &.fill-indigo { background: linear-gradient(90deg, var(--c-ind-lt), var(--c-ind)); }
+        &.fill-teal   { background: linear-gradient(90deg, var(--c-teal-lt), var(--c-teal)); }
+        &.fill-violet { background: linear-gradient(90deg, var(--c-vio-lt), var(--c-vio)); }
+    }
+
+    .dd-bar-count {
+        font-size: 12px; font-weight: 700; color: var(--c-ink);
+        font-family: var(--fh); text-align: right;
+    }
+
+    // ── State list ───────────────────────────────────────────
+    .dd-state-list  { display: flex; flex-direction: column; gap: 10px; }
+
+    .dd-state-row {
+        display: grid;
+        grid-template-columns: 44px 1fr 32px;
+        align-items: center; gap: 10px;
+    }
+
+    .dd-state-badge {
+        font-size: 10.5px; font-weight: 700;
+        color: var(--c-ind-dk); background: var(--c-ind-lt);
+        border-radius: 7px; padding: 4px 5px; text-align: center;
+        font-family: var(--fh);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    // ── Empty ────────────────────────────────────────────────
+    .dd-empty {
+        font-size: 13px; color: var(--c-ink3);
+        text-align: center; padding: 28px 0; font-style: italic;
+    }
+
+    // ── Responsive ───────────────────────────────────────────
+    @media (max-width: 1400px) {
+        .dd-kpi-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1100px) {
+        .dd-main-grid   { grid-template-columns: 1fr; }
+        .dd-bottom-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 780px) {
+        .dd-header, .dd-body { padding-left: 1rem; padding-right: 1rem; }
+        .dd-kpi-row     { grid-template-columns: 1fr 1fr; }
+        .dd-bottom-grid { grid-template-columns: 1fr; }
+    }
+}
