@@ -153,7 +153,7 @@
                         </p>
 
                         <div style="text-align: center; margin: 24px 0;">
-                            <a t-att-href="'/my/dealer-applications/%s' % object.id"
+                            <a t-att-href="'/my/dealer-applications'"
                             style="background: #1E3A8A; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 14px;">
                                 Complete Your Application
                             </a>
