@@ -158,13 +158,15 @@ class DealerPortal(CustomerPortal):
         }
 
     def _render_dealer_page(self, app, states, error=None, values=None):
-        is_locked = bool(app and app.state_type in self.LOCKED_STATES)
+        if not app:
+            return request.redirect('/my')
+        is_locked = bool(app.state_type in self.LOCKED_STATES)
         return request.render('sunair_crm.portal_dealer_detail', {
             'application': app,
             'states': states,
             'error': error or {},
-            'values': values if values is not None else (self._get_dealer_form_values(app) if app else {}),
-            'edit_app_id': app.id if app else None,
+            'values': values if values is not None else self._get_dealer_form_values(app),
+            'edit_app_id': app.id,
             'is_locked': is_locked,
             'page_name': 'dealer_application',
         })
