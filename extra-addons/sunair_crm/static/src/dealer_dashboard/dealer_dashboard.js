@@ -252,7 +252,7 @@ export class DealerOverviewDashboard extends Component {
             type: "ir.actions.act_window",
             name: "All Dealers",
             res_model: "res.partner",
-            views: [[false, "list"], [false, "kanban"], [false, "form"]],
+            views: [[false, "kanban"], [false, "list"], [false, "form"]],
             domain: [["is_dealer", "=", true]],
             target: "current",
         });
@@ -263,8 +263,20 @@ export class DealerOverviewDashboard extends Component {
             type: "ir.actions.act_window",
             name: "Active Dealers",
             res_model: "res.partner",
-            views: [[false, "list"], [false, "form"]],
+            views: [[false, "kanban"], [false, "list"], [false, "form"]],
             domain: [["is_dealer", "=", true], ["active", "=", true]],
+            target: "current",
+        });
+    }
+
+    actionViewNewThisMonth() {
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "New Dealers This Month",
+            res_model: "res.partner",
+            views: [[false, "kanban"], [false, "list"], [false, "form"]],
+            domain: [["is_dealer", "=", true], ["create_date", ">=", startOfMonth]],
             target: "current",
         });
     }

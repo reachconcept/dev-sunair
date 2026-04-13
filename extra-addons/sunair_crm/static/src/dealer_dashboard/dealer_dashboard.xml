@@ -69,7 +69,7 @@
                     </div>
                 </div>
 
-                <div class="dd-kpi-card">
+                <div class="dd-kpi-card" t-on-click="actionViewNewThisMonth">
                     <div class="dd-kpi-header">
                         <span class="dd-kpi-label">New This Month</span>
                         <div class="dd-kpi-icon" style="--icon-bg:#FEF4E3;--icon-color:#F5A623">
