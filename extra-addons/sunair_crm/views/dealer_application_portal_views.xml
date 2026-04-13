@@ -32,6 +32,7 @@
             t-attf-class="#{ferror.get(fname) and 'dp-err' or ''}"
             t-att-data-dp-required="frequired and '1' or None"
             t-att-placeholder="fplaceholder or None"
+            t-att-disabled="is_locked and 'disabled' or None"
         />
         <span t-if="ferror.get(fname)" class="dp-errmsg" style="display:block;">This field is required.</span>
     </div>
@@ -48,7 +49,8 @@
             t-attf-id="dp_#{fname}"
             t-attf-name="#{fname}"
             t-attf-class="#{ferror.get(fname) and 'dp-err' or ''}"
-            t-att-data-dp-required="frequired and '1' or None">
+            t-att-data-dp-required="frequired and '1' or None"
+            t-att-disabled="is_locked and 'disabled' or None">
             <option value="">Select state…</option>
             <t t-foreach="states" t-as="st">
                 <option t-att-value="st.id"
@@ -63,10 +65,7 @@
 
 
 <!-- ================================================================
-     MAIN PAGE  /my/dealer-applications
-     Sol: durum + özet bilgiler
-     Sağ: step form (kayıt varsa dolu, yoksa boş)
-     Alt: chatter (kayıt varsa)
+     MAIN PAGE
      ================================================================ -->
 <template id="portal_dealer_detail" name="Dealer Application" inherit_id="portal.portal_sidebar" primary="True">
     <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
@@ -90,16 +89,17 @@
                 <t t-set="entries">
                     <div class="d-flex flex-column gap-3 mt-3">
 
-                        <!-- Action buttons -->
+                        <!-- Buttons -->
                         <div class="d-flex flex-column gap-2">
                             <a href="/my" class="btn btn-light">
                                 <i class="fa fa-arrow-left me-1"/> My account
                             </a>
-                            <button type="submit" form="dp-form" class="btn btn-primary">
-                                <i class="fa fa-check me-1"/>
-                                <t t-if="application">Save changes</t>
-                                <t t-else="">Submit application</t>
-                            </button>
+                            <t t-if="not is_locked">
+                                <button type="submit" form="dp-form" name="action" value="save"
+                                        class="btn btn-secondary">
+                                    <i class="fa fa-floppy-o me-1"/> Save draft
+                                </button>
+                            </t>
                         </div>
 
                         <hr style="margin:4px 0;border-color:#f1f5f9;"/>
@@ -108,9 +108,7 @@
                         <div>
                             <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;margin:0 0 6px;">Status</p>
                             <t t-if="application">
-                                <t t-set="st" t-value="application.state_type"/>
                                 <t t-set="stage_color" t-value="application.stage_id.color if application.stage_id else 0"/>
-                                <!-- color alanına göre renklendirme -->
                                 <t t-if="stage_color == 10">
                                     <span style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#166534;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
                                         <span style="width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
@@ -156,31 +154,39 @@
                             </t>
                         </div>
 
+                        <!-- Locked notice -->
+                        <t t-if="is_locked">
+                            <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;">
+                                <p style="font-size:12px;font-weight:600;color:#92400e;margin:0 0 4px;">
+                                    <i class="fa fa-lock me-1"/> Application submitted
+                                </p>
+                                <small style="font-size:12px;color:#a16207;line-height:1.6;">
+                                    Your application is under review. No further edits are allowed.
+                                </small>
+                            </div>
+                        </t>
+
                         <!-- Info card -->
                         <t t-if="application">
                             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;">
-
                                 <div t-if="application.create_date" style="display:flex;flex-direction:column;gap:2px;">
                                     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Submitted on</span>
                                     <span style="font-size:13px;font-weight:500;color:#0f172a;">
                                         <t t-esc="application.create_date" t-options='{"widget":"date"}'/>
                                     </span>
                                 </div>
-
                                 <div t-if="application.email" style="display:flex;flex-direction:column;gap:2px;">
                                     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Email</span>
                                     <span style="font-size:13px;font-weight:500;color:#0f172a;word-break:break-all;">
                                         <t t-esc="application.email"/>
                                     </span>
                                 </div>
-
                                 <div t-if="application.phone" style="display:flex;flex-direction:column;gap:2px;">
                                     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Phone</span>
                                     <span style="font-size:13px;font-weight:500;color:#0f172a;">
                                         <t t-esc="application.phone"/>
                                     </span>
                                 </div>
-
                                 <div t-if="application.street" style="display:flex;flex-direction:column;gap:2px;">
                                     <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Address</span>
                                     <span style="font-size:13px;font-weight:500;color:#0f172a;line-height:1.6;">
@@ -190,7 +196,6 @@
                                         <t t-if="application.zip_code"> <t t-esc="application.zip_code"/></t>
                                     </span>
                                 </div>
-
                             </div>
                         </t>
 
@@ -203,10 +208,10 @@
                             </t>
                         </div>
 
-                        <!-- New application hint -->
+                        <!-- How it works (new) -->
                         <t t-if="not application">
                             <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;">
-                                <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#2563eb;margin:0 0 8px;">How it works</p>
+                                <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#2563eb;margin:0 0 10px;">How it works</p>
                                 <div style="display:flex;flex-direction:column;gap:10px;">
                                     <div style="display:flex;align-items:flex-start;gap:8px;">
                                         <span style="width:20px;height:20px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
@@ -214,7 +219,7 @@
                                     </div>
                                     <div style="display:flex;align-items:flex-start;gap:8px;">
                                         <span style="width:20px;height:20px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
-                                        <small style="font-size:12px;color:#1e40af;line-height:1.6;">Submit for our team to review</small>
+                                        <small style="font-size:12px;color:#1e40af;line-height:1.6;">Save draft anytime, submit when ready</small>
                                     </div>
                                     <div style="display:flex;align-items:flex-start;gap:8px;">
                                         <span style="width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
@@ -224,15 +229,31 @@
                             </div>
                         </t>
 
+                        <div class="navspy flex-grow-1 ps-0" t-ignore="true" role="complementary">
+                            <ul class="nav flex-column bs-sidenav"></ul>
+                        </div>
+
                     </div>
                 </t>
-            </t>    
+            </t>
 
             <!-- ====== SAĞ: FORM ====== -->
             <div id="dealer_app_content" class="col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0">
 
                 <t t-if="error.get('_global')">
-                    <div class="dp-alert mb-3">An error occurred while saving your application. Please try again.</div>
+                    <div class="dp-alert mb-3">An error occurred while saving. Please try again.</div>
+                </t>
+
+                <!-- Locked banner -->
+                <t t-if="is_locked">
+                    <div class="dp-alert mb-4"
+                         style="background:#fffbeb;border-color:#fde68a;color:#92400e;display:flex;align-items:center;gap:10px;">
+                        <i class="fa fa-lock fa-lg"/>
+                        <div>
+                            <strong>Application submitted</strong> — your application is currently under review.
+                            Fields are read-only. Contact us if you need to make changes.
+                        </div>
+                    </div>
                 </t>
 
                 <!-- stepper -->
@@ -306,7 +327,6 @@
                         </div>
 
                         <div class="dp-btn-row">
-                            <a href="/my" class="btn btn-light btn-sm">← My account</a>
                             <button type="button" class="btn btn-primary btn-sm" data-dp-next="1">Next: Business details →</button>
                         </div>
                     </div>
@@ -327,7 +347,10 @@
                                         <div class="dp-radios">
                                             <t t-foreach="[('sole_proprietorship','Sole Proprietorship'),('partnership','Partnership'),('corporation','Corporation'),('llc','LLC'),('s_corp','S Corp'),('other','Other')]" t-as="bt">
                                                 <label class="dp-radio-opt">
-                                                    <input type="radio" name="business_type" t-att-value="bt[0]" t-att-checked="values.get('business_type') == bt[0] and 'checked' or None"/>
+                                                    <input type="radio" name="business_type"
+                                                           t-att-value="bt[0]"
+                                                           t-att-checked="values.get('business_type') == bt[0] and 'checked' or None"
+                                                           t-att-disabled="is_locked and 'disabled' or None"/>
                                                     <t t-esc="bt[1]"/>
                                                 </label>
                                             </t>
@@ -335,49 +358,63 @@
                                     </div>
                                     <div class="dp-f dp-full" id="dp-btype-other-row" style="display:none;">
                                         <label>Specify other type</label>
-                                        <input type="text" name="business_type_other" t-att-value="values.get('business_type_other','')"/>
+                                        <input type="text" name="business_type_other"
+                                               t-att-value="values.get('business_type_other','')"
+                                               t-att-disabled="is_locked and 'disabled' or None"/>
                                     </div>
                                     <t t-call="sunair_crm._dp_input"><t t-set="fname">duns_number</t><t t-set="flabel">DUN &amp; Bradstreet ID #</t><t t-set="fval" t-value="values.get('duns_number','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">000000000</t></t>
                                     <t t-call="sunair_crm._dp_input"><t t-set="fname">year_established</t><t t-set="flabel">Year established</t><t t-set="fval" t-value="values.get('year_established','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">e.g. 1998</t></t>
                                     <t t-call="sunair_crm._dp_input"><t t-set="fname">federal_id</t><t t-set="flabel">Federal identification #</t><t t-set="fval" t-value="values.get('federal_id','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">XX-XXXXXXX</t></t>
                                     <div class="dp-f">
                                         <label for="dp_tax_status">Tax status</label>
-                                        <select id="dp_tax_status" name="tax_status">
+                                        <select id="dp_tax_status" name="tax_status" t-att-disabled="is_locked and 'disabled' or None">
                                             <option value="taxable" t-att-selected="values.get('tax_status','taxable') == 'taxable' and 'selected' or None">Taxable</option>
                                             <option value="tax_exempt" t-att-selected="values.get('tax_status') == 'tax_exempt' and 'selected' or None">Tax exempt</option>
                                         </select>
                                     </div>
                                     <div class="dp-f" id="dp-tax-exempt-row" style="display:none;">
                                         <label for="dp_tax_exempt_number">Tax exempt #</label>
-                                        <input type="text" id="dp_tax_exempt_number" name="tax_exempt_number" t-att-value="values.get('tax_exempt_number','')"/>
+                                        <input type="text" id="dp_tax_exempt_number" name="tax_exempt_number"
+                                               t-att-value="values.get('tax_exempt_number','')"
+                                               t-att-disabled="is_locked and 'disabled' or None"/>
                                     </div>
                                     <div class="dp-f dp-full">
                                         <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
-                                            <input type="checkbox" name="multi_jurisdiction_attached" value="1" t-att-checked="values.get('multi_jurisdiction_attached') and 'checked' or None"/>
+                                            <input type="checkbox" name="multi_jurisdiction_attached" value="1"
+                                                   t-att-checked="values.get('multi_jurisdiction_attached') and 'checked' or None"
+                                                   t-att-disabled="is_locked and 'disabled' or None"/>
                                             Multi-jurisdiction form attached
                                         </label>
                                     </div>
                                     <div class="dp-divider">Other business names</div>
                                     <div class="dp-f dp-full">
                                         <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
-                                            <input type="checkbox" id="dp_has_other_business_names" name="has_other_business_names" value="1" t-att-checked="values.get('has_other_business_names') and 'checked' or None"/>
+                                            <input type="checkbox" id="dp_has_other_business_names"
+                                                   name="has_other_business_names" value="1"
+                                                   t-att-checked="values.get('has_other_business_names') and 'checked' or None"
+                                                   t-att-disabled="is_locked and 'disabled' or None"/>
                                             Doing business under other names?
                                         </label>
                                     </div>
                                     <div class="dp-f dp-full" id="dp-other-names-row" style="display:none;">
                                         <label>List other business names</label>
-                                        <textarea name="other_business_names"><t t-esc="values.get('other_business_names','')"/></textarea>
+                                        <textarea name="other_business_names" t-att-disabled="is_locked and 'disabled' or None"><t t-esc="values.get('other_business_names','')"/></textarea>
                                     </div>
                                     <div class="dp-divider">Bankruptcy history</div>
                                     <div class="dp-f dp-full">
                                         <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
-                                            <input type="checkbox" id="dp_has_bankruptcy" name="has_bankruptcy" value="1" t-att-checked="values.get('has_bankruptcy') and 'checked' or None"/>
+                                            <input type="checkbox" id="dp_has_bankruptcy" name="has_bankruptcy" value="1"
+                                                   t-att-checked="values.get('has_bankruptcy') and 'checked' or None"
+                                                   t-att-disabled="is_locked and 'disabled' or None"/>
                                             Has any principle been involved in bankruptcy?
                                         </label>
                                     </div>
                                     <div class="dp-f dp-full" id="dp-bankruptcy-row" style="display:none;">
                                         <label>Bankruptcy date(s)</label>
-                                        <input type="text" name="bankruptcy_dates" t-att-value="values.get('bankruptcy_dates','')" placeholder="e.g. 01/2015"/>
+                                        <input type="text" name="bankruptcy_dates"
+                                               t-att-value="values.get('bankruptcy_dates','')"
+                                               placeholder="e.g. 01/2015"
+                                               t-att-disabled="is_locked and 'disabled' or None"/>
                                     </div>
                                 </div>
                             </div>
@@ -483,29 +520,42 @@
                                     <div class="dp-divider">AWCBN membership</div>
                                     <div class="dp-f dp-full">
                                         <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
-                                            <input type="checkbox" id="dp_is_awcbn" name="is_awcbn" value="1" t-att-checked="values.get('is_awcbn') and 'checked' or None"/>
+                                            <input type="checkbox" id="dp_is_awcbn" name="is_awcbn" value="1"
+                                                   t-att-checked="values.get('is_awcbn') and 'checked' or None"
+                                                   t-att-disabled="is_locked and 'disabled' or None"/>
                                             AWCBN member
                                         </label>
                                     </div>
                                     <div class="dp-f" id="dp-awcbn-row" style="display:none;">
                                         <label for="dp_awcbn_number">AWCBN member number</label>
-                                        <input type="text" id="dp_awcbn_number" name="awcbn_number" t-att-value="values.get('awcbn_number','')"/>
+                                        <input type="text" id="dp_awcbn_number" name="awcbn_number"
+                                               t-att-value="values.get('awcbn_number','')"
+                                               t-att-disabled="is_locked and 'disabled' or None"/>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="dp-btn-row">
                             <button type="button" class="btn btn-light btn-sm" data-dp-prev="1">← Back</button>
-                            <button type="submit" class="btn btn-success">
-                                <t t-if="edit_app_id">Save changes ✓</t>
-                                <t t-else="">Submit application ✓</t>
-                            </button>
+                            <t t-if="not is_locked">
+                                <button type="submit" name="action" value="save" class="btn btn-secondary">
+                                    <i class="fa fa-floppy-o me-1"/> Save changes
+                                </button>
+                                <button type="submit" name="action" value="submit" class="btn btn-success">
+                                    <i class="fa fa-paper-plane me-1"/> Submit &amp; finalize
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <span style="display:inline-flex;align-items:center;gap:6px;background:#fef9c3;color:#854d0e;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid #fde68a;">
+                                    <i class="fa fa-lock me-1"/> Submitted — read only
+                                </span>
+                            </t>
                         </div>
                     </div>
 
                 </form>
 
-                <!-- chatter — sadece kayıt varsa -->
+                <!-- chatter -->
                 <t t-if="application">
                     <hr class="mt-5"/>
                     <div id="dealer_communication">
@@ -516,8 +566,8 @@
                     </div>
                 </t>
 
-            </div><!-- /col -->
-        </div><!-- /row -->
+            </div>
+        </div>
     </xpath>
 </template>
 
@@ -530,19 +580,23 @@
         <div class="row">
             <t t-call="portal.portal_record_sidebar">
                 <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'"/>
+                <t t-set="title">
+                    <h2 class="mb-1" style="font-size:15px;font-weight:700;color:#16a34a;">
+                        <i class="fa fa-check-circle me-1"/> Submitted
+                    </h2>
+                </t>
                 <t t-set="entries">
                     <div class="d-flex flex-column gap-2 mt-3">
                         <a href="/my/dealer-applications" class="btn btn-primary">View my application</a>
                         <a href="/my" class="btn btn-light">← My account</a>
                         <div class="mt-3">
                             <small class="text-muted" style="font-size:12px;line-height:1.7;">
-                                Our team will review your application within 2–3 business days and contact you at the email address provided.
+                                Our team will review your application within 2–3 business days.
                             </small>
                         </div>
                     </div>
                 </t>
             </t>
-
             <div class="col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0">
                 <div class="text-center mb-5">
                     <div class="dp-ty-circle">
@@ -563,14 +617,14 @@
                     <div class="dp-card-bd">
                         <div style="display:flex;flex-direction:column;gap:20px;">
                             <div style="display:flex;align-items:flex-start;gap:14px;">
-                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#714b67;">1</div>
+                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#2563eb;">1</div>
                                 <div style="padding-top:4px;">
                                     <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">AR review</p>
                                     <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6;">Our accounts receivable team will review your submitted application within 2–3 business days.</p>
                                 </div>
                             </div>
                             <div style="display:flex;align-items:flex-start;gap:14px;">
-                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#714b67;">2</div>
+                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#2563eb;">2</div>
                                 <div style="padding-top:4px;">
                                     <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Manager approval</p>
                                     <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6;">After finance review, your application will proceed to a manager for final approval.</p>

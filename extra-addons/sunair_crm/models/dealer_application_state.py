@@ -22,6 +22,7 @@ class DealerApplicationState(models.Model):
     state_type = fields.Selection([
         ('draft', 'Draft'),
         ('sent', 'Sent'),
+        ('submitted', 'Submitted'),
         ('ar_approval', 'AR Approval'),
         ('manager_approval', 'Manager Approval'),
         ('completed', 'Completed'),

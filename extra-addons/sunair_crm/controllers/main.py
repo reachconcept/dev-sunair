@@ -1,6 +1,6 @@
 from odoo import http
 from odoo.http import request
-from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+from odoo.addons.portal.controllers.portal import CustomerPortal
 
 
 class DealerRequestController(http.Controller):
@@ -70,9 +70,6 @@ class DealerRequestController(http.Controller):
             'sells_pergola_louvered':    post.get('sells_pergola_louvered', 'no'),
             'pergola_louvered_supplier': post.get('pergola_louvered_supplier', '').strip(),
             'pergola_louvered_sales_pct': post.get('pergola_louvered_sales_pct', '0_10'),
-            'stage_id': request.env['dealer.application.state'].sudo().search([
-                ('is_submitted', '=', True)
-            ], limit=1).id,
         }
 
         request.env['dealer.request'].sudo().create([vals])
@@ -80,6 +77,8 @@ class DealerRequestController(http.Controller):
 
 
 class DealerPortal(CustomerPortal):
+
+    LOCKED_STATES = ('submitted', 'ar_approval', 'manager_approval', 'completed', 'cancelled')
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
@@ -93,7 +92,6 @@ class DealerPortal(CustomerPortal):
         return values
 
     def _get_dealer_form_values(self, app):
-        """Mevcut kaydın değerlerini form dict'ine çevirir."""
         return {
             'company_legal_name':    app.company_legal_name or '',
             'dba_name':              app.dba_name or '',
@@ -159,50 +157,34 @@ class DealerPortal(CustomerPortal):
             'awcbn_number':          app.awcbn_number or '',
         }
 
-    # ------------------------------------------------------------------
-    # Ana route — varsa mevcut kaydı aç, yoksa yeni form
-    # ------------------------------------------------------------------
+    def _render_dealer_page(self, app, states, error=None, values=None):
+        is_locked = bool(app and app.state_type in self.LOCKED_STATES)
+        return request.render('sunair_crm.portal_dealer_detail', {
+            'application': app,
+            'states': states,
+            'error': error or {},
+            'values': values if values is not None else (self._get_dealer_form_values(app) if app else {}),
+            'edit_app_id': app.id if app else None,
+            'is_locked': is_locked,
+            'page_name': 'dealer_application',
+        })
+
     @http.route(
-        ['/my/dealer-applications', '/my/dealer-applications/page/<int:page>'],
+        ['/my/dealer-applications',
+         '/my/dealer-applications/new',
+         '/my/dealer-applications/page/<int:page>'],
         type='http', auth='user', website=True,
     )
-    def portal_dealer_list(self, page=1, **kw):
+    def portal_dealer_main(self, page=1, **kw):
         partner = request.env.user.partner_id
-        existing = request.env['dealer.application'].sudo().search([
+        app = request.env['dealer.application'].sudo().search([
             ('partner_id', '=', partner.id)
         ], limit=1)
         states = request.env['res.country.state'].sudo().search(
             [('country_id.code', '=', 'US')], order='name'
         )
-        if existing:
-            values = self._get_dealer_form_values(existing)
-            return request.render('sunair_crm.portal_dealer_detail', {
-                'application': existing,
-                'states': states,
-                'error': {},
-                'values': values,
-                'edit_app_id': existing.id,
-                'page_name': 'dealer_application',
-            })
-        return request.render('sunair_crm.portal_dealer_detail', {
-            'application': None,
-            'states': states,
-            'error': {},
-            'values': {},
-            'edit_app_id': None,
-            'page_name': 'dealer_application',
-        })
+        return self._render_dealer_page(app, states)
 
-    # ------------------------------------------------------------------
-    # /new → aynı sayfaya yönlendir
-    # ------------------------------------------------------------------
-    @http.route('/my/dealer-applications/new', type='http', auth='user', website=True)
-    def portal_dealer_new(self, **kw):
-        return request.redirect('/my/dealer-applications')
-
-    # ------------------------------------------------------------------
-    # Submit
-    # ------------------------------------------------------------------
     @http.route(
         '/my/dealer-applications/submit',
         type='http', auth='user', website=True, methods=['POST'], csrf=True,
@@ -212,6 +194,24 @@ class DealerPortal(CustomerPortal):
         states = request.env['res.country.state'].sudo().search(
             [('country_id.code', '=', 'US')], order='name'
         )
+
+        def _int(v):
+            try:
+                return int(v) if v else False
+            except (ValueError, TypeError):
+                return False
+
+        edit_app_id = _int(post.get('edit_app_id'))
+        action = post.get('action', 'save')
+
+        existing = None
+        if edit_app_id:
+            existing = request.env['dealer.application'].sudo().search([
+                ('id', '=', edit_app_id), ('partner_id', '=', partner.id),
+            ], limit=1)
+
+        if existing and existing.state_type in self.LOCKED_STATES:
+            return self._render_dealer_page(existing, states)
 
         error = {}
         for f in ['company_legal_name', 'street', 'city', 'state_id', 'zip_code', 'phone', 'email']:
@@ -224,28 +224,8 @@ class DealerPortal(CustomerPortal):
             if not y.isdigit() or not (1900 <= int(y) <= 2100):
                 error['year_established'] = True
 
-        def _int(v):
-            try:
-                return int(v) if v else False
-            except (ValueError, TypeError):
-                return False
-
-        edit_app_id = _int(post.get('edit_app_id'))
-        existing = None
-        if edit_app_id:
-            existing = request.env['dealer.application'].sudo().search([
-                ('id', '=', edit_app_id), ('partner_id', '=', partner.id),
-            ], limit=1)
-
         if error:
-            return request.render('sunair_crm.portal_dealer_detail', {
-                'application': existing,
-                'states': states,
-                'error': error,
-                'values': post,
-                'edit_app_id': edit_app_id,
-                'page_name': 'dealer_application',
-            })
+            return self._render_dealer_page(existing, states, error=error, values=post)
 
         vals = {
             'partner_id':                  partner.id,
@@ -317,24 +297,20 @@ class DealerPortal(CustomerPortal):
             if existing:
                 vals.pop('partner_id', None)
                 existing.write(vals)
+                if action == 'submit':
+                    existing.sudo().action_send_application()
             else:
-                app = request.env['dealer.application'].sudo().create(vals)
-                app.sudo().action_send_application()
+                existing = request.env['dealer.application'].sudo().create(vals)
+                if action == 'submit':
+                    existing.sudo().action_send_application()
         except Exception:
-            return request.render('sunair_crm.portal_dealer_detail', {
-                'application': existing,
-                'states': states,
-                'error': {'_global': True},
-                'values': post,
-                'edit_app_id': edit_app_id,
-                'page_name': 'dealer_application',
-            })
+            return self._render_dealer_page(existing, states,
+                                            error={'_global': True}, values=post)
 
-        return request.redirect('/my/dealer-applications/thank-you')
+        if action == 'submit':
+            return request.redirect('/my/dealer-applications/thank-you')
+        return request.redirect('/my/dealer-applications')
 
-    # ------------------------------------------------------------------
-    # Teşekkür
-    # ------------------------------------------------------------------
     @http.route('/my/dealer-applications/thank-you', type='http', auth='user', website=True)
     def portal_dealer_thankyou(self, **kw):
         return request.render('sunair_crm.portal_dealer_thankyou', {
