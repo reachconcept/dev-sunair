@@ -4,7 +4,7 @@ from odoo.http import request
 
 class DealerRequestController(http.Controller):
 
-    @http.route('/become-a-dealer', type='http', auth='public', website=True, sitemap=True)
+    @http.route(['/become-a-dealer', '/'], type='http', auth='public', website=True, sitemap=True)
     def dealer_form(self, **kwargs):
         """Render the Become a Dealer form page."""
         states = request.env['res.country.state'].sudo().search([
