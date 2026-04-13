@@ -358,7 +358,7 @@
         <field name="arch" type="xml">
             <search string="Dealer Requests">
                 <field name="first_name"/>
-                <!-- <field name="last_name"/>
+                <field name="last_name"/>
                 <field name="company"/>
                 <field name="email"/>
                 <field name="dealer_representative_id"/>
@@ -368,12 +368,14 @@
                 <separator/>
                 <filter name="no_rep" string="No Representative"
                         domain="[('dealer_representative_id', '=', False)]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_by_state" string="State"
-                            context="{'group_by': 'state_id'}"/>
-                    <filter name="group_by_rep" string="Representative"
-                            context="{'group_by': 'dealer_representative_id'}"/>
-                </group> -->
+               <separator/>
+                <filter name="sells_retractable_awnings" string="Retractable Awnings" domain="[('sells_retractable_awnings', '=', 'yes')]"/>
+                <filter name="sells_solar_screens" string="Solar Screens" domain="[('sells_solar_screens', '=', 'yes')]"/>
+                <filter name="sells_pergola_louvered" string="Pergola Louvered" domain="[('sells_pergola_louvered', '=', 'yes')]"/>
+               <separator/>
+               <filter name="is_distributor" string="Distributor" domain="[('is_distributor', '=', True)]"/>
+               <filter name="is_retail" string="Retail" domain="[('is_retail', '=', True)]"/>
+               <filter name="is_wholesale" string="Wholesale" domain="[('is_wholesale', '=', True)]"/>
             </search>
         </field>
     </record>
