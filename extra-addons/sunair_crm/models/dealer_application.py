@@ -167,9 +167,30 @@ class DealerApplication(models.Model):
         return states.search([])
 
     def action_send_application(self):
-        state = self._get_state('sent')
-        if state:
-            self.stage_id = state
+        template = self.env.ref('sunair_crm.dealer_application_invite_email')
+
+        for rec in self:
+            if not rec.partner_id or not rec.partner_id.email:
+                raise ValidationError("Customer email is missing.")
+
+            template.with_context(
+                mail_notify_author=False,
+                mail_auto_delete=True,
+            ).send_mail(
+                rec.id,
+                force_send=True,
+                raise_exception=False,
+                email_values={
+                    'auto_delete': True,
+                    'message_id': False,
+                    'res_id': False,  
+                    'model': False,  
+                }
+            )
+            state = self._get_state('sent')
+            if state:
+                rec.stage_id = state
+
 
     def action_send_to_finance(self):
         state = self._get_state('ar_approval')
