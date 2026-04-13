@@ -147,6 +147,7 @@ class DealerRequest(models.Model):
             'lead_id': self.lead_id.id,
             'partner_id': self.partner_id.id,
             'request_id': self.id,
+            'stage_id': self.env['dealer.application.state'].search([], order='sequence asc', limit=1).id,
         })
         self.application_id = application.id
         application.message_post(

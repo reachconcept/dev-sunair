@@ -257,9 +257,21 @@ class DealerApplication(models.Model):
                 'zip': self.zip_code,
                 'phone': self.phone,
                 'email': self.email,
-                'is_dealer': True,
+                'is_dealer': False,
             })
             self.partner_id = partner.id
+
+            portal_wizard = self.env['portal.wizard'].with_context(
+                active_ids=partner.ids,
+                active_model='res.partner',
+            ).create({})
+
+            wizard_user = portal_wizard.user_ids.filtered(
+                lambda u: u.partner_id == partner
+            )
+            if wizard_user:
+                wizard_user.action_grant_access()
+
         return self.partner_id
 
     @api.depends()

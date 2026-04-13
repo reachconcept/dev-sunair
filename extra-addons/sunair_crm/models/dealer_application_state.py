@@ -14,6 +14,10 @@ class DealerApplicationState(models.Model):
         string='Closing State', default=False,
         help='Applications in this state are considered finalized.',
     )
+    is_submitted = fields.Boolean(
+        string='Submitted State', default=False,
+        help='Applications in this state are considered submitted.',
+    )
     color = fields.Integer(string='Color Index')
     state_type = fields.Selection([
         ('draft', 'Draft'),

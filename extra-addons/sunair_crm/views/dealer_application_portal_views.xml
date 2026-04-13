@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- /my home tile -->
+<template id="portal_my_home_dealer"
+          inherit_id="portal.portal_my_home"
+          name="Portal: Dealer Application">
+    <xpath expr="//div[@id='portal_common_category']" position="inside">
+        <t t-call="portal.portal_docs_entry">
+            <t t-set="icon" t-value="'/sunair_crm/static/description/dealer_icon.svg'"/>
+            <t t-set="title">Dealer Application</t>
+            <t t-set="text">Apply to become an authorized dealer</t>
+            <t t-set="url" t-value="'/my/dealer-applications'"/>
+            <t t-set="placeholder_count" t-value="'dealer_application_count'"/>
+        </t>
+    </xpath>
+</template>
+
+
+<!-- MACRO: input -->
+<template id="_dp_input" name="dp input macro">
+    <div t-attf-class="dp-f #{fsize or ''}">
+        <label t-attf-for="dp_#{fname}">
+            <t t-esc="flabel"/>
+            <span t-if="frequired" class="req"> *</span>
+        </label>
+        <input
+            t-attf-id="dp_#{fname}"
+            t-attf-name="#{fname}"
+            t-att-type="ftype or 'text'"
+            t-att-value="fval or ''"
+            t-attf-class="#{ferror.get(fname) and 'dp-err' or ''}"
+            t-att-data-dp-required="frequired and '1' or None"
+            t-att-placeholder="fplaceholder or None"
+        />
+        <span t-if="ferror.get(fname)" class="dp-errmsg" style="display:block;">This field is required.</span>
+    </div>
+</template>
+
+<!-- MACRO: state select -->
+<template id="_dp_state" name="dp state macro">
+    <div t-attf-class="dp-f #{fsize or ''}">
+        <label t-attf-for="dp_#{fname}">
+            <t t-esc="flabel"/>
+            <span t-if="frequired" class="req"> *</span>
+        </label>
+        <select
+            t-attf-id="dp_#{fname}"
+            t-attf-name="#{fname}"
+            t-attf-class="#{ferror.get(fname) and 'dp-err' or ''}"
+            t-att-data-dp-required="frequired and '1' or None">
+            <option value="">Select state…</option>
+            <t t-foreach="states" t-as="st">
+                <option t-att-value="st.id"
+                        t-att-selected="str(fval or '') == str(st.id) and 'selected' or None">
+                    <t t-esc="st.name"/>
+                </option>
+            </t>
+        </select>
+        <span t-if="ferror.get(fname)" class="dp-errmsg" style="display:block;">This field is required.</span>
+    </div>
+</template>
+
+
+<!-- ================================================================
+     MAIN PAGE  /my/dealer-applications
+     Sol: durum + özet bilgiler
+     Sağ: step form (kayıt varsa dolu, yoksa boş)
+     Alt: chatter (kayıt varsa)
+     ================================================================ -->
+<template id="portal_dealer_detail" name="Dealer Application" inherit_id="portal.portal_sidebar" primary="True">
+    <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+        <div class="row">
+
+            <!-- ====== SOL SIDEBAR ====== -->
+            <t t-call="portal.portal_record_sidebar">
+                <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'"/>
+                <t t-set="title">
+                    <t t-if="application">
+                        <h2 t-field="application.company_legal_name" class="mb-0 text-break"
+                            style="font-size:20px;font-weight:700;"/>
+                        <small style="font-size:12px;color:#94a3b8;font-weight:400;">
+                            <t t-esc="application.name"/>
+                        </small>
+                    </t>
+                    <h2 t-else="" class="mb-0 text-break" style="font-size:20px;font-weight:700;">
+                        New Application
+                    </h2>
+                </t>
+                <t t-set="entries">
+                    <div class="d-flex flex-column gap-3 mt-3">
+
+                        <!-- Action buttons -->
+                        <div class="d-flex flex-column gap-2">
+                            <a href="/my" class="btn btn-light">
+                                <i class="fa fa-arrow-left me-1"/> My account
+                            </a>
+                            <button type="submit" form="dp-form" class="btn btn-primary">
+                                <i class="fa fa-check me-1"/>
+                                <t t-if="application">Save changes</t>
+                                <t t-else="">Submit application</t>
+                            </button>
+                        </div>
+
+                        <hr style="margin:4px 0;border-color:#f1f5f9;"/>
+
+                        <!-- Status -->
+                        <div>
+                            <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;margin:0 0 6px;">Status</p>
+                            <t t-if="application">
+                                <t t-set="st" t-value="application.state_type"/>
+                                <t t-set="stage_color" t-value="application.stage_id.color if application.stage_id else 0"/>
+                                <!-- color alanına göre renklendirme -->
+                                <t t-if="stage_color == 10">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#dcfce7;color:#166534;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-elif="stage_color == 2">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#991b1b;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#dc2626;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-elif="stage_color == 3">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#fef9c3;color:#854d0e;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#ca8a04;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-elif="stage_color == 4">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#dbeafe;color:#1e40af;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#2563eb;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-elif="stage_color == 6">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#f3e8ff;color:#6b21a8;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#9333ea;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-else="">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;color:#475569;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                        <span style="width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;"></span>
+                                        <t t-esc="application.stage_id.name or 'Draft'"/>
+                                    </span>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <span style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;color:#475569;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                    <span style="width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;"></span>
+                                    Not started
+                                </span>
+                            </t>
+                        </div>
+
+                        <!-- Info card -->
+                        <t t-if="application">
+                            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;">
+
+                                <div t-if="application.create_date" style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Submitted on</span>
+                                    <span style="font-size:13px;font-weight:500;color:#0f172a;">
+                                        <t t-esc="application.create_date" t-options='{"widget":"date"}'/>
+                                    </span>
+                                </div>
+
+                                <div t-if="application.email" style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Email</span>
+                                    <span style="font-size:13px;font-weight:500;color:#0f172a;word-break:break-all;">
+                                        <t t-esc="application.email"/>
+                                    </span>
+                                </div>
+
+                                <div t-if="application.phone" style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Phone</span>
+                                    <span style="font-size:13px;font-weight:500;color:#0f172a;">
+                                        <t t-esc="application.phone"/>
+                                    </span>
+                                </div>
+
+                                <div t-if="application.street" style="display:flex;flex-direction:column;gap:2px;">
+                                    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#94a3b8;">Address</span>
+                                    <span style="font-size:13px;font-weight:500;color:#0f172a;line-height:1.6;">
+                                        <t t-esc="application.street"/><br/>
+                                        <t t-esc="application.city or ''"/>
+                                        <t t-if="application.state_id">, <t t-esc="application.state_id.name"/></t>
+                                        <t t-if="application.zip_code"> <t t-esc="application.zip_code"/></t>
+                                    </span>
+                                </div>
+
+                            </div>
+                        </t>
+
+                        <!-- Rep contact -->
+                        <div t-if="application and application.dealer_representative_id">
+                            <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94a3b8;margin:0 0 8px;">Your contact</p>
+                            <t t-call="portal.portal_my_contact">
+                                <t t-set="_contactName" t-value="application.dealer_representative_id.name"/>
+                                <t t-set="_contactLink" t-value="True"/>
+                            </t>
+                        </div>
+
+                        <!-- New application hint -->
+                        <t t-if="not application">
+                            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;">
+                                <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#2563eb;margin:0 0 8px;">How it works</p>
+                                <div style="display:flex;flex-direction:column;gap:10px;">
+                                    <div style="display:flex;align-items:flex-start;gap:8px;">
+                                        <span style="width:20px;height:20px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+                                        <small style="font-size:12px;color:#1e40af;line-height:1.6;">Fill out all four sections of the form</small>
+                                    </div>
+                                    <div style="display:flex;align-items:flex-start;gap:8px;">
+                                        <span style="width:20px;height:20px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+                                        <small style="font-size:12px;color:#1e40af;line-height:1.6;">Submit for our team to review</small>
+                                    </div>
+                                    <div style="display:flex;align-items:flex-start;gap:8px;">
+                                        <span style="width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+                                        <small style="font-size:12px;color:#166534;line-height:1.6;">Get approved within 2–3 business days</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </t>
+            </t>    
+
+            <!-- ====== SAĞ: FORM ====== -->
+            <div id="dealer_app_content" class="col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0">
+
+                <t t-if="error.get('_global')">
+                    <div class="dp-alert mb-3">An error occurred while saving your application. Please try again.</div>
+                </t>
+
+                <!-- stepper -->
+                <div class="dp-stepper">
+                    <div class="dp-step active">
+                        <div class="dp-step-dot">1</div>
+                        <span class="dp-step-lbl">Company info</span>
+                    </div>
+                    <div class="dp-step-line"/>
+                    <div class="dp-step">
+                        <div class="dp-step-dot">2</div>
+                        <span class="dp-step-lbl">Business details</span>
+                    </div>
+                    <div class="dp-step-line"/>
+                    <div class="dp-step">
+                        <div class="dp-step-dot">3</div>
+                        <span class="dp-step-lbl">Principals &amp; banking</span>
+                    </div>
+                    <div class="dp-step-line"/>
+                    <div class="dp-step">
+                        <div class="dp-step-dot">4</div>
+                        <span class="dp-step-lbl">Review &amp; submit</span>
+                    </div>
+                </div>
+
+                <form id="dp-form" method="POST" action="/my/dealer-applications/submit">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input t-if="edit_app_id" type="hidden" name="edit_app_id" t-att-value="edit_app_id"/>
+
+                    <!-- ===== PANEL 1 ===== -->
+                    <div class="dp-step-panel">
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon">
+                                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                                </div>
+                                <div><h3>Company information</h3><p>Legal name, trade name and contact details</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g2">
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">company_legal_name</t><t t-set="flabel">Company legal name</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('company_legal_name','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">e.g. Acme Corporation LLC</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">dba_name</t><t t-set="flabel">Trading as / DBA name(s)</t><t t-set="fval" t-value="values.get('dba_name','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <div class="dp-divider">Business address</div>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">street</t><t t-set="flabel">Street address</t><t t-set="frequired" t-value="True"/><t t-set="fsize">dp-full</t><t t-set="fval" t-value="values.get('street','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">123 Main Street</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">city</t><t t-set="flabel">City</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('city','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_state"><t t-set="fname">state_id</t><t t-set="flabel">State</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('state_id','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">zip_code</t><t t-set="flabel">ZIP code</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('zip_code','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">10001</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">phone</t><t t-set="flabel">Phone</t><t t-set="ftype">tel</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('phone','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">+1 (555) 000-0000</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">fax</t><t t-set="flabel">FAX</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('fax','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">cell</t><t t-set="flabel">Cell</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('cell','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">email</t><t t-set="flabel">Email address</t><t t-set="ftype">email</t><t t-set="frequired" t-value="True"/><t t-set="fval" t-value="values.get('email','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">contact@company.com</t></t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                </div>
+                                <div><h3>Billing address</h3><p>Leave blank if same as business address</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g2">
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">billing_street</t><t t-set="flabel">Street address</t><t t-set="fsize">dp-full</t><t t-set="fval" t-value="values.get('billing_street','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">billing_city</t><t t-set="flabel">City</t><t t-set="fval" t-value="values.get('billing_city','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_state"><t t-set="fname">billing_state_id</t><t t-set="flabel">State</t><t t-set="fval" t-value="values.get('billing_state_id','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">billing_zip</t><t t-set="flabel">ZIP</t><t t-set="fval" t-value="values.get('billing_zip','')"/><t t-set="ferror" t-value="error"/></t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dp-btn-row">
+                            <a href="/my" class="btn btn-light btn-sm">← My account</a>
+                            <button type="button" class="btn btn-primary btn-sm" data-dp-next="1">Next: Business details →</button>
+                        </div>
+                    </div>
+
+                    <!-- ===== PANEL 2 ===== -->
+                    <div class="dp-step-panel">
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </div>
+                                <div><h3>Business type &amp; registration</h3><p>Legal structure, tax status and federal identifiers</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g2">
+                                    <div class="dp-f dp-full">
+                                        <label>Type of business <span class="req">*</span></label>
+                                        <div class="dp-radios">
+                                            <t t-foreach="[('sole_proprietorship','Sole Proprietorship'),('partnership','Partnership'),('corporation','Corporation'),('llc','LLC'),('s_corp','S Corp'),('other','Other')]" t-as="bt">
+                                                <label class="dp-radio-opt">
+                                                    <input type="radio" name="business_type" t-att-value="bt[0]" t-att-checked="values.get('business_type') == bt[0] and 'checked' or None"/>
+                                                    <t t-esc="bt[1]"/>
+                                                </label>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="dp-f dp-full" id="dp-btype-other-row" style="display:none;">
+                                        <label>Specify other type</label>
+                                        <input type="text" name="business_type_other" t-att-value="values.get('business_type_other','')"/>
+                                    </div>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">duns_number</t><t t-set="flabel">DUN &amp; Bradstreet ID #</t><t t-set="fval" t-value="values.get('duns_number','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">000000000</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">year_established</t><t t-set="flabel">Year established</t><t t-set="fval" t-value="values.get('year_established','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">e.g. 1998</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">federal_id</t><t t-set="flabel">Federal identification #</t><t t-set="fval" t-value="values.get('federal_id','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">XX-XXXXXXX</t></t>
+                                    <div class="dp-f">
+                                        <label for="dp_tax_status">Tax status</label>
+                                        <select id="dp_tax_status" name="tax_status">
+                                            <option value="taxable" t-att-selected="values.get('tax_status','taxable') == 'taxable' and 'selected' or None">Taxable</option>
+                                            <option value="tax_exempt" t-att-selected="values.get('tax_status') == 'tax_exempt' and 'selected' or None">Tax exempt</option>
+                                        </select>
+                                    </div>
+                                    <div class="dp-f" id="dp-tax-exempt-row" style="display:none;">
+                                        <label for="dp_tax_exempt_number">Tax exempt #</label>
+                                        <input type="text" id="dp_tax_exempt_number" name="tax_exempt_number" t-att-value="values.get('tax_exempt_number','')"/>
+                                    </div>
+                                    <div class="dp-f dp-full">
+                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
+                                            <input type="checkbox" name="multi_jurisdiction_attached" value="1" t-att-checked="values.get('multi_jurisdiction_attached') and 'checked' or None"/>
+                                            Multi-jurisdiction form attached
+                                        </label>
+                                    </div>
+                                    <div class="dp-divider">Other business names</div>
+                                    <div class="dp-f dp-full">
+                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
+                                            <input type="checkbox" id="dp_has_other_business_names" name="has_other_business_names" value="1" t-att-checked="values.get('has_other_business_names') and 'checked' or None"/>
+                                            Doing business under other names?
+                                        </label>
+                                    </div>
+                                    <div class="dp-f dp-full" id="dp-other-names-row" style="display:none;">
+                                        <label>List other business names</label>
+                                        <textarea name="other_business_names"><t t-esc="values.get('other_business_names','')"/></textarea>
+                                    </div>
+                                    <div class="dp-divider">Bankruptcy history</div>
+                                    <div class="dp-f dp-full">
+                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
+                                            <input type="checkbox" id="dp_has_bankruptcy" name="has_bankruptcy" value="1" t-att-checked="values.get('has_bankruptcy') and 'checked' or None"/>
+                                            Has any principle been involved in bankruptcy?
+                                        </label>
+                                    </div>
+                                    <div class="dp-f dp-full" id="dp-bankruptcy-row" style="display:none;">
+                                        <label>Bankruptcy date(s)</label>
+                                        <input type="text" name="bankruptcy_dates" t-att-value="values.get('bankruptcy_dates','')" placeholder="e.g. 01/2015"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-btn-row">
+                            <button type="button" class="btn btn-light btn-sm" data-dp-prev="1">← Back</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-dp-next="1">Next: Principals &amp; banking →</button>
+                        </div>
+                    </div>
+
+                    <!-- ===== PANEL 3 ===== -->
+                    <div class="dp-step-panel">
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                                <div><h3>Principal #1</h3><p>Owner / officer information</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g3">
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_name_1</t><t t-set="flabel">Full name</t><t t-set="fval" t-value="values.get('principle_name_1','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_title_1</t><t t-set="flabel">Title</t><t t-set="fval" t-value="values.get('principle_title_1','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_ssn_1</t><t t-set="flabel">SSN</t><t t-set="fval" t-value="values.get('principle_ssn_1','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">XXX-XX-XXXX</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_address_1</t><t t-set="flabel">Address</t><t t-set="fval" t-value="values.get('principle_address_1','')"/><t t-set="ferror" t-value="error"/><t t-set="fsize">dp-full</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_city_1</t><t t-set="flabel">City</t><t t-set="fval" t-value="values.get('principle_city_1','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_state"><t t-set="fname">principle_state_id_1</t><t t-set="flabel">State</t><t t-set="fval" t-value="values.get('principle_state_id_1','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_phone_1</t><t t-set="flabel">Phone</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('principle_phone_1','')"/><t t-set="ferror" t-value="error"/></t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                                <div><h3>Principal #2</h3><p>Optional — leave blank if not applicable</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g3">
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_name_2</t><t t-set="flabel">Full name</t><t t-set="fval" t-value="values.get('principle_name_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_title_2</t><t t-set="flabel">Title</t><t t-set="fval" t-value="values.get('principle_title_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_ssn_2</t><t t-set="flabel">SSN</t><t t-set="fval" t-value="values.get('principle_ssn_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_address_2</t><t t-set="flabel">Address</t><t t-set="fval" t-value="values.get('principle_address_2','')"/><t t-set="ferror" t-value="error"/><t t-set="fsize">dp-full</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_city_2</t><t t-set="flabel">City</t><t t-set="fval" t-value="values.get('principle_city_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_state"><t t-set="fname">principle_state_id_2</t><t t-set="flabel">State</t><t t-set="fval" t-value="values.get('principle_state_id_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">principle_phone_2</t><t t-set="flabel">Phone</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('principle_phone_2','')"/><t t-set="ferror" t-value="error"/></t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+                                <div><h3>Banking information</h3><p>Primary bank for credit reference</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g2">
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">bank_name</t><t t-set="flabel">Bank name</t><t t-set="fval" t-value="values.get('bank_name','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">bank_account_number</t><t t-set="flabel">Account #</t><t t-set="fval" t-value="values.get('bank_account_number','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">bank_address</t><t t-set="flabel">Address</t><t t-set="fval" t-value="values.get('bank_address','')"/><t t-set="ferror" t-value="error"/><t t-set="fsize">dp-full</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">bank_city</t><t t-set="flabel">City</t><t t-set="fval" t-value="values.get('bank_city','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_state"><t t-set="fname">bank_state_id</t><t t-set="flabel">State</t><t t-set="fval" t-value="values.get('bank_state_id','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">bank_zip</t><t t-set="flabel">ZIP</t><t t-set="fval" t-value="values.get('bank_zip','')"/><t t-set="ferror" t-value="error"/></t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                                <div><h3>Trade references</h3><p>Up to 3 trade references</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <t t-foreach="[('1','#1'),('2','#2'),('3','#3')]" t-as="ref">
+                                    <div t-attf-style="#{not ref_first and 'border-top:1px solid #f1f5f9;padding-top:14px;margin-top:14px;' or ''}">
+                                        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;margin-bottom:10px;">Reference <t t-esc="ref[1]"/></p>
+                                        <div class="dp-g2">
+                                            <t t-call="sunair_crm._dp_input"><t t-set="fname" t-value="'trade_ref_'+ref[0]+'_name'"/><t t-set="flabel">Company name</t><t t-set="fval" t-value="values.get('trade_ref_'+ref[0]+'_name','')"/><t t-set="ferror" t-value="error"/></t>
+                                            <t t-call="sunair_crm._dp_input"><t t-set="fname" t-value="'trade_ref_'+ref[0]+'_phone'"/><t t-set="flabel">Phone</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('trade_ref_'+ref[0]+'_phone','')"/><t t-set="ferror" t-value="error"/></t>
+                                            <t t-call="sunair_crm._dp_input"><t t-set="fname" t-value="'trade_ref_'+ref[0]+'_fax'"/><t t-set="flabel">FAX</t><t t-set="ftype">tel</t><t t-set="fval" t-value="values.get('trade_ref_'+ref[0]+'_fax','')"/><t t-set="ferror" t-value="error"/></t>
+                                            <t t-call="sunair_crm._dp_input"><t t-set="fname" t-value="'trade_ref_'+ref[0]+'_address'"/><t t-set="flabel">Address</t><t t-set="fval" t-value="values.get('trade_ref_'+ref[0]+'_address','')"/><t t-set="ferror" t-value="error"/></t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="dp-btn-row">
+                            <button type="button" class="btn btn-light btn-sm" data-dp-prev="1">← Back</button>
+                            <button type="button" class="btn btn-primary btn-sm" data-dp-next="1">Next: Review →</button>
+                        </div>
+                    </div>
+
+                    <!-- ===== PANEL 4 ===== -->
+                    <div class="dp-step-panel">
+                        <div class="dp-card">
+                            <div class="dp-card-hd">
+                                <div class="dp-card-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                <div><h3>Authorization &amp; signature</h3><p>Certify the information provided</p></div>
+                            </div>
+                            <div class="dp-card-bd">
+                                <div class="dp-g2">
+                                    <div class="dp-note dp-full">
+                                        By submitting this application, I certify that all information provided is accurate and complete.
+                                        I authorize Sunair to verify the information and contact the references listed above.
+                                    </div>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">signed_by_name</t><t t-set="flabel">Your full name</t><t t-set="fval" t-value="values.get('signed_by_name','')"/><t t-set="ferror" t-value="error"/><t t-set="fplaceholder">Type your full name as signature</t></t>
+                                    <t t-call="sunair_crm._dp_input"><t t-set="fname">signed_by_title</t><t t-set="flabel">Your title</t><t t-set="fval" t-value="values.get('signed_by_title','')"/><t t-set="ferror" t-value="error"/></t>
+                                    <div class="dp-divider">AWCBN membership</div>
+                                    <div class="dp-f dp-full">
+                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
+                                            <input type="checkbox" id="dp_is_awcbn" name="is_awcbn" value="1" t-att-checked="values.get('is_awcbn') and 'checked' or None"/>
+                                            AWCBN member
+                                        </label>
+                                    </div>
+                                    <div class="dp-f" id="dp-awcbn-row" style="display:none;">
+                                        <label for="dp_awcbn_number">AWCBN member number</label>
+                                        <input type="text" id="dp_awcbn_number" name="awcbn_number" t-att-value="values.get('awcbn_number','')"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dp-btn-row">
+                            <button type="button" class="btn btn-light btn-sm" data-dp-prev="1">← Back</button>
+                            <button type="submit" class="btn btn-success">
+                                <t t-if="edit_app_id">Save changes ✓</t>
+                                <t t-else="">Submit application ✓</t>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- chatter — sadece kayıt varsa -->
+                <t t-if="application">
+                    <hr class="mt-5"/>
+                    <div id="dealer_communication">
+                        <h3>Communication history</h3>
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="application"/>
+                        </t>
+                    </div>
+                </t>
+
+            </div><!-- /col -->
+        </div><!-- /row -->
+    </xpath>
+</template>
+
+
+<!-- ================================================================
+     THANK YOU
+     ================================================================ -->
+<template id="portal_dealer_thankyou" name="Dealer Application Thank You" inherit_id="portal.portal_sidebar" primary="True">
+    <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+        <div class="row">
+            <t t-call="portal.portal_record_sidebar">
+                <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'"/>
+                <t t-set="entries">
+                    <div class="d-flex flex-column gap-2 mt-3">
+                        <a href="/my/dealer-applications" class="btn btn-primary">View my application</a>
+                        <a href="/my" class="btn btn-light">← My account</a>
+                        <div class="mt-3">
+                            <small class="text-muted" style="font-size:12px;line-height:1.7;">
+                                Our team will review your application within 2–3 business days and contact you at the email address provided.
+                            </small>
+                        </div>
+                    </div>
+                </t>
+            </t>
+
+            <div class="col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0">
+                <div class="text-center mb-5">
+                    <div class="dp-ty-circle">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h2 style="font-size:26px;font-weight:700;color:#0f172a;margin-bottom:8px;">Application submitted!</h2>
+                    <p style="font-size:15px;color:#64748b;max-width:420px;margin:0 auto;line-height:1.7;">
+                        Thank you for applying to become an authorized Sunair dealer.
+                    </p>
+                </div>
+                <div class="dp-card">
+                    <div class="dp-card-hd">
+                        <div class="dp-card-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <div><h3>What happens next?</h3><p>Your application is now under review</p></div>
+                    </div>
+                    <div class="dp-card-bd">
+                        <div style="display:flex;flex-direction:column;gap:20px;">
+                            <div style="display:flex;align-items:flex-start;gap:14px;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#714b67;">1</div>
+                                <div style="padding-top:4px;">
+                                    <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">AR review</p>
+                                    <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6;">Our accounts receivable team will review your submitted application within 2–3 business days.</p>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:flex-start;gap:14px;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:#eff6ff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#714b67;">2</div>
+                                <div style="padding-top:4px;">
+                                    <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Manager approval</p>
+                                    <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6;">After finance review, your application will proceed to a manager for final approval.</p>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:flex-start;gap:14px;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:#dcfce7;border:2px solid #86efac;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#16a34a;">3</div>
+                                <div style="padding-top:4px;">
+                                    <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 3px;">Welcome as a dealer</p>
+                                    <p style="font-size:13px;color:#64748b;margin:0;line-height:1.6;">Once approved, you will receive your dealer starter kit and account setup instructions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+</odoo>

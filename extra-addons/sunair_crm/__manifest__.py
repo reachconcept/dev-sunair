@@ -36,6 +36,7 @@
         "views/product_views.xml",
         "views/crm_product_category_views.xml",
         "views/dealer_dashboard_views.xml",
+        "views/dealer_application_portal_views.xml",
         # "views/dealer_form.xml",
     ],
     'assets': {
@@ -43,6 +44,10 @@
             'sunair_crm/static/src/dealer_dashboard/dealer_dashboard.js',
             'sunair_crm/static/src/dealer_dashboard/dealer_dashboard.scss',
             'sunair_crm/static/src/dealer_dashboard/dealer_dashboard.xml',
+        ],
+        'web.assets_frontend': [
+            'sunair_crm/static/src/dealer_application_portal/dealer_application_portal.js',
+            'sunair_crm/static/src/dealer_application_portal/dealer_application_portal.css',
         ],
     },
     'license': 'LGPL-3',

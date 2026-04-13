@@ -10,6 +10,7 @@
                 <field name="name"/>
                 <field name="state_type"/>
                 <field name="is_closed"/>
+                <field name="is_submitted"/>
                 <field name="fold"/>
                 <field name="color" widget="color_picker"/>
             </list>
@@ -32,6 +33,7 @@
                         <group>
                             <field name="fold"/>
                             <field name="is_closed"/>
+                            <field name="is_submitted"/>
                         </group>
                     </group>
                 </sheet>
