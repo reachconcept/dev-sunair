@@ -300,11 +300,19 @@ class DealerPortal(CustomerPortal):
                 vals.pop('partner_id', None)
                 existing.write(vals)
                 if action == 'submit':
-                    existing.sudo().action_send_application()
+                    submitted_stage = request.env['dealer.application.state'].sudo().search([
+                        ('state_type', '=', 'submitted')
+                    ], limit=1)
+                    if submitted_stage:
+                        existing.stage_id = submitted_stage.id
             else:
                 existing = request.env['dealer.application'].sudo().create(vals)
                 if action == 'submit':
-                    existing.sudo().action_send_application()
+                    submitted_stage = request.env['dealer.application.state'].sudo().search([
+                        ('state_type', '=', 'submitted')
+                    ], limit=1)
+                    if submitted_stage:
+                        existing.stage_id = submitted_stage.id
         except Exception:
             return self._render_dealer_page(existing, states,
                                             error={'_global': True}, values=post)
