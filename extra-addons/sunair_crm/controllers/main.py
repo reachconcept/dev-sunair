@@ -70,9 +70,15 @@ class DealerRequestController(http.Controller):
             'sells_pergola_louvered':    post.get('sells_pergola_louvered', 'no'),
             'pergola_louvered_supplier': post.get('pergola_louvered_supplier', '').strip(),
             'pergola_louvered_sales_pct': post.get('pergola_louvered_sales_pct', '0_10'),
+            'state_id': self.env['dealer.request.state'].sudo().search([], limit=1).id,
         }
 
-        request.env['dealer.request'].sudo().create([vals])
+        application = request.env['dealer.request'].sudo().create(vals)
+
+        template = request.env.ref('sunair_crm.email_template_dealer_request_notify_company')
+        if template and application.company_id and application.company_id.email:
+            template.sudo().send_mail(application.id, force_send=True)
+
         return request.render('sunair_crm.dealer_request_success', {})
 
 

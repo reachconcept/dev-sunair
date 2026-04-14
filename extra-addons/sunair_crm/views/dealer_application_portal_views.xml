@@ -580,11 +580,11 @@
         <div class="row">
             <t t-call="portal.portal_record_sidebar">
                 <t t-set="classes" t-value="'col-lg-4 col-xxl-3 d-print-none'"/>
-                <t t-set="title">
+                <!-- <t t-set="title">
                     <h2 class="mb-1" style="font-size:15px;font-weight:700;color:#16a34a;">
                         <i class="fa fa-check-circle me-1"/> Submitted
                     </h2>
-                </t>
+                </t> -->
                 <t t-set="entries">
                     <div class="d-flex flex-column gap-2 mt-3">
                         <a href="/my/dealer-applications" class="btn btn-primary">View my application</a>

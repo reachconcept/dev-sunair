@@ -37,7 +37,7 @@
         "views/crm_product_category_views.xml",
         "views/dealer_dashboard_views.xml",
         "views/dealer_application_portal_views.xml",
-        # "views/dealer_form.xml",
+        "views/dealer_form.xml",
     ],
     'assets': {
         'web.assets_backend': [

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo >
 
     <!-- Email to the dealer when a lead is assigned to them -->
     <record id="email_template_dealer_lead_assigned" model="mail.template">
@@ -122,62 +122,283 @@
     <record id="dealer_application_invite_email" model="mail.template">
         <field name="name">Dealer Application Invitation</field>
         <field name="model_id" ref="model_dealer_application"/>
-        <field name="subject">Dealer Application - {{ object.company_legal_name or 'Application' }}</field>
+        <field name="subject">You're Invited to Apply — Sunair Dealer Program</field>
         <field name="email_from">{{ object.company_id.email or user.email }}</field>
         <field name="email_to">{{ object.partner_id.email }}</field>
         <field name="body_html" type="html">
-            <div style="background: #f4f4f7; padding: 32px; border-radius: 12px;">
-                <div style="max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e8e6f0; overflow: hidden;">
-
-                    <div style="background: #1E3A8A; padding: 32px;">
-                        <p style="color: white; font-size: 20px; margin: 0;">
-                            Sunair Architectural Structures
-                        </p>
-                        <p style="color: rgba(255,255,255,0.7); margin: 4px 0 0;">
-                            Dealer Application Invitation
-                        </p>
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; background-color: #f4f4f7; padding: 24px; border-radius: 12px;">
+                <div style="background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6f0; overflow: hidden;">
+                
+                    <!-- Header -->
+                    <div style="background-color: #1a1a2e; padding: 28px 32px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td style="vertical-align: middle;">
+                            <table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="vertical-align: middle; padding-right: 14px;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background-color: #c9a227; text-align: center; line-height: 44px; font-size: 20px;">&#9728;</div>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                <p style="color: #ffffff; font-size: 17px; font-weight: bold; margin: 0;">Sunair Architectural Structures</p>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 3px 0 0; text-transform: uppercase; letter-spacing: 1px;">Dealer application invitation</p>
+                                </td>
+                            </tr>
+                            </table>
+                        </td>
+                        </tr>
+                    </table>
                     </div>
-
-                    <div style="padding: 24px 32px;">
-                        <p style="font-size: 14px; color: #333;">
-                            Dear <strong><t t-out="object.partner_id.name"/></strong>,
-                        </p>
-
-                        <p style="font-size: 14px; color: #333;">
-                            Thank you for your interest in becoming a dealer with 
-                            <strong>Sunair Architectural Structures</strong>.
-                        </p>
-
-                        <p style="font-size: 14px; color: #333;">
-                            To proceed with your application, please complete the dealer application form using the link below:
-                        </p>
-
-                        <div style="text-align: center; margin: 24px 0;">
-                            <a t-att-href="'/my/dealer-applications'"
-                            style="background: #1E3A8A; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 14px;">
-                                Complete Your Application
-                            </a>
-                        </div>
-
-                        <p style="font-size: 13px; color: #666;">
-                            If you have any questions, feel free to contact us.
-                        </p>
-
-                        <p style="font-size: 13px; color: #666;">
-                            Best regards,<br/>
-                            Sunair Team
-                        </p>
+                
+                    <!-- Gold stripe -->
+                    <div style="height: 3px; background-color: #c9a227;"></div>
+                
+                    <!-- Body -->
+                    <div style="padding: 28px 32px;">
+                
+                    <p style="font-size: 15px; font-weight: bold; color: #1a1a2e; margin: 0 0 18px;">
+                        Dear <t t-out="object.partner_id.name or 'Valued Partner'"/>,
+                    </p>
+                
+                    <p style="font-size: 14px; color: #555555; line-height: 1.7; margin: 0 0 14px;">
+                        Thank you for your interest in becoming a dealer with <strong style="color: #1a1a2e;">Sunair Architectural Structures</strong>. We're excited about the possibility of welcoming you to our dealer network.
+                    </p>
+                
+                    <p style="font-size: 14px; color: #555555; line-height: 1.7; margin: 0 0 24px;">
+                        To proceed, please complete your dealer application using the button below. The form will only take a few minutes and our team will review your submission promptly.
+                    </p>
+                
+                    <!-- Info card -->
+                    <div style="background-color: #f4f4f7; border-radius: 8px; padding: 16px 18px; margin-bottom: 26px;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="width: 36px; vertical-align: top; padding-top: 2px;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #c9a227; text-align: center; line-height: 24px; font-size: 13px; font-weight: bold; color: #1a1a2e;">i</div>
+                            </td>
+                            <td style="vertical-align: top;">
+                            <p style="font-size: 13px; color: #555555; margin: 0; line-height: 1.6;">
+                                This invitation was created for <strong style="color: #1a1a2e;"><t t-out="object.partner_id.name or '—'"/></strong>.
+                                <t t-if="object.company_legal_name">
+                                Your application is linked to <strong style="color: #1a1a2e;"><t t-out="object.company_legal_name"/></strong>.
+                                </t>
+                            </p>
+                            </td>
+                        </tr>
+                        </table>
                     </div>
-
-                    <div style="border-top: 1px solid #eee; padding: 16px 32px;">
-                        <p style="font-size: 12px; color: #aaa; margin: 0;">
-                            This is an automated message from Sunair Architectural Structures.
-                        </p>
+                
+                    <!-- CTA button -->
+                    <div style="text-align: center; margin-bottom: 28px;">
+                        <a t-att-href="'/my/dealer-applications'" style="display: inline-block; background-color: #1a1a2e; color: #c9a227; font-size: 14px; font-weight: bold; padding: 13px 32px; border-radius: 8px; text-decoration: none; letter-spacing: 0.3px;">
+                        Complete Your Application
+                        </a>
                     </div>
-
+                
+                    <p style="font-size: 13px; color: #888888; line-height: 1.6; margin: 0 0 18px;">
+                        If you have any questions before or during the application process, don't hesitate to reach out to your Sunair contact directly.
+                    </p>
+                
+                    <p style="font-size: 14px; color: #333333; margin: 0;">
+                        Warm regards,<br/>
+                        <strong style="color: #1a1a2e;">Sunair Team</strong>
+                    </p>
+                
+                    </div>
+                
+                    <!-- Footer -->
+                    <div style="border-top: 1px solid #e8e6f0; padding: 14px 32px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td style="font-size: 11px; color: #cccccc;">Sunair Architectural Structures</td>
+                        <td style="font-size: 11px; color: #cccccc; text-align: right;">Automated notification — do not reply</td>
+                        </tr>
+                    </table>
+                    </div>
+                
                 </div>
             </div>
         </field>
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="auto_delete" eval="True"/>
     </record>
 
+     <record id="email_template_dealer_request_notify_company" model="mail.template">
+        <field name="name">Dealer Request — Notify Company</field>
+        <field name="model_id" ref="model_dealer_request"/>
+        <field name="subject">New Dealer Request Received: {{ object.name }}</field>
+        <field name="email_from">{{ object.company_id.email or user.email }}</field>
+        <field name="email_to">{{ object.company_id.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; background-color: #f4f4f7; padding: 24px; border-radius: 12px;">
+                <div style="background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6f0; overflow: hidden;">
+                
+                    <!-- Header -->
+                    <div style="background-color: #1a1a2e; padding: 24px 28px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td style="vertical-align: middle;">
+                            <table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="vertical-align: middle; padding-right: 14px;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; background-color: #c9a227; text-align: center; line-height: 44px; font-size: 20px;">&#9728;</div>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                <p style="color: #ffffff; font-size: 17px; font-weight: bold; margin: 0;">Sunair Architectural Structures</p>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 3px 0 0; text-transform: uppercase; letter-spacing: 1px;">New dealer application received</p>
+                                </td>
+                            </tr>
+                            </table>
+                        </td>
+                        <td style="text-align: right; vertical-align: middle;">
+                            <span style="font-size: 12px; font-weight: bold; color: #1a1a2e; background-color: #c9a227; padding: 4px 12px; border-radius: 20px;">
+                            <t t-out="object.name or '—'"/>
+                            </span>
+                        </td>
+                        </tr>
+                    </table>
+                    </div>
+                
+                    <!-- Gold stripe -->
+                    <div style="height: 3px; background-color: #c9a227;"></div>
+                
+                    <!-- Body -->
+                    <div style="padding: 24px 28px;">
+                
+                    <p style="font-size: 15px; font-weight: bold; color: #1a1a2e; margin: 0 0 22px;">A new dealer application has been submitted and requires your review.</p>
+                
+                    <!-- 2x2 stat grid -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                        <tr>
+                        <td width="50%" style="padding-right: 6px; padding-bottom: 12px; vertical-align: top;">
+                            <div style="background-color: #f4f4f7; border-radius: 8px; padding: 12px 14px;">
+                            <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 4px;">Applicant</p>
+                            <p style="font-size: 14px; font-weight: bold; color: #1a1a2e; margin: 0;">
+                                <t t-out="(object.first_name or '') + ' ' + (object.last_name or '')"/>
+                            </p>
+                            </div>
+                        </td>
+                        <td width="50%" style="padding-left: 6px; padding-bottom: 12px; vertical-align: top;">
+                            <div style="background-color: #f4f4f7; border-radius: 8px; padding: 12px 14px;">
+                            <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 4px;">Company</p>
+                            <p style="font-size: 14px; font-weight: bold; color: #1a1a2e; margin: 0;">
+                                <t t-out="object.company or object.company_legal_name or '—'"/>
+                            </p>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td width="50%" style="padding-right: 6px; vertical-align: top;">
+                            <div style="background-color: #f4f4f7; border-radius: 8px; padding: 12px 14px;">
+                            <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 4px;">Location</p>
+                            <p style="font-size: 14px; font-weight: bold; color: #1a1a2e; margin: 0;">
+                                <t t-out="(object.city or '') + (', ' + object.country_state_id.name if object.country_state_id else '') + (' ' + object.zip if object.zip else '') or '—'"/>
+                            </p>
+                            </div>
+                        </td>
+                        <td width="50%" style="padding-left: 6px; vertical-align: top;">
+                            <div style="background-color: #f4f4f7; border-radius: 8px; padding: 12px 14px;">
+                            <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 4px;">Years in business</p>
+                            <p style="font-size: 14px; font-weight: bold; color: #1a1a2e; margin: 0;">
+                                <t t-out="object.years_in_business or '—'"/>
+                            </p>
+                            </div>
+                        </td>
+                        </tr>
+                    </table>
+                
+                    <!-- Contact details -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e8e6f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                        <tr>
+                        <td colspan="2" style="background-color: #f4f4f7; padding: 9px 14px; border-bottom: 1px solid #e8e6f0;">
+                            <p style="font-size: 11px; font-weight: bold; color: #888888; margin: 0; text-transform: uppercase; letter-spacing: 0.6px;">Contact details</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0; width: 130px;">Email</td>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;"><t t-out="object.email or '—'"/></td>
+                        </tr>
+                        <tr>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0; width: 130px;">Phone</td>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;"><t t-out="object.work_phone or '—'"/></td>
+                        </tr>
+                        <tr>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #888888; width: 130px;">Has showroom</td>
+                        <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e;">
+                            <t t-if="object.has_showroom == 'yes'">Yes</t>
+                            <t t-else="">No</t>
+                        </td>
+                        </tr>
+                    </table>
+                
+                    <!-- Product interests -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e8e6f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                        <tr>
+                        <td style="background-color: #f4f4f7; padding: 9px 14px; border-bottom: 1px solid #e8e6f0;">
+                            <p style="font-size: 11px; font-weight: bold; color: #888888; margin: 0; text-transform: uppercase; letter-spacing: 0.6px;">Product interests</p>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td style="padding: 12px 14px;">
+                            <t t-if="object.sells_retractable_awnings == 'yes'">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Retractable Awnings</span>
+                            </t>
+                            <t t-if="object.sells_solar_screens == 'yes'">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Solar Screens</span>
+                            </t>
+                            <t t-if="object.sells_pergola_louvered == 'yes'">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Pergola / Louvered</span>
+                            </t>
+                            <t t-if="object.is_distributor">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Distributor</span>
+                            </t>
+                            <t t-if="object.is_retail">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Retail</span>
+                            </t>
+                            <t t-if="object.is_wholesale">
+                            <span style="font-size: 12px; font-weight: bold; color: #c9a227; background-color: #1a1a2e; padding: 4px 12px; border-radius: 20px; display: inline-block; margin: 3px 4px 3px 0;">Wholesale</span>
+                            </t>
+                        </td>
+                        </tr>
+                    </table>
+                
+                    <!-- Comments -->
+                    <t t-if="object.comments">
+                        <div style="background-color: #f4f4f7; border-radius: 8px; padding: 14px 16px; margin-bottom: 22px;">
+                        <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 6px;">Comments</p>
+                        <p style="font-size: 13px; color: #333333; margin: 0; line-height: 1.6;"><t t-out="object.comments"/></p>
+                        </div>
+                    </t>
+                
+                    <!-- How heard -->
+                    <t t-if="object.how_heard">
+                        <div style="background-color: #f4f4f7; border-radius: 8px; padding: 14px 16px; margin-bottom: 22px;">
+                        <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #aaaaaa; margin: 0 0 6px;">How did they hear about us</p>
+                        <p style="font-size: 13px; color: #333333; margin: 0;"><t t-out="object.how_heard"/></p>
+                        </div>
+                    </t>
+                
+                    <!-- CTA button -->
+                    <div style="text-align: center; margin-top: 4px;">
+                        <a t-att-href="'/odoo/dealer-applications/' + str(object.id)" style="display: inline-block; background-color: #1a1a2e; color: #c9a227; font-size: 14px; font-weight: bold; padding: 13px 28px; border-radius: 8px; text-decoration: none; letter-spacing: 0.3px;">
+                        Review application in Odoo
+                        </a>
+                    </div>
+                
+                    </div>
+                
+                    <!-- Footer -->
+                    <div style="border-top: 1px solid #e8e6f0; padding: 14px 28px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                        <td style="font-size: 11px; color: #cccccc;">Sunair Architectural Structures</td>
+                        <td style="font-size: 11px; color: #cccccc; text-align: right;">Automated notification — do not reply</td>
+                        </tr>
+                    </table>
+                    </div>
+                
+                </div>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
 </odoo>
