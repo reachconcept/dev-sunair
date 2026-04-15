@@ -226,8 +226,8 @@
         <field name="name">Dealer Request — Notify Company</field>
         <field name="model_id" ref="model_dealer_request"/>
         <field name="subject">New Dealer Request Received: {{ object.name }}</field>
-        <field name="email_from">{{ object.company_id.email}},{{ object.email }}</field>
         <field name="email_to">{{ object.company_id.email }}</field>
+        <field name="email_from">{{ object.company_id.email}},{{ object.email }}</field>
         <field name="body_html" type="html">
             <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; background-color: #f4f4f7; padding: 24px; border-radius: 12px;">
                 <div style="background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6f0; overflow: hidden;">

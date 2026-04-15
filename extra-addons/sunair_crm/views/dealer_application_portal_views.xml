@@ -7,7 +7,7 @@
           name="Portal: Dealer Application">
     <xpath expr="//div[@id='portal_common_category']" position="inside">
         <t t-call="portal.portal_docs_entry">
-            <t t-set="icon" t-value="'/sunair_crm/static/description/dealer_icon.svg'"/>
+            <t t-set="icon" t-value="'/sunair_crm/static/description/dealer_portal_icon.svg'"/>
             <t t-set="title">Dealer Application</t>
             <t t-set="text">Apply to become an authorized dealer</t>
             <t t-set="url" t-value="'/my/dealer-applications'"/>
