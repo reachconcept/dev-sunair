@@ -240,7 +240,7 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="order_id" readonly="1" invisible="not order_id"/>
                             <field name="territory_id"/>
-                            <field name="dealer_representative_id" widget="many2one_avatar_user"/>
+                            <field name="dealer_representative_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                         </group>
                     </group>
 
