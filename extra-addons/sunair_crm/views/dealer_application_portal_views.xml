@@ -279,7 +279,11 @@
                     </div>
                 </div>
 
-                <form id="dp-form" method="POST" action="/my/dealer-applications/submit">
+                <form id="dp-form" method="POST" t-attf-action="#{'/dealer-application/' + (access_token or '') + '/submit' if access_token else '/my/dealer-applications/submit'}">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <t t-if="access_token">
+                        <input type="hidden" name="access_token" t-att-value="access_token"/>
+                    </t>
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <input t-if="edit_app_id" type="hidden" name="edit_app_id" t-att-value="edit_app_id"/>
 
@@ -519,7 +523,7 @@
                                     <t t-call="sunair_crm._dp_input"><t t-set="fname">signed_by_title</t><t t-set="flabel">Your title</t><t t-set="fval" t-value="values.get('signed_by_title','')"/><t t-set="ferror" t-value="error"/></t>
                                     <div class="dp-divider">AWCBN membership</div>
                                     <div class="dp-f dp-full">
-                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;">
+                                        <label class="dp-radio-opt" style="gap:8px;font-weight:400;" t-if="not is_locked">
                                             <input type="checkbox" id="dp_is_awcbn" name="is_awcbn" value="1"
                                                    t-att-checked="values.get('is_awcbn') and 'checked' or None"
                                                    t-att-disabled="is_locked and 'disabled' or None"/>
@@ -528,7 +532,7 @@
                                     </div>
                                     <div class="dp-f" id="dp-awcbn-row" style="display:none;">
                                         <label for="dp_awcbn_number">AWCBN member number</label>
-                                        <input type="text" id="dp_awcbn_number" name="awcbn_number"
+                                        <input type="text" id="dp_awcbn_number" name="awcbn_number" t-if="not is_locked"
                                                t-att-value="values.get('awcbn_number','')"
                                                t-att-disabled="is_locked and 'disabled' or None"/>
                                     </div>

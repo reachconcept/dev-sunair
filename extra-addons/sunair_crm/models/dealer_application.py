@@ -1,6 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
-
+import secrets
 
 class DealerApplication(models.Model):
     _name = 'dealer.application'
@@ -130,6 +130,13 @@ class DealerApplication(models.Model):
     dealer_representative = fields.Char(string='Representative')
     is_awcbn = fields.Boolean(string='AWCBN Member')
     awcbn_number = fields.Char(string='AWCBN Number')
+
+    access_token = fields.Char(
+        string='Access Token',
+        copy=False,
+        readonly=True,
+        index=True,
+    )
 
     def write(self, vals):
         res = super().write(vals)
@@ -307,4 +314,6 @@ class DealerApplication(models.Model):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('dealer.application') or 'New'
+            if not vals.get('access_token'):
+                vals['access_token'] = secrets.token_urlsafe(32)
         return super().create(vals_list)
