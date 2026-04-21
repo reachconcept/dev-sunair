@@ -83,6 +83,13 @@ class DealerRequestController(http.Controller):
         if template and application.company_id and application.company_id.email:
             template.sudo().send_mail(application.id, force_send=True)
 
+        applicant_template = request.env.ref(
+            'sunair_crm.email_template_dealer_request_confirm_applicant',
+            raise_if_not_found=False,
+        )
+        if applicant_template and application.email:
+            applicant_template.sudo().send_mail(application.id, force_send=True)
+            
         return request.render('sunair_crm.dealer_request_success', {})
 
 
