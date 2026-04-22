@@ -552,4 +552,184 @@
         </field>
         <field name="auto_delete" eval="False"/>
     </record>
+
+    <record id="email_template_dealer_request_notify_rep" model="mail.template">
+        <field name="name">Dealer Request — Notify Sales Rep</field>
+        <field name="model_id" ref="model_dealer_request"/>
+        <field name="subject">New Dealer Request Assigned to You: {{ object.name }}</field>
+        <field name="email_to">{{ object.dealer_representative_id.email }}</field>
+        <field name="email_from">{{ object.company_id.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; background-color: #f4f4f7; padding: 24px; border-radius: 12px;">
+                <div style="background-color: #ffffff; border-radius: 12px; border: 1px solid #e8e6f0; overflow: hidden;">
+
+                    <!-- Header -->
+                    <div style="background-color: #1a1a2e; padding: 20px 24px;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="vertical-align: middle;">
+                                    <table cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td style="vertical-align: middle; padding-right: 12px;">
+                                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #c9a227; text-align: center; line-height: 40px; font-size: 18px;">&#127919;</div>
+                                            </td>
+                                            <td style="vertical-align: middle;">
+                                                <p style="color: #ffffff; font-size: 15px; font-weight: bold; margin: 0;">Sunair Architectural Structures</p>
+                                                <p style="color: rgba(255,255,255,0.45); font-size: 11px; margin: 2px 0 0; text-transform: uppercase; letter-spacing: 0.8px;">New dealer request assigned</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="text-align: right; vertical-align: middle;">
+                                    <span style="font-size: 11px; font-weight: bold; color: #1a1a2e; background-color: #c9a227; padding: 4px 12px; border-radius: 20px;">
+                                        <t t-out="object.name or '—'"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Gold stripe -->
+                    <div style="height: 3px; background-color: #c9a227;"></div>
+
+                    <!-- Body -->
+                    <div style="padding: 24px;">
+
+                        <p style="font-size: 15px; font-weight: bold; color: #1a1a2e; margin: 0 0 6px;">
+                            Hi <t t-out="object.dealer_representative_id.name or 'there'"/>,
+                        </p>
+                        <p style="font-size: 13px; color: #555555; line-height: 1.65; margin: 0 0 22px;">
+                            A new dealer request has been assigned to you. Review the details below and follow up with the applicant as soon as possible.
+                        </p>
+
+                        <!-- Applicant summary -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e8e6f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                            <tr>
+                                <td colspan="2" style="background-color: #f4f4f7; padding: 8px 14px; border-bottom: 1px solid #e8e6f0;">
+                                    <p style="font-size: 10px; font-weight: bold; color: #888888; margin: 0; text-transform: uppercase; letter-spacing: 0.8px;">Applicant details</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0; width: 130px;">Name</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="(object.first_name or '') + ' ' + (object.last_name or '')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Title</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="object.title or '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Company</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="object.company or '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Email</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <a t-att-href="'mailto:' + (object.email or '')" style="color: #c9a227; text-decoration: none;">
+                                        <t t-out="object.email or '—'"/>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Phone</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="object.work_phone or '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888;">Location</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e;">
+                                    <t t-out="(object.city or '') + (', ' + object.country_state_id.name if object.country_state_id else '') + (' ' + object.zip if object.zip else '') or '—'"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Business profile -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e8e6f0; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+                            <tr>
+                                <td colspan="2" style="background-color: #f4f4f7; padding: 8px 14px; border-bottom: 1px solid #e8e6f0;">
+                                    <p style="font-size: 10px; font-weight: bold; color: #888888; margin: 0; text-transform: uppercase; letter-spacing: 0.8px;">Business profile</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0; width: 130px;">Type</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-if="object.is_distributor">Distributor </t>
+                                    <t t-if="object.is_retail">Retail </t>
+                                    <t t-if="object.is_wholesale">Wholesale</t>
+                                    <t t-if="not object.is_distributor and not object.is_retail and not object.is_wholesale">—</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Years in business</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="object.years_in_business or '—'"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888; border-bottom: 1px solid #e8e6f0;">Has showroom</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e; border-bottom: 1px solid #e8e6f0;">
+                                    <t t-out="dict(no='No', soon='No — but will soon', yes='Yes').get(object.has_showroom, '—')"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #888888;">How they heard</td>
+                                <td style="padding: 9px 14px; font-size: 13px; color: #1a1a2e;">
+                                    <t t-out="object.how_heard or '—'"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- CTA -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+                            <tr>
+                                <td style="text-align: center; padding: 4px 0;">
+                                    <a t-att-href="'/odoo/dealer-requests/' + str(object.id)"
+                                       style="display: inline-block; background-color: #c9a227; color: #1a1a2e; font-size: 13px; font-weight: bold; text-decoration: none; padding: 11px 28px; border-radius: 6px; letter-spacing: 0.3px;">
+                                        View Request in Odoo →
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Comments callout (conditional) -->
+                        <t t-if="object.comments">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fffbea; border-left: 3px solid #c9a227; border-radius: 0 6px 6px 0; margin-bottom: 20px;">
+                                <tr>
+                                    <td style="padding: 12px 16px;">
+                                        <p style="font-size: 10px; font-weight: bold; color: #888888; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.8px;">Applicant comments</p>
+                                        <p style="font-size: 13px; color: #333333; margin: 0; line-height: 1.6;">
+                                            <t t-out="object.comments"/>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <p style="font-size: 12px; color: #888888; margin: 0; line-height: 1.6;">
+                            This request was automatically assigned to you. If you believe this is a mistake, please contact your manager.
+                        </p>
+
+                    </div>
+
+                    <!-- Footer -->
+                    <div style="border-top: 1px solid #e8e6f0; padding: 12px 24px;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="font-size: 11px; color: #cccccc;">Sunair Architectural Structures</td>
+                                <td style="font-size: 11px; color: #cccccc; text-align: right;">Automated notification</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
 </odoo>

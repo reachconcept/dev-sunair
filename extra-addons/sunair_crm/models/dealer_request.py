@@ -175,6 +175,16 @@ class DealerRequest(models.Model):
             for rec in self:
                 if rec.application_id:
                     rec.application_id.with_context(dealer_sync_skip=True).write(sync_vals)
+        
+        if 'dealer_representative_id' in vals and vals['dealer_representative_id']:
+            template = self.env.ref(
+                'sunair_crm.email_template_dealer_request_notify_rep',
+                raise_if_not_found=False,
+            )
+            if template:
+                for rec in self:
+                    if rec.dealer_representative_id and rec.dealer_representative_id.email:
+                        template.send_mail(rec.id, force_send=True)
         return res
 
     @api.model
