@@ -141,7 +141,7 @@
                                 </t>
 
                                 <!-- Phone -->
-                                <t t-if="record.phone.raw_value or record.mobile.raw_value">
+                                <t t-if="record.phone.raw_value">
                                     <div class="text-muted mb-1">
                                         <i class="fa fa-phone me-1"/>
                                         <t t-esc="record.phone.value"/>
