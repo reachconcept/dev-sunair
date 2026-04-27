@@ -9,6 +9,7 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="team_id"/>
+                <field name="dealer_representative_id"/>
                 <field name="backup_user_id" optional="hide"/>
                 <field name="company_id"/>
                 <field name="zip_range" optional="hide"/>
@@ -41,6 +42,7 @@
                         <group string="General Information">
                             <field name="code"/>
                             <field name="team_id"/>
+                            <field name="dealer_representative_id"/>
                             <field name="backup_user_id" readonly="1"/>
                         </group>
                         <group string="Configuration">

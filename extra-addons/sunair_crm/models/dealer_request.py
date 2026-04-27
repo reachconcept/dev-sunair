@@ -1,5 +1,6 @@
 from odoo import models, fields, api
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class DealerRequest(models.Model):
     _name = 'dealer.request'
@@ -161,6 +162,33 @@ class DealerRequest(models.Model):
             'res_id': application.id,
             'target': 'current',
         }
+    
+    def _get_rep_from_zip(self, zip_code):
+        if not zip_code or len(zip_code) < 4:
+            return False
+
+        try:
+            prefix = int(zip_code[:4])
+        except (ValueError, AttributeError):
+            return False
+
+        territories = self.env['crm.territory'].search([('active', '=', True)])
+
+        for territory in territories:
+            if not territory.zip_range:
+                continue
+            for r in territory.zip_range.split(','):
+                r = r.strip()
+                if '-' in r:
+                    start, end = r.split('-')
+                    try:
+                        if int(start.strip()) <= prefix <= int(end.strip()):
+                            rep = territory.team_id.user_id if territory.team_id else False
+                            return rep.id if rep else False
+                    except (ValueError, AttributeError):
+                        continue
+
+        return False
 
     def write(self, vals):
         res = super().write(vals)
@@ -196,4 +224,11 @@ class DealerRequest(models.Model):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('dealer.request') or 'New'
+            
+            if not vals.get('dealer_representative_id') and vals.get('zip'):
+                _logger.info(f"****** Creating Dealer Request with values: {vals.get('zip')}")
+                rep_id = self._get_rep_from_zip(vals['zip'])
+                if rep_id:
+                    vals['dealer_representative_id'] = rep_id
+
         return super().create(vals_list)

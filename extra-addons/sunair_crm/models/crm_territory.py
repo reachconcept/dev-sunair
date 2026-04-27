@@ -11,6 +11,7 @@ class CrmTerritory(models.Model):
     code = fields.Char(string='Territory Code', required=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     team_id = fields.Many2one('crm.team', string='Primary Sales Team', required=True)
+    dealer_representative_id = fields.Many2one('res.users', string='Representative', tracking=True)
     backup_user_id = fields.Many2one('res.users', string='Backup Representative', compute='_compute_backup_user', store=True)
     zip_range = fields.Char(string='ZIP Code Range', help='Define ZIP code ranges for this territory, e.g. "100-199,300-399"')
     active = fields.Boolean(default=True)
