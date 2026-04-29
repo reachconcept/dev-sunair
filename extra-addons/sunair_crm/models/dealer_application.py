@@ -208,8 +208,7 @@ class DealerApplication(models.Model):
             self.stage_id = state
 
     def action_manager_approve(self):
-        state = self._get_state('partnership')
-        # state = self._get_state('completed')
+        state = self._get_state('completed')
         for rec in self:
             if rec.partner_id:
                 rec.partner_id.write({
