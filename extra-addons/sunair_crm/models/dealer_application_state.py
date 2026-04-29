@@ -21,6 +21,7 @@ class DealerApplicationState(models.Model):
         ('submitted', 'Submitted'),
         ('ar_approval', 'AR Approval'),
         ('manager_approval', 'Manager Approval'),
+        ('partnership', 'Partnership Form'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ], string='State Type',

@@ -195,6 +195,7 @@
                     <button name="action_send_to_finance" type="object" string="Send to Finance" class="btn-primary" invisible="state_type != 'sent'"/>
                     <button name="action_ar_approve" type="object" string="AR Approve" class="btn-primary" invisible="state_type != 'ar_approval'" confirm="Approve this application for AR?"/>
                     <button name="action_manager_approve" type="object" string="Manager Approve" class="btn-success" invisible="state_type != 'manager_approval'" confirm="This will create a sales order. Proceed?"/>
+                    <button name="action_complete_partnership" type="object" string="Complete &amp; Finish Onboarding" class="btn-success" invisible="state_type != 'partnership'" confirm="This will finalize onboarding and create the sales order. Proceed?"/>
                     <button name="action_cancel" type="object" string="Cancel" invisible="state_type in ('completed', 'cancelled')" confirm="Cancel this application?"/>
                     <field name="stage_id" widget="statusbar" options="{'clickable': True}"/>
                 </header>
@@ -212,12 +213,24 @@
                                 </span>
                             </div>
                         </button>
+                        
                         <button class="oe_stat_button" type="object" name="action_view_documents" icon="fa-file-o">
                             <field name="document_count" widget="statinfo" string="Documents"/>
                         </button>
                         <button class="oe_stat_button" type="object" name="action_view_order" icon="fa-shopping-cart" invisible="not order_id">
                             <div class="o_stat_info">
                                 <span class="o_stat_text">Sales Order</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_request"
+                                icon="fa-inbox"
+                                invisible="not partnership_order_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Order</span>
+                                <span class="o_stat_value">
+                                    <field name="partnership_order_id" string=""/>
+                                </span>
                             </div>
                         </button>
                     </div>
@@ -278,7 +291,83 @@
                                 </group>
                             </group>
                         </page>
+                        <page string="Partnership / Onboarding" invisible="state_type not in ('partnership', 'completed')">
+                            <div style="padding: 28px 32px;">
 
+                                <div style="border: 1px solid #e2e8f0;
+                                            border-left: 4px solid #4f46e5;
+                                            border-radius: 8px;
+                                            background: #ffffff;
+                                            display: flex;
+                                            align-items: center;
+                                            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+                                            overflow: hidden;">
+
+                                    <div style="display: flex; align-items: center; gap: 16px; padding: 20px 24px; flex: 1;">
+                                        <div style="background: #ede9fe;
+                                                    border-radius: 8px;
+                                                    width: 44px; height: 44px;
+                                                    display: flex; align-items: center; justify-content: center;
+                                                    flex-shrink: 0;">
+                                            <span style="font-size: 20px;">💼</span>
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 15px; font-weight: 700; color: #1a202c; margin-bottom: 3px;">
+                                                $350 Partnership Fee
+                                            </div>
+                                            <div style="font-size: 12px; color: #718096;">
+                                                Create and link the partnership fee sales order to proceed
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style="width: 1px; background: #e2e8f0; align-self: stretch;"/>
+
+                                    <div style="display: flex; align-items: center; gap: 10px; padding: 20px 32px; flex-shrink: 0;">
+                                        <span class="o_form_label" style="font-size: 13px; font-weight: 500; color: #4a5568; white-space: nowrap;">
+                                            Partnership ZIP Code
+                                        </span>
+                                        <field name="partnership_zip_code" nolabel="1"
+                                            placeholder="e.g. 90210"
+                                            style="max-width: 130px;"/>
+                                    </div>
+
+                                    <div style="width: 1px; background: #e2e8f0; align-self: stretch;"/>
+
+                                    <div style="padding: 20px 24px; flex-shrink: 0; display: flex; align-items: center;">
+                                        <button invisible="partnership_order_id != False"
+                                                name="action_create_partnership_fee_order" type="object"
+                                                confirm="This will create a $350 partnership fee sales order for the dealer. Proceed?"
+                                                style="background: #4f46e5;
+                                                    color: #ffffff;
+                                                    border: none;
+                                                    border-radius: 6px;
+                                                    padding: 10px 20px;
+                                                    font-size: 13px;
+                                                    font-weight: 600;
+                                                    cursor: pointer;
+                                                    white-space: nowrap;
+                                                    letter-spacing: 0.3px;">
+                                            Create Fee Order
+                                        </button>
+                                        <div invisible="not partnership_order_id"
+                                            style="display: flex; align-items: center; gap: 8px;">
+                                            <div style="background: #38a169;
+                                                        border-radius: 50%;
+                                                        width: 24px; height: 24px;
+                                                        display: flex; align-items: center; justify-content: center;
+                                                        flex-shrink: 0;">
+                                                <span style="color: white; font-size: 12px; font-weight: 700;">✓</span>
+                                            </div>
+                                            <field name="partnership_order_id" readonly="1" nolabel="1"
+                                                style="font-size: 13px; color: #2f855a; font-weight: 600;"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </page>
                         <page string="Business Details">
                             <group name="business_details" string="Business Information">
                                 <group>

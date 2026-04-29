@@ -137,7 +137,13 @@ class DealerApplication(models.Model):
         readonly=True,
         index=True,
     )
-
+    # Partnership / Onboarding fields
+    partnership_zip_code = fields.Char(string='Partnership ZIP Code')
+    partnership_order_id = fields.Many2one(
+        'sale.order',
+        string='Partnership Sales Order',
+        readonly=True,
+    )
     def write(self, vals):
         res = super().write(vals)
         if self.env.context.get('dealer_sync_skip'):
@@ -202,7 +208,8 @@ class DealerApplication(models.Model):
             self.stage_id = state
 
     def action_manager_approve(self):
-        state = self._get_state('completed')
+        state = self._get_state('partnership')
+        # state = self._get_state('completed')
         for rec in self:
             if rec.partner_id:
                 rec.partner_id.write({
@@ -317,3 +324,37 @@ class DealerApplication(models.Model):
             if not vals.get('access_token'):
                 vals['access_token'] = secrets.token_urlsafe(32)
         return super().create(vals_list)
+
+    def action_create_partnership_fee_order(self):
+        self.ensure_one()
+        if self.partnership_order_id:
+            raise ValidationError("A partnership fee order has already been created.")
+        
+        fee_product = self.env['product.product'].search([
+            ('is_partnership_fee', '=', True)
+        ], limit=1)
+        
+        if not fee_product:
+            raise ValidationError("No partnership fee product found. Please mark a product with 'Partnership Fee Product'.")
+        
+        if not self.partner_id:
+            raise ValidationError("Please set a partner before creating the order.")
+        
+        order = self.env['sale.order'].create({
+            'partner_id': self.partner_id.id,
+        })
+        self.env['sale.order.line'].create({
+            'order_id': order.id,
+            'product_id': fee_product.id,
+            'product_uom_qty': 1,
+            'price_unit': 350.0,
+        })
+        self.partnership_order_id = order.id
+        
+    def action_complete_partnership(self):
+        state = self._get_state('completed')
+        for rec in self:
+            if not rec.partnership_order_id:
+                raise ValidationError("Please create the $350 partnership fee order before completing onboarding.")
+            if state:
+                rec.stage_id = state

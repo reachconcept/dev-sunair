@@ -10,6 +10,8 @@
         <xpath expr="//label[@for='purchase_ok']" position="after">
             <field name="is_dealer_starter_kit"/>
             <label for="is_dealer_starter_kit" string="Is Dealer Kit" class="o_form_label"/>
+            <field name="is_partnership_fee"/>
+            <label for="is_partnership_fee" string="Is Partnership Fee" class="o_form_label"/>
         </xpath>
 
     </field>
